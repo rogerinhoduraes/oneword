@@ -1,0 +1,362 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FD5E270D62FF41F3AE433131 /* OneWordApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D858E1EE3188476392F95093 /* OneWordApp.swift */; };
+		6DEF487DD6AA4332B5D766A3 /* DocumentScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */; };
+		2F190FB42AA74277A196D7BF /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */; };
+		0D59E1D618D74E598CC36BE0 /* RSVPReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */; };
+		B1CD2E6FE465481D9CBB467D /* StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */; };
+		14E9B17CBA81423C99170F05 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289DFA44EBC84D4ABDEC210A /* Document.swift */; };
+		62B128D1302547048A61BE5A /* DocumentContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */; };
+		94B1FF48D3FF438BA3831E70 /* ModelContainer+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */; };
+		230BFF686A89402183012D3C /* ReadingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */; };
+		B3F265D8EB1A4794A0B4F45C /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36366093A5734F80B7BF5605 /* ReadingSession.swift */; };
+		B382E5BB80EA49AC82F0E140 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */; };
+		FD3C5742459947EC8A15FCA4 /* RSVPReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */; };
+		B14712E0775A4A04BEB4285B /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5FDD65A78E45038F24E71A /* LibraryView.swift */; };
+		2ADD579F5E6A4390BD144588 /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */; };
+		D9964C96B6964DF7AB1237F3 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */; };
+		1C643EB6AD214A968E7DCB9A /* VisionDocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */; };
+		2A957EA04CAA48CF8A88AE22 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDBB1849FDC4199BF62218B /* StatsView.swift */; };
+		EFECCD1FD3984DA48A157B2A /* OCRError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */; };
+		FFAB248AE1904521801117AA /* OCRResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5A78025B184C0EBE70B900 /* OCRResult.swift */; };
+		0A55C7DBD30D4C8DB0F128CC /* OCRServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */; };
+		D7AE7E5FFA20443A91083D1E /* TextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E52BD70D504258AF52B6A6 /* TextParser.swift */; };
+		DAECBB2B6F504CB4A817F8EA /* UIImage+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */; };
+		84F8B02F386D440F90CBBDC5 /* VisionOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */; };
+		1352BB31958D4286AC354765 /* PDFImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */; };
+		CEAE5FF477124C108DE111E7 /* ORPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4400E5832514256BAAFE5E6 /* ORPHelper.swift */; };
+		2E50B6AC6A174B7085E612D6 /* RSVPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */; };
+		F9D5F03A638A45718E8CAC06 /* RSVPEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8A4230C315438595FB7C7D /* RSVPEngine.swift */; };
+		5342EC935DFF4217B9F777BA /* RSVPEngineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */; };
+		364F1DCF59504F1BAE64255A /* ReaderSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340398E4D64A466BAE629623 /* ReaderSettings.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CAFD900087A64194973783D7 /* OneWord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneWord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D858E1EE3188476392F95093 /* OneWordApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/OneWordApp.swift"; sourceTree = "<group>"; };
+		84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/DocumentScannerViewModel.swift"; sourceTree = "<group>"; };
+		D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/LibraryViewModel.swift"; sourceTree = "<group>"; };
+		939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/RSVPReaderViewModel.swift"; sourceTree = "<group>"; };
+		F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/StatsViewModel.swift"; sourceTree = "<group>"; };
+		289DFA44EBC84D4ABDEC210A /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/Document.swift"; sourceTree = "<group>"; };
+		59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/DocumentContent.swift"; sourceTree = "<group>"; };
+		773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ModelContainer+Preview.swift"; sourceTree = "<group>"; };
+		CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingProgress.swift"; sourceTree = "<group>"; };
+		36366093A5734F80B7BF5605 /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingSession.swift"; sourceTree = "<group>"; };
+		AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/MainTabView.swift"; sourceTree = "<group>"; };
+		A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Reader/RSVPReaderView.swift"; sourceTree = "<group>"; };
+		9E5FDD65A78E45038F24E71A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Library/LibraryView.swift"; sourceTree = "<group>"; };
+		82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/CameraPickerView.swift"; sourceTree = "<group>"; };
+		83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/DocumentScannerView.swift"; sourceTree = "<group>"; };
+		29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/VisionDocumentScannerView.swift"; sourceTree = "<group>"; };
+		5BDBB1849FDC4199BF62218B /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Stats/StatsView.swift"; sourceTree = "<group>"; };
+		EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRError.swift"; sourceTree = "<group>"; };
+		0B5A78025B184C0EBE70B900 /* OCRResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRResult.swift"; sourceTree = "<group>"; };
+		E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRServiceProtocol.swift"; sourceTree = "<group>"; };
+		67E52BD70D504258AF52B6A6 /* TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/TextParser.swift"; sourceTree = "<group>"; };
+		918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/UIImage+Orientation.swift"; sourceTree = "<group>"; };
+		DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/VisionOCRService.swift"; sourceTree = "<group>"; };
+		72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/Document/PDFImportService.swift"; sourceTree = "<group>"; };
+		B4400E5832514256BAAFE5E6 /* ORPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ORPHelper.swift"; sourceTree = "<group>"; };
+		C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPConfiguration.swift"; sourceTree = "<group>"; };
+		7B8A4230C315438595FB7C7D /* RSVPEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngine.swift"; sourceTree = "<group>"; };
+		C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngineProtocol.swift"; sourceTree = "<group>"; };
+		340398E4D64A466BAE629623 /* ReaderSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ReaderSettings.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EB51587405BD4F31B5315D3C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		82CB5DD55F3F4B4AB7CB2A54 = {
+			isa = PBXGroup;
+			children = (
+				70CA5A122E8B47A7A6F17018 /* OneWord Sources */,
+				B502C8F3569248D2A7E192DF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B502C8F3569248D2A7E192DF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAFD900087A64194973783D7 /* OneWord.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70CA5A122E8B47A7A6F17018 /* OneWord Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D858E1EE3188476392F95093 /* OneWordApp.swift */,
+				84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */,
+				D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */,
+				939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */,
+				F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */,
+				289DFA44EBC84D4ABDEC210A /* Document.swift */,
+				59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */,
+				773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */,
+				CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */,
+				36366093A5734F80B7BF5605 /* ReadingSession.swift */,
+				AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */,
+				A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */,
+				9E5FDD65A78E45038F24E71A /* LibraryView.swift */,
+				82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */,
+				83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */,
+				29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */,
+				5BDBB1849FDC4199BF62218B /* StatsView.swift */,
+				EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */,
+				0B5A78025B184C0EBE70B900 /* OCRResult.swift */,
+				E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */,
+				67E52BD70D504258AF52B6A6 /* TextParser.swift */,
+				918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */,
+				DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */,
+				72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */,
+				B4400E5832514256BAAFE5E6 /* ORPHelper.swift */,
+				C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */,
+				7B8A4230C315438595FB7C7D /* RSVPEngine.swift */,
+				C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */,
+				340398E4D64A466BAE629623 /* ReaderSettings.swift */,
+			);
+			name = "OneWord Sources";
+			path = OneWord;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9407F65AF7C4CD19714F342 /* OneWord */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8761B6D75F484214978F24AE /* Build configuration list for PBXNativeTarget "OneWord" */;
+			buildPhases = (
+				4C8E07680AB64F598C302A04 /* Sources */,
+				EB51587405BD4F31B5315D3C /* Frameworks */,
+				F8F5B954DA7B4B14B1295951 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneWord;
+			productName = OneWord;
+			productReference = CAFD900087A64194973783D7 /* OneWord.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83BFA3AE96ED420FA1AD2DCF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					C9407F65AF7C4CD19714F342 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = C90DC19351C3451C9A6AFF74 /* Build configuration list for PBXProject "OneWord" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 82CB5DD55F3F4B4AB7CB2A54;
+			productRefGroup = B502C8F3569248D2A7E192DF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9407F65AF7C4CD19714F342 /* OneWord */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8F5B954DA7B4B14B1295951 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C8E07680AB64F598C302A04 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD5E270D62FF41F3AE433131 /* OneWordApp.swift in Sources */,
+				6DEF487DD6AA4332B5D766A3 /* DocumentScannerViewModel.swift in Sources */,
+				2F190FB42AA74277A196D7BF /* LibraryViewModel.swift in Sources */,
+				0D59E1D618D74E598CC36BE0 /* RSVPReaderViewModel.swift in Sources */,
+				B1CD2E6FE465481D9CBB467D /* StatsViewModel.swift in Sources */,
+				14E9B17CBA81423C99170F05 /* Document.swift in Sources */,
+				62B128D1302547048A61BE5A /* DocumentContent.swift in Sources */,
+				94B1FF48D3FF438BA3831E70 /* ModelContainer+Preview.swift in Sources */,
+				230BFF686A89402183012D3C /* ReadingProgress.swift in Sources */,
+				B3F265D8EB1A4794A0B4F45C /* ReadingSession.swift in Sources */,
+				B382E5BB80EA49AC82F0E140 /* MainTabView.swift in Sources */,
+				FD3C5742459947EC8A15FCA4 /* RSVPReaderView.swift in Sources */,
+				B14712E0775A4A04BEB4285B /* LibraryView.swift in Sources */,
+				2ADD579F5E6A4390BD144588 /* CameraPickerView.swift in Sources */,
+				D9964C96B6964DF7AB1237F3 /* DocumentScannerView.swift in Sources */,
+				1C643EB6AD214A968E7DCB9A /* VisionDocumentScannerView.swift in Sources */,
+				2A957EA04CAA48CF8A88AE22 /* StatsView.swift in Sources */,
+				EFECCD1FD3984DA48A157B2A /* OCRError.swift in Sources */,
+				FFAB248AE1904521801117AA /* OCRResult.swift in Sources */,
+				0A55C7DBD30D4C8DB0F128CC /* OCRServiceProtocol.swift in Sources */,
+				D7AE7E5FFA20443A91083D1E /* TextParser.swift in Sources */,
+				DAECBB2B6F504CB4A817F8EA /* UIImage+Orientation.swift in Sources */,
+				84F8B02F386D440F90CBBDC5 /* VisionOCRService.swift in Sources */,
+				1352BB31958D4286AC354765 /* PDFImportService.swift in Sources */,
+				CEAE5FF477124C108DE111E7 /* ORPHelper.swift in Sources */,
+				2E50B6AC6A174B7085E612D6 /* RSVPConfiguration.swift in Sources */,
+				F9D5F03A638A45718E8CAC06 /* RSVPEngine.swift in Sources */,
+				5342EC935DFF4217B9F777BA /* RSVPEngineProtocol.swift in Sources */,
+				364F1DCF59504F1BAE64255A /* ReaderSettings.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		258524DFDF9948DCB486F032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6DD7FA4E020642679383C8B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = "wholemodule";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		1594DB70C2B54068AF4D4088 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "OneWord/Sources/OneWord/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OneWord;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oneword.rsvp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B8AA99CF2C9646A0B04F73EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "OneWord/Sources/OneWord/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OneWord;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oneword.rsvp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C90DC19351C3451C9A6AFF74 /* Build configuration list for PBXProject "OneWord" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				258524DFDF9948DCB486F032 /* Debug */,
+				6DD7FA4E020642679383C8B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8761B6D75F484214978F24AE /* Build configuration list for PBXNativeTarget "OneWord" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1594DB70C2B54068AF4D4088 /* Debug */,
+				B8AA99CF2C9646A0B04F73EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 83BFA3AE96ED420FA1AD2DCF /* Project object */;
+}

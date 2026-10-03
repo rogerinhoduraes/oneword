@@ -1,0 +1,4 @@
+module OneWord {
+header "OneWord-Swift.h"
+export *
+}

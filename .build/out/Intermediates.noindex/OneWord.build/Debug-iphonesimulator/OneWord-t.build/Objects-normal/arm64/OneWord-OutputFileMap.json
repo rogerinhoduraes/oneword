@@ -1,0 +1,109 @@
+{
+  "" : {
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OneWord-primary.dia",
+    "emit-module-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OneWord-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OneWord-primary-emit-module.dia",
+    "pch" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OneWord-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OneWord-primary.swiftdeps"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/Document.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/Document~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/DocumentContent.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/DocumentContent~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/ModelContainer+Preview.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ModelContainer+Preview~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/ReadingProgress.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/ReadingProgress~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRError.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRError~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRResult.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRResult~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRServiceProtocol.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/OCRServiceProtocol~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/TextParser.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/TextParser~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/UIImage+Orientation.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/UIImage+Orientation~partial.swiftmodule"
+  },
+  "/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/VisionOCRService.swift" : {
+    "const-values" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.swiftconstvalues",
+    "dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.d",
+    "diagnostics" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.dia",
+    "index-unit-output-path" : "/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.o",
+    "llvm-bc" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.bc",
+    "object" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.o",
+    "swift-dependencies" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService.swiftdeps",
+    "swiftmodule" : "/Users/rogerioduraes/Documents/dev/OneWord/.build/out/Intermediates.noindex/OneWord.build/Debug-iphonesimulator/OneWord-t.build/Objects-normal/arm64/VisionOCRService~partial.swiftmodule"
+  }
+}

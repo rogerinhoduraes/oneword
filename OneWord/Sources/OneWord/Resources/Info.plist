@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>OneWord</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleDisplayName</key>
+    <string>OneWord</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.oneword.rsvp</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>NSCameraUsageDescription</key>
+    <string>O OneWord precisa de acesso à câmera para fotografar páginas físicas de livros e extrair o texto de forma 100% offline para o leitor RSVP.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>O OneWord precisa de acesso à biblioteca de fotos para selecionar imagens de documentos e convertê-los para o leitor RSVP.</string>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+</dict>
+</plist>

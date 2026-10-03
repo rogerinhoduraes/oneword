@@ -1,0 +1,10 @@
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/Document.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/DocumentContent.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/ModelContainer+Preview.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Models/ReadingProgress.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRError.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRResult.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/OCRServiceProtocol.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/TextParser.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/UIImage+Orientation.swift
+/Users/rogerioduraes/Documents/dev/OneWord/OneWord/Sources/OneWord/Services/OCR/VisionOCRService.swift

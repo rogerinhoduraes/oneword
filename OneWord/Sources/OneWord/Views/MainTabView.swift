@@ -1,0 +1,53 @@
+//
+//  MainTabView.swift
+//  OneWord
+//
+//  Created for OneWord - RSVP Reader iOS MVP
+//
+
+import SwiftUI
+import SwiftData
+
+/// TabView principal do aplicativo OneWord.
+/// Alterna entre a Biblioteca de leitura e o Dashboard de Estatísticas/Produtividade.
+public struct MainTabView: View {
+    public enum Tab: String, Hashable {
+        case library
+        case stats
+    }
+    
+    @State private var selectedTab: Tab
+    
+    public init(initialTab: Tab = .library) {
+        let launchArg = UserDefaults.standard.string(forKey: "selectedTab")
+        let tab: Tab
+        if launchArg == "stats" {
+            tab = .stats
+        } else {
+            tab = initialTab
+        }
+        _selectedTab = State(initialValue: tab)
+    }
+    
+    public var body: some View {
+        TabView(selection: $selectedTab) {
+            LibraryView()
+                .tabItem {
+                    Label("Biblioteca", systemImage: "books.vertical.fill")
+                }
+                .tag(Tab.library)
+            
+            StatsView()
+                .tabItem {
+                    Label("Estatísticas", systemImage: "chart.bar.xaxis")
+                }
+                .tag(Tab.stats)
+        }
+        .tint(.blue)
+    }
+}
+
+#Preview {
+    MainTabView()
+        .modelContainer(ModelContainer.preview)
+}

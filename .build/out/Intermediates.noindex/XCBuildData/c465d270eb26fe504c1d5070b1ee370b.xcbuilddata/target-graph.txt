@@ -1,0 +1,7 @@
+Target dependency graph (3 targets)
+Target 'AllExcludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'OneWord-product' in project 'OneWord'
+➜ Explicit dependency on target 'OneWord' in project 'OneWord'
+Target 'OneWord-product' in project 'OneWord'
+➜ Explicit dependency on target 'OneWord' in project 'OneWord'
+Target 'OneWord' in project 'OneWord' (no dependencies)
