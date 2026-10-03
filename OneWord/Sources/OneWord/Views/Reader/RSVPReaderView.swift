@@ -65,7 +65,7 @@ public struct RSVPReaderView: View {
         }
         #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
-        .statusBarHidden(viewModel.isPlaying)
+        .statusBarHidden(true)
         #endif
         .onDisappear {
             viewModel.onDisappear()

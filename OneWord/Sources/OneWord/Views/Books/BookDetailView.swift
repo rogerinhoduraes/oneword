@@ -23,6 +23,7 @@ public struct BookDetailView: View {
     
     // Controle de Leitura RSVP
     @State private var readingReaderViewModel: RSVPReaderViewModel?
+    @State private var isShowingReader: Bool = false
     
     // Escaneamento de Páginas
     @State private var isShowingDocumentScanner: Bool = false
@@ -118,18 +119,16 @@ public struct BookDetailView: View {
             .padding(.vertical)
         }
         #if os(iOS)
-        .fullScreenCover(item: Binding<IdentifiableReaderModel?>(
-            get: { readingReaderViewModel.map { IdentifiableReaderModel(viewModel: $0) } },
-            set: { readingReaderViewModel = $0?.viewModel }
-        )) { wrapper in
-            RSVPReaderView(viewModel: wrapper.viewModel)
+        .fullScreenCover(isPresented: $isShowingReader) {
+            if let readingReaderViewModel {
+                RSVPReaderView(viewModel: readingReaderViewModel)
+            }
         }
         #else
-        .sheet(item: Binding<IdentifiableReaderModel?>(
-            get: { readingReaderViewModel.map { IdentifiableReaderModel(viewModel: $0) } },
-            set: { readingReaderViewModel = $0?.viewModel }
-        )) { wrapper in
-            RSVPReaderView(viewModel: wrapper.viewModel)
+        .sheet(isPresented: $isShowingReader) {
+            if let readingReaderViewModel {
+                RSVPReaderView(viewModel: readingReaderViewModel)
+            }
         }
         #endif
         #if canImport(VisionKit) && canImport(UIKit)
@@ -179,6 +178,7 @@ public struct BookDetailView: View {
             modelContext: modelContext
         )
         self.readingReaderViewModel = vm
+        self.isShowingReader = true
     }
     
     private func deletePage(_ page: BookPage) {
@@ -610,10 +610,6 @@ private struct OCRProcessingOverlay: View {
     }
 }
 
-private struct IdentifiableReaderModel: Identifiable {
-    let id = UUID()
-    let viewModel: RSVPReaderViewModel
-}
 
 private extension Color {
     static var bookGroupedBg: Color {

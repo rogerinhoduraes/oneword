@@ -181,31 +181,39 @@ public final class RSVPReaderViewModel {
     /// Alterna reprodução entre Play e Pause.
     public func togglePlayPause() {
         engine.togglePlayPause()
+        if !engine.isPlaying {
+            persistProgress(to: engine.currentIndex, forceDiskSave: true)
+        }
     }
     
     /// Avança uma palavra manualmente.
     public func stepForward() {
         engine.stepForward()
+        persistProgress(to: engine.currentIndex, forceDiskSave: true)
     }
     
     /// Retrocede 10 palavras (Requisito de UX Crítico).
     public func rewind10Words() {
         engine.stepBackward(count: 10)
+        persistProgress(to: engine.currentIndex, forceDiskSave: true)
     }
     
     /// Avança para a próxima frase (Requisito de UX Crítico).
     public func advanceSentence() {
         engine.advanceSentence()
+        persistProgress(to: engine.currentIndex, forceDiskSave: true)
     }
     
     /// Retorna para a frase anterior (Requisito de UX Crítico).
     public func rewindSentence() {
         engine.rewindSentence()
+        persistProgress(to: engine.currentIndex, forceDiskSave: true)
     }
     
     /// Reinicia a leitura do início.
     public func reset() {
         engine.reset()
+        persistProgress(to: 0, forceDiskSave: true)
     }
     
     private var sessionStartTime: Date = Date()
@@ -214,22 +222,31 @@ public final class RSVPReaderViewModel {
     /// Pausa a reprodução, força o salvamento do progresso e registra a sessão de leitura.
     public func onDisappear() {
         engine.pause()
-        persistProgress(to: engine.currentIndex)
+        persistProgress(to: engine.currentIndex, forceDiskSave: true)
         recordSessionIfNeeded()
     }
     
     // MARK: - Persistência
     
-    private func persistProgress(to index: Int) {
+    private var wordsSinceLastDiskSave: Int = 0
+    private let diskSaveInterval: Int = 30 // Salva no disco a cada 30 palavras para evitar I/O excessivo
+    
+    private func persistProgress(to index: Int, forceDiskSave: Bool = false) {
         if let book {
             book.updateProgress(to: index)
         } else if let document {
             document.updateProgress(to: index)
         }
         
-        if let modelContext {
-            try? modelContext.save()
+        wordsSinceLastDiskSave += 1
+        
+        if forceDiskSave || wordsSinceLastDiskSave >= diskSaveInterval || engine.isCompleted {
+            wordsSinceLastDiskSave = 0
+            if let modelContext {
+                try? modelContext.save()
+            }
         }
+        
         if engine.isCompleted {
             recordSessionIfNeeded()
         }
