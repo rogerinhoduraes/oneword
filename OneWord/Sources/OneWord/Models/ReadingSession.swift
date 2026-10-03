@@ -33,6 +33,9 @@ public final class ReadingSession {
     /// Documento associado opcional.
     public var document: Document?
     
+    /// Livro associado opcional.
+    public var book: Book?
+    
     public init(
         id: UUID = UUID(),
         date: Date = Date(),
@@ -40,7 +43,8 @@ public final class ReadingSession {
         wordsRead: Int = 0,
         averageWPM: Int = 300,
         documentTitle: String = "",
-        document: Document? = nil
+        document: Document? = nil,
+        book: Book? = nil
     ) {
         self.id = id
         self.date = date
@@ -49,6 +53,7 @@ public final class ReadingSession {
         self.averageWPM = averageWPM
         self.documentTitle = documentTitle
         self.document = document
+        self.book = book
     }
     
     /// Tempo que uma pessoa média (lendo a 200 WPM) levaria para ler essas mesmas palavras.

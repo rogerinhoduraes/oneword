@@ -29,21 +29,31 @@ public struct MainTabView: View {
         _selectedTab = State(initialValue: tab)
     }
     
+    @Query private var books: [Book]
+    
     public var body: some View {
-        TabView(selection: $selectedTab) {
-            LibraryView()
-                .tabItem {
-                    Label("Biblioteca", systemImage: "books.vertical.fill")
+        Group {
+            if UserDefaults.standard.bool(forKey: "previewBookDetail"), let firstBook = books.first {
+                NavigationStack {
+                    BookDetailView(book: firstBook)
                 }
-                .tag(Tab.library)
-            
-            StatsView()
-                .tabItem {
-                    Label("Estatísticas", systemImage: "chart.bar.xaxis")
+            } else {
+                TabView(selection: $selectedTab) {
+                    LibraryView()
+                        .tabItem {
+                            Label("Biblioteca", systemImage: "books.vertical.fill")
+                        }
+                        .tag(Tab.library)
+                    
+                    StatsView()
+                        .tabItem {
+                            Label("Estatísticas", systemImage: "chart.bar.xaxis")
+                        }
+                        .tag(Tab.stats)
                 }
-                .tag(Tab.stats)
+                .tint(.blue)
+            }
         }
-        .tint(.blue)
     }
 }
 

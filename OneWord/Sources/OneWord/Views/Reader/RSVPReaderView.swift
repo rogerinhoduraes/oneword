@@ -17,12 +17,26 @@ public struct RSVPReaderView: View {
     
     @State private var viewModel: RSVPReaderViewModel
     
+    /// Inicializa a tela de leitura diretamente com um RSVPReaderViewModel configurado.
+    public init(viewModel: RSVPReaderViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
+
     /// Inicializa a tela de leitura a partir de um documento persistido.
     /// - Parameters:
     ///   - document: Documento da biblioteca.
     ///   - modelContext: Contexto SwiftData para auto-save contínuo.
     public init(document: Document, modelContext: ModelContext? = nil) {
         _viewModel = State(initialValue: RSVPReaderViewModel(document: document, modelContext: modelContext))
+    }
+    
+    /// Inicializa a tela de leitura a partir de um livro multi-páginas da biblioteca.
+    /// - Parameters:
+    ///   - book: Livro da biblioteca.
+    ///   - startPageNumber: Página específica para início (opcional, para modo híbrido).
+    ///   - modelContext: Contexto SwiftData para auto-save contínuo.
+    public init(book: Book, startPageNumber: Int? = nil, modelContext: ModelContext? = nil) {
+        _viewModel = State(initialValue: RSVPReaderViewModel(book: book, startPageNumber: startPageNumber, modelContext: modelContext))
     }
     
     public var body: some View {
@@ -74,13 +88,19 @@ public struct RSVPReaderView: View {
             Spacer()
             
             VStack(spacing: 2) {
-                Text(viewModel.document.title)
+                Text(viewModel.title)
                     .font(.headline)
                     .lineLimit(1)
                 
-                Text(viewModel.remainingTimeFormatted)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 4) {
+                    if !viewModel.subtitle.isEmpty {
+                        Text(viewModel.subtitle)
+                        Text("•")
+                    }
+                    Text(viewModel.remainingTimeFormatted)
+                }
+                .font(.caption2)
+                .foregroundStyle(.secondary)
             }
             
             Spacer()

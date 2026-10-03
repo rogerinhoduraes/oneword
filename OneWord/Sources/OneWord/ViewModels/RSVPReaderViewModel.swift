@@ -10,7 +10,7 @@ import SwiftData
 import Observation
 
 /// ViewModel responsável pela tela de leitura RSVP.
-/// Conecta a entidade `Document` persistida ao `RSVPEngine`,
+/// Conecta a entidade `Document` ou `Book` persistida ao `RSVPEngine`,
 /// sincroniza o progresso em tempo real e expõe comandos para a interface SwiftUI.
 @Observable
 @MainActor
@@ -18,8 +18,11 @@ public final class RSVPReaderViewModel {
     
     // MARK: - Entidades
     
-    /// Documento ativo em leitura.
-    public let document: Document
+    /// Documento ativo em leitura (se for leitura de documento avulso).
+    public let document: Document?
+    
+    /// Livro ativo em leitura (se for leitura de livro multi-páginas).
+    public let book: Book?
     
     /// Motor de apresentação serial rápida.
     public let engine: RSVPEngine
@@ -35,19 +38,16 @@ public final class RSVPReaderViewModel {
     /// Preferências visuais (tema, fonte, tamanho e guias ORP).
     public var settings: ReaderSettings = ReaderSettings()
     
-    // MARK: - Inicializador
+    // MARK: - Inicializadores
     
-    /// Inicializa o ViewModel do Leitor com o documento e o contexto de persistência.
-    /// - Parameters:
-    ///   - document: Documento a ser lido.
-    ///   - modelContext: Contexto SwiftData opcional para persistência contínua.
-    ///   - initialWPM: Velocidade inicial (default: 300 WPM).
+    /// Inicializa o ViewModel do Leitor com um Documento avulso.
     public init(
         document: Document,
         modelContext: ModelContext? = nil,
         initialWPM: Int = 300
     ) {
         self.document = document
+        self.book = nil
         self.modelContext = modelContext
         
         let config = RSVPConfiguration(wpm: initialWPM)
@@ -56,15 +56,61 @@ public final class RSVPReaderViewModel {
         let words = document.content?.words ?? []
         let initialIndex = document.currentWordIndex
         
+        self.sessionInitialIndex = initialIndex
         engine.load(words: words, initialIndex: initialIndex)
         
-        // Sincroniza progresso com o documento sempre que o cursor avança
+        self.engine.onIndexChanged = { [weak self] newIndex in
+            self?.persistProgress(to: newIndex)
+        }
+    }
+    
+    /// Inicializa o ViewModel do Leitor com um Livro multi-páginas.
+    /// Permite leitura contínua partindo do progresso salvo ou de uma página específica (Modo Híbrido).
+    public init(
+        book: Book,
+        startPageNumber: Int? = nil,
+        modelContext: ModelContext? = nil,
+        initialWPM: Int = 300
+    ) {
+        self.book = book
+        self.document = nil
+        self.modelContext = modelContext
+        
+        let config = RSVPConfiguration(wpm: initialWPM)
+        self.engine = RSVPEngine(config: config)
+        
+        let words = book.allWords
+        let initialIndex: Int
+        if let startPageNumber {
+            initialIndex = book.globalWordIndex(forPageNumber: startPageNumber)
+            book.updateProgress(to: initialIndex)
+        } else {
+            initialIndex = book.currentGlobalWordIndex
+        }
+        
+        self.sessionInitialIndex = initialIndex
+        engine.load(words: words, initialIndex: initialIndex)
+        
         self.engine.onIndexChanged = { [weak self] newIndex in
             self?.persistProgress(to: newIndex)
         }
     }
     
     // MARK: - Propriedades Expostas para SwiftUI
+    
+    /// Título do item em leitura.
+    public var title: String {
+        book?.title ?? document?.title ?? "Leitura"
+    }
+    
+    /// Subtítulo descritivo de posição (ex: página do livro).
+    public var subtitle: String {
+        if let book {
+            let livePage = book.pageInfo(forGlobalWordIndex: engine.currentIndex)?.page.pageNumber ?? book.currentPageNumber
+            return "Página \(livePage) de \(max(1, book.totalPages))"
+        }
+        return ""
+    }
     
     /// Velocidade de leitura em WPM vinculável a Sliders (Double).
     public var wpmBinding: Double {
@@ -98,7 +144,7 @@ public final class RSVPReaderViewModel {
         engine.isCompleted
     }
     
-    /// Total de palavras no documento.
+    /// Total de palavras no documento ou livro.
     public var totalWords: Int {
         engine.totalWords
     }
@@ -175,7 +221,12 @@ public final class RSVPReaderViewModel {
     // MARK: - Persistência
     
     private func persistProgress(to index: Int) {
-        document.updateProgress(to: index)
+        if let book {
+            book.updateProgress(to: index)
+        } else if let document {
+            document.updateProgress(to: index)
+        }
+        
         if let modelContext {
             try? modelContext.save()
         }
@@ -195,8 +246,9 @@ public final class RSVPReaderViewModel {
             durationSeconds: duration,
             wordsRead: wordsRead,
             averageWPM: engine.config.wpm,
-            documentTitle: document.title,
-            document: document
+            documentTitle: title,
+            document: document,
+            book: book
         )
         
         modelContext?.insert(session)

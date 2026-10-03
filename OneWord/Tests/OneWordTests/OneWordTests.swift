@@ -373,5 +373,91 @@ final class OneWordTests: XCTestCase {
         XCTAssertEqual(config.speedRampDeltaWPM, 25)
         XCTAssertEqual(config.speedRampMaxWPM, 600)
     }
+    
+    // MARK: - Testes da Biblioteca de Livros (Multi-Páginas, Capas e RSVP Híbrido)
+    
+    @MainActor
+    func testBookCreationAndPageOffsets() {
+        let book = Book(
+            title: "Dom Casmurro",
+            author: "Machado de Assis",
+            coverThemeColor: "#881337"
+        )
+        
+        XCTAssertEqual(book.title, "Dom Casmurro")
+        XCTAssertEqual(book.author, "Machado de Assis")
+        XCTAssertEqual(book.coverThemeColor, "#881337")
+        XCTAssertNil(book.coverImageData)
+        XCTAssertEqual(book.totalPages, 0)
+        XCTAssertEqual(book.totalWords, 0)
+        
+        // Adiciona Página 1 (3 palavras)
+        let p1 = book.addPage(rawText: "Uma noite destas,", words: ["Uma", "noite", "destas,"])
+        XCTAssertEqual(p1.pageNumber, 1)
+        XCTAssertEqual(p1.wordCount, 3)
+        
+        // Adiciona Página 2 (4 palavras)
+        let p2 = book.addPage(rawText: "vindo da cidade para", words: ["vindo", "da", "cidade", "para"])
+        XCTAssertEqual(p2.pageNumber, 2)
+        XCTAssertEqual(p2.wordCount, 4)
+        
+        // Adiciona Página 3 (3 palavras)
+        let p3 = book.addPage(rawText: "o Engenho Novo.", words: ["o", "Engenho", "Novo."])
+        XCTAssertEqual(p3.pageNumber, 3)
+        XCTAssertEqual(p3.wordCount, 3)
+        
+        XCTAssertEqual(book.totalPages, 3)
+        XCTAssertEqual(book.totalWords, 10)
+        XCTAssertEqual(book.allWords.count, 10)
+        
+        // Testa offsets das páginas: Página 1 inicia em 0, Página 2 em 3, Página 3 em 7
+        XCTAssertEqual(book.pageOffsets, [0, 3, 7])
+        
+        // Testa salto para página específica (Modo Híbrido)
+        XCTAssertEqual(book.globalWordIndex(forPageNumber: 1), 0)
+        XCTAssertEqual(book.globalWordIndex(forPageNumber: 2), 3)
+        XCTAssertEqual(book.globalWordIndex(forPageNumber: 3), 7)
+        
+        // Testa cálculo de página atual conforme o índice avança
+        book.updateProgress(to: 0)
+        XCTAssertEqual(book.currentPageNumber, 1)
+        
+        book.updateProgress(to: 2)
+        XCTAssertEqual(book.currentPageNumber, 1)
+        
+        book.updateProgress(to: 3) // Primeira palavra da página 2
+        XCTAssertEqual(book.currentPageNumber, 2)
+        
+        book.updateProgress(to: 6) // Última palavra da página 2
+        XCTAssertEqual(book.currentPageNumber, 2)
+        
+        book.updateProgress(to: 7) // Primeira palavra da página 3
+        XCTAssertEqual(book.currentPageNumber, 3)
+        
+        book.updateProgress(to: 10) // Concluído
+        XCTAssertEqual(book.currentPageNumber, 3)
+        XCTAssertTrue(book.isCompleted)
+        XCTAssertEqual(book.progressPercentage, 1.0)
+    }
+    
+    @MainActor
+    func testRSVPReaderViewModelWithBookAndPageJump() {
+        let book = Book(title: "Manual de Astrofísica", author: "Carl Sagan")
+        book.addPage(rawText: "O cosmos é tudo.", words: ["O", "cosmos", "é", "tudo."]) // 4 palavras (idx 0..3)
+        book.addPage(rawText: "Somos poeira estelar.", words: ["Somos", "poeira", "estelar."]) // 3 palavras (idx 4..6)
+        
+        // Inicia leitura saltando diretamente para a Página 2 (Modo Híbrido)
+        let vm = RSVPReaderViewModel(book: book, startPageNumber: 2, initialWPM: 300)
+        XCTAssertEqual(vm.currentIndex, 4)
+        XCTAssertEqual(vm.currentWord, "Somos")
+        XCTAssertEqual(vm.title, "Manual de Astrofísica")
+        XCTAssertEqual(vm.subtitle, "Página 2 de 2")
+        
+        // Avança uma palavra
+        vm.stepForward()
+        XCTAssertEqual(vm.currentIndex, 5)
+        XCTAssertEqual(vm.currentWord, "poeira")
+        XCTAssertEqual(book.currentGlobalWordIndex, 5)
+    }
 }
 

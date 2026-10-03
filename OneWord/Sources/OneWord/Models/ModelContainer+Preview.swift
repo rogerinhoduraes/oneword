@@ -17,7 +17,9 @@ public extension ModelContainer {
                 Document.self,
                 DocumentContent.self,
                 ReadingProgress.self,
-                ReadingSession.self
+                ReadingSession.self,
+                Book.self,
+                BookPage.self
             ])
             let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
             let container = try ModelContainer(for: schema, configurations: [configuration])
@@ -38,8 +40,24 @@ public extension ModelContainer {
                 words: sampleWords,
                 initialWordIndex: 0
             )
-            
             container.mainContext.insert(sampleDoc)
+            
+            // Livro com múltiplas páginas mockadas
+            let sampleBook = Book(
+                title: "O Guia da Superleitura",
+                author: "Jim Kwik & RSVP Labs",
+                coverThemeColor: "#2563EB"
+            )
+            sampleBook.addPage(
+                rawText: "Capítulo 1: O cérebro humano processa imagens e conceitos em milissegundos. Quando treinamos nossa atenção visual, a velocidade de apreensão ultrapassa qualquer barreira tradicional.",
+                words: ["Capítulo", "1:", "O", "cérebro", "humano", "processa", "imagens", "e", "conceitos", "em", "milissegundos.", "Quando", "treinamos", "nossa", "atenção", "visual,", "a", "velocidade", "de", "apreensão", "ultrapassa", "qualquer", "barreira", "tradicional."]
+            )
+            sampleBook.addPage(
+                rawText: "Capítulo 2: Eliminar a subvocalização é o segredo para saltar de duzentas para seiscentas palavras por minuto com total nitidez e foco inabalável.",
+                words: ["Capítulo", "2:", "Eliminar", "a", "subvocalização", "é", "o", "segredo", "para", "saltar", "de", "duzentas", "para", "seiscentas", "palavras", "por", "minuto", "com", "total", "nitidez", "e", "foco", "inabalável."]
+            )
+            container.mainContext.insert(sampleBook)
+            
             try container.mainContext.save()
             
             return container

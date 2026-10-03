@@ -7,72 +7,82 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FD5E270D62FF41F3AE433131 /* OneWordApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D858E1EE3188476392F95093 /* OneWordApp.swift */; };
-		6DEF487DD6AA4332B5D766A3 /* DocumentScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */; };
-		2F190FB42AA74277A196D7BF /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */; };
-		0D59E1D618D74E598CC36BE0 /* RSVPReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */; };
-		B1CD2E6FE465481D9CBB467D /* StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */; };
-		14E9B17CBA81423C99170F05 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289DFA44EBC84D4ABDEC210A /* Document.swift */; };
-		62B128D1302547048A61BE5A /* DocumentContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */; };
-		94B1FF48D3FF438BA3831E70 /* ModelContainer+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */; };
-		230BFF686A89402183012D3C /* ReadingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */; };
-		B3F265D8EB1A4794A0B4F45C /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36366093A5734F80B7BF5605 /* ReadingSession.swift */; };
-		B382E5BB80EA49AC82F0E140 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */; };
-		FD3C5742459947EC8A15FCA4 /* RSVPReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */; };
-		B14712E0775A4A04BEB4285B /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5FDD65A78E45038F24E71A /* LibraryView.swift */; };
-		2ADD579F5E6A4390BD144588 /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */; };
-		D9964C96B6964DF7AB1237F3 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */; };
-		1C643EB6AD214A968E7DCB9A /* VisionDocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */; };
-		2A957EA04CAA48CF8A88AE22 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDBB1849FDC4199BF62218B /* StatsView.swift */; };
-		EFECCD1FD3984DA48A157B2A /* OCRError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */; };
-		FFAB248AE1904521801117AA /* OCRResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5A78025B184C0EBE70B900 /* OCRResult.swift */; };
-		0A55C7DBD30D4C8DB0F128CC /* OCRServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */; };
-		D7AE7E5FFA20443A91083D1E /* TextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E52BD70D504258AF52B6A6 /* TextParser.swift */; };
-		DAECBB2B6F504CB4A817F8EA /* UIImage+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */; };
-		84F8B02F386D440F90CBBDC5 /* VisionOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */; };
-		1352BB31958D4286AC354765 /* PDFImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */; };
-		CEAE5FF477124C108DE111E7 /* ORPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4400E5832514256BAAFE5E6 /* ORPHelper.swift */; };
-		2E50B6AC6A174B7085E612D6 /* RSVPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */; };
-		F9D5F03A638A45718E8CAC06 /* RSVPEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8A4230C315438595FB7C7D /* RSVPEngine.swift */; };
-		5342EC935DFF4217B9F777BA /* RSVPEngineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */; };
-		364F1DCF59504F1BAE64255A /* ReaderSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340398E4D64A466BAE629623 /* ReaderSettings.swift */; };
+		2A497D5428FE44C7B71656E1 /* OneWordApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C742F43627445B6ADE62EEF /* OneWordApp.swift */; };
+		0810CF4B3FC3454F91F35D46 /* DocumentScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E20F7326DD4FD495EE43DB /* DocumentScannerViewModel.swift */; };
+		E680F46E546C4A6F83887693 /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1417A597BD104BA18384D898 /* LibraryViewModel.swift */; };
+		0B90CE2F7DB44EA281C38EFF /* RSVPReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B3F9E773884B20B5034719 /* RSVPReaderViewModel.swift */; };
+		A50C600993784268A424A148 /* StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F2748BC9704A32A0912FA3 /* StatsViewModel.swift */; };
+		033E34A1B2824F4E9190D33F /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2EAB201BBD4CA2AEA32EAA /* Book.swift */; };
+		3A89CA3A94EB4F2180BB26CB /* BookPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC006E57C1148578CDA9CB1 /* BookPage.swift */; };
+		A38E1D7143AE424B8908F10E /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AA057AB479452E9B0DB562 /* Document.swift */; };
+		A53D21E1FFCB4182BC533E28 /* DocumentContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BD65CD3414C09B113B02C /* DocumentContent.swift */; };
+		8505CD34EED04A0795FF7A91 /* ModelContainer+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F97EB6AD5804E999A6DA763 /* ModelContainer+Preview.swift */; };
+		B20AB61333AD4DDCB3D88575 /* ReadingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = F441E3B605B549C8B4B093DB /* ReadingProgress.swift */; };
+		DBBB4741D10B44F8A891BFDF /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9906BB7C7F8450880FF5A6D /* ReadingSession.swift */; };
+		06433C282FB34656AE5BB753 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041014B3F8064044A607A600 /* MainTabView.swift */; };
+		7F1CFBC847284463AC32E586 /* RSVPReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE11BAC6385D46BF81C18959 /* RSVPReaderView.swift */; };
+		C91E324EA66343CF8295EE7A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D353AA01AB14562B28ABCD9 /* LibraryView.swift */; };
+		DA8F57D4780146C68108C567 /* AddBookSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26018F34DCEA4970901A6B97 /* AddBookSheetView.swift */; };
+		2491B30545E74498B55802AE /* BookCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FDE56490D348309171734E /* BookCoverView.swift */; };
+		60949036E9334D9D99FFB25A /* BookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE1EF53888F487A95951726 /* BookDetailView.swift */; };
+		0A1FD850FED84B108AC906C1 /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368834047E404BBF9081D505 /* CameraPickerView.swift */; };
+		D2E58741C34B467AAD55B970 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3C26199E1C4890A3510550 /* DocumentScannerView.swift */; };
+		8E03FBA8280E4ADC8A9E06A6 /* VisionDocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9ECBE5287040CC85C34CB8 /* VisionDocumentScannerView.swift */; };
+		B85A882DD41240D7823C9B9E /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67184A080EC649EC8F805660 /* StatsView.swift */; };
+		5619521A2F764928A32D03D4 /* OCRError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D182988416374EBC90CE63FC /* OCRError.swift */; };
+		E8B214AD123F4E758DEAE459 /* OCRResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B724CFBE06474A9FE60BB3 /* OCRResult.swift */; };
+		FF6D73D1551645489DCC38E8 /* OCRServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02B373BE5AE4B039C9552A6 /* OCRServiceProtocol.swift */; };
+		A01F68E5F57545AF95822F5E /* TextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E9EF9580B854672B33622A7 /* TextParser.swift */; };
+		2BE8FCFB51914E4598411FF0 /* UIImage+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B833EA9036E242429892964E /* UIImage+Orientation.swift */; };
+		A185B02866E243A4831C3375 /* VisionOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0FB9BDA458468C85208EEF /* VisionOCRService.swift */; };
+		4B38FA93A57740B2A3C67447 /* PDFImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F412CD92F614DF2B47B2CA5 /* PDFImportService.swift */; };
+		293E5E6004BA48B3B093CF3E /* ORPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F9CA50EBB9474C8951C2A4 /* ORPHelper.swift */; };
+		684634533E284DD4967459CC /* RSVPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227522515B4544D3B9F5AF27 /* RSVPConfiguration.swift */; };
+		4DF378AD37304BA9A7EBCA64 /* RSVPEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BACE5EBA564A3094040FEE /* RSVPEngine.swift */; };
+		227BF92ED2294E5D9604593A /* RSVPEngineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8631568BD8F42209F78EC50 /* RSVPEngineProtocol.swift */; };
+		7F0A3DBA7D854F84937B3B5C /* ReaderSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124A927445344DD99C0AE3F6 /* ReaderSettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CAFD900087A64194973783D7 /* OneWord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneWord.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D858E1EE3188476392F95093 /* OneWordApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/OneWordApp.swift"; sourceTree = "<group>"; };
-		84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/DocumentScannerViewModel.swift"; sourceTree = "<group>"; };
-		D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/LibraryViewModel.swift"; sourceTree = "<group>"; };
-		939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/RSVPReaderViewModel.swift"; sourceTree = "<group>"; };
-		F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/StatsViewModel.swift"; sourceTree = "<group>"; };
-		289DFA44EBC84D4ABDEC210A /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/Document.swift"; sourceTree = "<group>"; };
-		59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/DocumentContent.swift"; sourceTree = "<group>"; };
-		773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ModelContainer+Preview.swift"; sourceTree = "<group>"; };
-		CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingProgress.swift"; sourceTree = "<group>"; };
-		36366093A5734F80B7BF5605 /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingSession.swift"; sourceTree = "<group>"; };
-		AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/MainTabView.swift"; sourceTree = "<group>"; };
-		A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Reader/RSVPReaderView.swift"; sourceTree = "<group>"; };
-		9E5FDD65A78E45038F24E71A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Library/LibraryView.swift"; sourceTree = "<group>"; };
-		82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/CameraPickerView.swift"; sourceTree = "<group>"; };
-		83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/DocumentScannerView.swift"; sourceTree = "<group>"; };
-		29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/VisionDocumentScannerView.swift"; sourceTree = "<group>"; };
-		5BDBB1849FDC4199BF62218B /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Stats/StatsView.swift"; sourceTree = "<group>"; };
-		EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRError.swift"; sourceTree = "<group>"; };
-		0B5A78025B184C0EBE70B900 /* OCRResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRResult.swift"; sourceTree = "<group>"; };
-		E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRServiceProtocol.swift"; sourceTree = "<group>"; };
-		67E52BD70D504258AF52B6A6 /* TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/TextParser.swift"; sourceTree = "<group>"; };
-		918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/UIImage+Orientation.swift"; sourceTree = "<group>"; };
-		DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/VisionOCRService.swift"; sourceTree = "<group>"; };
-		72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/Document/PDFImportService.swift"; sourceTree = "<group>"; };
-		B4400E5832514256BAAFE5E6 /* ORPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ORPHelper.swift"; sourceTree = "<group>"; };
-		C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPConfiguration.swift"; sourceTree = "<group>"; };
-		7B8A4230C315438595FB7C7D /* RSVPEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngine.swift"; sourceTree = "<group>"; };
-		C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngineProtocol.swift"; sourceTree = "<group>"; };
-		340398E4D64A466BAE629623 /* ReaderSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ReaderSettings.swift"; sourceTree = "<group>"; };
+		64332BB10F024930B472A6EA /* OneWord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneWord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C742F43627445B6ADE62EEF /* OneWordApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/OneWordApp.swift"; sourceTree = "<group>"; };
+		19E20F7326DD4FD495EE43DB /* DocumentScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/DocumentScannerViewModel.swift"; sourceTree = "<group>"; };
+		1417A597BD104BA18384D898 /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/LibraryViewModel.swift"; sourceTree = "<group>"; };
+		27B3F9E773884B20B5034719 /* RSVPReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/RSVPReaderViewModel.swift"; sourceTree = "<group>"; };
+		96F2748BC9704A32A0912FA3 /* StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/ViewModels/StatsViewModel.swift"; sourceTree = "<group>"; };
+		1E2EAB201BBD4CA2AEA32EAA /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/Book.swift"; sourceTree = "<group>"; };
+		8BC006E57C1148578CDA9CB1 /* BookPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/BookPage.swift"; sourceTree = "<group>"; };
+		A9AA057AB479452E9B0DB562 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/Document.swift"; sourceTree = "<group>"; };
+		949BD65CD3414C09B113B02C /* DocumentContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/DocumentContent.swift"; sourceTree = "<group>"; };
+		2F97EB6AD5804E999A6DA763 /* ModelContainer+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ModelContainer+Preview.swift"; sourceTree = "<group>"; };
+		F441E3B605B549C8B4B093DB /* ReadingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingProgress.swift"; sourceTree = "<group>"; };
+		C9906BB7C7F8450880FF5A6D /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Models/ReadingSession.swift"; sourceTree = "<group>"; };
+		041014B3F8064044A607A600 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/MainTabView.swift"; sourceTree = "<group>"; };
+		FE11BAC6385D46BF81C18959 /* RSVPReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Reader/RSVPReaderView.swift"; sourceTree = "<group>"; };
+		9D353AA01AB14562B28ABCD9 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Library/LibraryView.swift"; sourceTree = "<group>"; };
+		26018F34DCEA4970901A6B97 /* AddBookSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Books/AddBookSheetView.swift"; sourceTree = "<group>"; };
+		F7FDE56490D348309171734E /* BookCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Books/BookCoverView.swift"; sourceTree = "<group>"; };
+		3DE1EF53888F487A95951726 /* BookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Books/BookDetailView.swift"; sourceTree = "<group>"; };
+		368834047E404BBF9081D505 /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/CameraPickerView.swift"; sourceTree = "<group>"; };
+		2C3C26199E1C4890A3510550 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/DocumentScannerView.swift"; sourceTree = "<group>"; };
+		9E9ECBE5287040CC85C34CB8 /* VisionDocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Scanner/VisionDocumentScannerView.swift"; sourceTree = "<group>"; };
+		67184A080EC649EC8F805660 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Views/Stats/StatsView.swift"; sourceTree = "<group>"; };
+		D182988416374EBC90CE63FC /* OCRError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRError.swift"; sourceTree = "<group>"; };
+		01B724CFBE06474A9FE60BB3 /* OCRResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRResult.swift"; sourceTree = "<group>"; };
+		D02B373BE5AE4B039C9552A6 /* OCRServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/OCRServiceProtocol.swift"; sourceTree = "<group>"; };
+		7E9EF9580B854672B33622A7 /* TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/TextParser.swift"; sourceTree = "<group>"; };
+		B833EA9036E242429892964E /* UIImage+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/UIImage+Orientation.swift"; sourceTree = "<group>"; };
+		6C0FB9BDA458468C85208EEF /* VisionOCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/OCR/VisionOCRService.swift"; sourceTree = "<group>"; };
+		7F412CD92F614DF2B47B2CA5 /* PDFImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/Document/PDFImportService.swift"; sourceTree = "<group>"; };
+		B7F9CA50EBB9474C8951C2A4 /* ORPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ORPHelper.swift"; sourceTree = "<group>"; };
+		227522515B4544D3B9F5AF27 /* RSVPConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPConfiguration.swift"; sourceTree = "<group>"; };
+		A7BACE5EBA564A3094040FEE /* RSVPEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngine.swift"; sourceTree = "<group>"; };
+		B8631568BD8F42209F78EC50 /* RSVPEngineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/RSVPEngineProtocol.swift"; sourceTree = "<group>"; };
+		124A927445344DD99C0AE3F6 /* ReaderSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/OneWord/Services/RSVP/ReaderSettings.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		EB51587405BD4F31B5315D3C /* Frameworks */ = {
+		5F0E0DAA6CCC447BBCB9D03D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -82,54 +92,59 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		82CB5DD55F3F4B4AB7CB2A54 = {
+		34F2690E9877456F938305A9 = {
 			isa = PBXGroup;
 			children = (
-				70CA5A122E8B47A7A6F17018 /* OneWord Sources */,
-				B502C8F3569248D2A7E192DF /* Products */,
+				F8BBA8869FB34AA2B3CAD1D9 /* OneWord Sources */,
+				73F17837A0EE4EE9A4E4D649 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		B502C8F3569248D2A7E192DF /* Products */ = {
+		73F17837A0EE4EE9A4E4D649 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CAFD900087A64194973783D7 /* OneWord.app */,
+				64332BB10F024930B472A6EA /* OneWord.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		70CA5A122E8B47A7A6F17018 /* OneWord Sources */ = {
+		F8BBA8869FB34AA2B3CAD1D9 /* OneWord Sources */ = {
 			isa = PBXGroup;
 			children = (
-				D858E1EE3188476392F95093 /* OneWordApp.swift */,
-				84ADEEFC2A2B48889AB320C7 /* DocumentScannerViewModel.swift */,
-				D22E06F8A3D648EABA8AE5AE /* LibraryViewModel.swift */,
-				939963EB8B9F409E83CC920F /* RSVPReaderViewModel.swift */,
-				F09DC1E386BA4CE6B6CD2091 /* StatsViewModel.swift */,
-				289DFA44EBC84D4ABDEC210A /* Document.swift */,
-				59E0EEF84D4144C4A5ECC087 /* DocumentContent.swift */,
-				773144B9606E4B3A839C5DB2 /* ModelContainer+Preview.swift */,
-				CE4BBFC3E8724427945BC35A /* ReadingProgress.swift */,
-				36366093A5734F80B7BF5605 /* ReadingSession.swift */,
-				AAB50D0CB69C4782BB7B5414 /* MainTabView.swift */,
-				A7AB7478177B4CA19FED9773 /* RSVPReaderView.swift */,
-				9E5FDD65A78E45038F24E71A /* LibraryView.swift */,
-				82C27083E1C24D0FA72F21B9 /* CameraPickerView.swift */,
-				83FDE36EFAC34E509185C394 /* DocumentScannerView.swift */,
-				29990244D06E4CE29C4173B5 /* VisionDocumentScannerView.swift */,
-				5BDBB1849FDC4199BF62218B /* StatsView.swift */,
-				EE838AD1CAD6416AB1C4CE63 /* OCRError.swift */,
-				0B5A78025B184C0EBE70B900 /* OCRResult.swift */,
-				E96D023EE0664A88810387CC /* OCRServiceProtocol.swift */,
-				67E52BD70D504258AF52B6A6 /* TextParser.swift */,
-				918BCEF7471B4521A7132F72 /* UIImage+Orientation.swift */,
-				DCBD092881844D7E82B4CE49 /* VisionOCRService.swift */,
-				72F516CE2F9C4396B8B843E1 /* PDFImportService.swift */,
-				B4400E5832514256BAAFE5E6 /* ORPHelper.swift */,
-				C488AB144E58487BBD083CAC /* RSVPConfiguration.swift */,
-				7B8A4230C315438595FB7C7D /* RSVPEngine.swift */,
-				C6CA7FDD03CE4DDC8D3B743B /* RSVPEngineProtocol.swift */,
-				340398E4D64A466BAE629623 /* ReaderSettings.swift */,
+				4C742F43627445B6ADE62EEF /* OneWordApp.swift */,
+				19E20F7326DD4FD495EE43DB /* DocumentScannerViewModel.swift */,
+				1417A597BD104BA18384D898 /* LibraryViewModel.swift */,
+				27B3F9E773884B20B5034719 /* RSVPReaderViewModel.swift */,
+				96F2748BC9704A32A0912FA3 /* StatsViewModel.swift */,
+				1E2EAB201BBD4CA2AEA32EAA /* Book.swift */,
+				8BC006E57C1148578CDA9CB1 /* BookPage.swift */,
+				A9AA057AB479452E9B0DB562 /* Document.swift */,
+				949BD65CD3414C09B113B02C /* DocumentContent.swift */,
+				2F97EB6AD5804E999A6DA763 /* ModelContainer+Preview.swift */,
+				F441E3B605B549C8B4B093DB /* ReadingProgress.swift */,
+				C9906BB7C7F8450880FF5A6D /* ReadingSession.swift */,
+				041014B3F8064044A607A600 /* MainTabView.swift */,
+				FE11BAC6385D46BF81C18959 /* RSVPReaderView.swift */,
+				9D353AA01AB14562B28ABCD9 /* LibraryView.swift */,
+				26018F34DCEA4970901A6B97 /* AddBookSheetView.swift */,
+				F7FDE56490D348309171734E /* BookCoverView.swift */,
+				3DE1EF53888F487A95951726 /* BookDetailView.swift */,
+				368834047E404BBF9081D505 /* CameraPickerView.swift */,
+				2C3C26199E1C4890A3510550 /* DocumentScannerView.swift */,
+				9E9ECBE5287040CC85C34CB8 /* VisionDocumentScannerView.swift */,
+				67184A080EC649EC8F805660 /* StatsView.swift */,
+				D182988416374EBC90CE63FC /* OCRError.swift */,
+				01B724CFBE06474A9FE60BB3 /* OCRResult.swift */,
+				D02B373BE5AE4B039C9552A6 /* OCRServiceProtocol.swift */,
+				7E9EF9580B854672B33622A7 /* TextParser.swift */,
+				B833EA9036E242429892964E /* UIImage+Orientation.swift */,
+				6C0FB9BDA458468C85208EEF /* VisionOCRService.swift */,
+				7F412CD92F614DF2B47B2CA5 /* PDFImportService.swift */,
+				B7F9CA50EBB9474C8951C2A4 /* ORPHelper.swift */,
+				227522515B4544D3B9F5AF27 /* RSVPConfiguration.swift */,
+				A7BACE5EBA564A3094040FEE /* RSVPEngine.swift */,
+				B8631568BD8F42209F78EC50 /* RSVPEngineProtocol.swift */,
+				124A927445344DD99C0AE3F6 /* ReaderSettings.swift */,
 			);
 			name = "OneWord Sources";
 			path = OneWord;
@@ -138,13 +153,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C9407F65AF7C4CD19714F342 /* OneWord */ = {
+		D91FEC2EB4BA4932B3F37139 /* OneWord */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8761B6D75F484214978F24AE /* Build configuration list for PBXNativeTarget "OneWord" */;
+			buildConfigurationList = 20672EAAC8D0415A9A06EF36 /* Build configuration list for PBXNativeTarget "OneWord" */;
 			buildPhases = (
-				4C8E07680AB64F598C302A04 /* Sources */,
-				EB51587405BD4F31B5315D3C /* Frameworks */,
-				F8F5B954DA7B4B14B1295951 /* Resources */,
+				8D7D46B148914DD2B188C88B /* Sources */,
+				5F0E0DAA6CCC447BBCB9D03D /* Frameworks */,
+				E09488B965B84F2DB8EC1C4C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -152,24 +167,24 @@
 			);
 			name = OneWord;
 			productName = OneWord;
-			productReference = CAFD900087A64194973783D7 /* OneWord.app */;
+			productReference = 64332BB10F024930B472A6EA /* OneWord.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		83BFA3AE96ED420FA1AD2DCF /* Project object */ = {
+		1B1E3332333345D09C0AB899 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					C9407F65AF7C4CD19714F342 = {
+					D91FEC2EB4BA4932B3F37139 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
 			};
-			buildConfigurationList = C90DC19351C3451C9A6AFF74 /* Build configuration list for PBXProject "OneWord" */;
+			buildConfigurationList = CA32BA912A3C4C73A691C707 /* Build configuration list for PBXProject "OneWord" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -177,18 +192,18 @@
 				en,
 				Base,
 			);
-			mainGroup = 82CB5DD55F3F4B4AB7CB2A54;
-			productRefGroup = B502C8F3569248D2A7E192DF /* Products */;
+			mainGroup = 34F2690E9877456F938305A9;
+			productRefGroup = 73F17837A0EE4EE9A4E4D649 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C9407F65AF7C4CD19714F342 /* OneWord */,
+				D91FEC2EB4BA4932B3F37139 /* OneWord */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		F8F5B954DA7B4B14B1295951 /* Resources */ = {
+		E09488B965B84F2DB8EC1C4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -198,46 +213,51 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4C8E07680AB64F598C302A04 /* Sources */ = {
+		8D7D46B148914DD2B188C88B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FD5E270D62FF41F3AE433131 /* OneWordApp.swift in Sources */,
-				6DEF487DD6AA4332B5D766A3 /* DocumentScannerViewModel.swift in Sources */,
-				2F190FB42AA74277A196D7BF /* LibraryViewModel.swift in Sources */,
-				0D59E1D618D74E598CC36BE0 /* RSVPReaderViewModel.swift in Sources */,
-				B1CD2E6FE465481D9CBB467D /* StatsViewModel.swift in Sources */,
-				14E9B17CBA81423C99170F05 /* Document.swift in Sources */,
-				62B128D1302547048A61BE5A /* DocumentContent.swift in Sources */,
-				94B1FF48D3FF438BA3831E70 /* ModelContainer+Preview.swift in Sources */,
-				230BFF686A89402183012D3C /* ReadingProgress.swift in Sources */,
-				B3F265D8EB1A4794A0B4F45C /* ReadingSession.swift in Sources */,
-				B382E5BB80EA49AC82F0E140 /* MainTabView.swift in Sources */,
-				FD3C5742459947EC8A15FCA4 /* RSVPReaderView.swift in Sources */,
-				B14712E0775A4A04BEB4285B /* LibraryView.swift in Sources */,
-				2ADD579F5E6A4390BD144588 /* CameraPickerView.swift in Sources */,
-				D9964C96B6964DF7AB1237F3 /* DocumentScannerView.swift in Sources */,
-				1C643EB6AD214A968E7DCB9A /* VisionDocumentScannerView.swift in Sources */,
-				2A957EA04CAA48CF8A88AE22 /* StatsView.swift in Sources */,
-				EFECCD1FD3984DA48A157B2A /* OCRError.swift in Sources */,
-				FFAB248AE1904521801117AA /* OCRResult.swift in Sources */,
-				0A55C7DBD30D4C8DB0F128CC /* OCRServiceProtocol.swift in Sources */,
-				D7AE7E5FFA20443A91083D1E /* TextParser.swift in Sources */,
-				DAECBB2B6F504CB4A817F8EA /* UIImage+Orientation.swift in Sources */,
-				84F8B02F386D440F90CBBDC5 /* VisionOCRService.swift in Sources */,
-				1352BB31958D4286AC354765 /* PDFImportService.swift in Sources */,
-				CEAE5FF477124C108DE111E7 /* ORPHelper.swift in Sources */,
-				2E50B6AC6A174B7085E612D6 /* RSVPConfiguration.swift in Sources */,
-				F9D5F03A638A45718E8CAC06 /* RSVPEngine.swift in Sources */,
-				5342EC935DFF4217B9F777BA /* RSVPEngineProtocol.swift in Sources */,
-				364F1DCF59504F1BAE64255A /* ReaderSettings.swift in Sources */,
+				2A497D5428FE44C7B71656E1 /* OneWordApp.swift in Sources */,
+				0810CF4B3FC3454F91F35D46 /* DocumentScannerViewModel.swift in Sources */,
+				E680F46E546C4A6F83887693 /* LibraryViewModel.swift in Sources */,
+				0B90CE2F7DB44EA281C38EFF /* RSVPReaderViewModel.swift in Sources */,
+				A50C600993784268A424A148 /* StatsViewModel.swift in Sources */,
+				033E34A1B2824F4E9190D33F /* Book.swift in Sources */,
+				3A89CA3A94EB4F2180BB26CB /* BookPage.swift in Sources */,
+				A38E1D7143AE424B8908F10E /* Document.swift in Sources */,
+				A53D21E1FFCB4182BC533E28 /* DocumentContent.swift in Sources */,
+				8505CD34EED04A0795FF7A91 /* ModelContainer+Preview.swift in Sources */,
+				B20AB61333AD4DDCB3D88575 /* ReadingProgress.swift in Sources */,
+				DBBB4741D10B44F8A891BFDF /* ReadingSession.swift in Sources */,
+				06433C282FB34656AE5BB753 /* MainTabView.swift in Sources */,
+				7F1CFBC847284463AC32E586 /* RSVPReaderView.swift in Sources */,
+				C91E324EA66343CF8295EE7A /* LibraryView.swift in Sources */,
+				DA8F57D4780146C68108C567 /* AddBookSheetView.swift in Sources */,
+				2491B30545E74498B55802AE /* BookCoverView.swift in Sources */,
+				60949036E9334D9D99FFB25A /* BookDetailView.swift in Sources */,
+				0A1FD850FED84B108AC906C1 /* CameraPickerView.swift in Sources */,
+				D2E58741C34B467AAD55B970 /* DocumentScannerView.swift in Sources */,
+				8E03FBA8280E4ADC8A9E06A6 /* VisionDocumentScannerView.swift in Sources */,
+				B85A882DD41240D7823C9B9E /* StatsView.swift in Sources */,
+				5619521A2F764928A32D03D4 /* OCRError.swift in Sources */,
+				E8B214AD123F4E758DEAE459 /* OCRResult.swift in Sources */,
+				FF6D73D1551645489DCC38E8 /* OCRServiceProtocol.swift in Sources */,
+				A01F68E5F57545AF95822F5E /* TextParser.swift in Sources */,
+				2BE8FCFB51914E4598411FF0 /* UIImage+Orientation.swift in Sources */,
+				A185B02866E243A4831C3375 /* VisionOCRService.swift in Sources */,
+				4B38FA93A57740B2A3C67447 /* PDFImportService.swift in Sources */,
+				293E5E6004BA48B3B093CF3E /* ORPHelper.swift in Sources */,
+				684634533E284DD4967459CC /* RSVPConfiguration.swift in Sources */,
+				4DF378AD37304BA9A7EBCA64 /* RSVPEngine.swift in Sources */,
+				227BF92ED2294E5D9604593A /* RSVPEngineProtocol.swift in Sources */,
+				7F0A3DBA7D854F84937B3B5C /* ReaderSettings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		258524DFDF9948DCB486F032 /* Debug */ = {
+		A94AEDAA2A80456FAEBBD922 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -266,7 +286,7 @@
 			};
 			name = Debug;
 		};
-		6DD7FA4E020642679383C8B3 /* Release */ = {
+		506B5A1FE3DF4331848CCB66 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -288,7 +308,7 @@
 			};
 			name = Release;
 		};
-		1594DB70C2B54068AF4D4088 /* Debug */ = {
+		68E063B308A0487BA001C83E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -311,7 +331,7 @@
 			};
 			name = Debug;
 		};
-		B8AA99CF2C9646A0B04F73EC /* Release */ = {
+		257FBE7DA38042A98089EFD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -337,20 +357,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C90DC19351C3451C9A6AFF74 /* Build configuration list for PBXProject "OneWord" */ = {
+		CA32BA912A3C4C73A691C707 /* Build configuration list for PBXProject "OneWord" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				258524DFDF9948DCB486F032 /* Debug */,
-				6DD7FA4E020642679383C8B3 /* Release */,
+				A94AEDAA2A80456FAEBBD922 /* Debug */,
+				506B5A1FE3DF4331848CCB66 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8761B6D75F484214978F24AE /* Build configuration list for PBXNativeTarget "OneWord" */ = {
+		20672EAAC8D0415A9A06EF36 /* Build configuration list for PBXNativeTarget "OneWord" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1594DB70C2B54068AF4D4088 /* Debug */,
-				B8AA99CF2C9646A0B04F73EC /* Release */,
+				68E063B308A0487BA001C83E /* Debug */,
+				257FBE7DA38042A98089EFD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -358,5 +378,5 @@
 /* End XCConfigurationList section */
 
 	};
-	rootObject = 83BFA3AE96ED420FA1AD2DCF /* Project object */;
+	rootObject = 1B1E3332333345D09C0AB899 /* Project object */;
 }
