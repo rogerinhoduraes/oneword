@@ -11,6 +11,9 @@ import PhotosUI
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(Translation)
+import Translation
+#endif
 
 /// Tela de Detalhes do Livro.
 /// Exibe informações, capa, estatísticas de progresso, índice de páginas escaneadas
@@ -24,6 +27,9 @@ public struct BookDetailView: View {
     // Controle de Leitura RSVP
     @State private var isShowingReader: Bool = false
     @State private var readingStartPage: Int? = nil
+    
+    // Tradução de Idiomas
+    @State private var isTranslationTriggered: Bool = false
     
     // Escaneamento de Páginas
     @State private var isShowingDocumentScanner: Bool = false
@@ -87,6 +93,20 @@ public struct BookDetailView: View {
                         startReading(fromPage: pageNum)
                     }
                 )
+                
+                // Banner / Seletor de Idioma e Tradução para Português
+                if book.totalPages > 0 && (book.isForeignLanguage || book.hasTranslation) {
+                    BookTranslationBannerSection(
+                        book: book,
+                        onTranslateTapped: {
+                            triggerTranslation()
+                        },
+                        onToggleTranslation: { active in
+                            book.toggleTranslation(active: active)
+                            try? modelContext.save()
+                        }
+                    )
+                }
                 
                 // Barra de Ações Rápidas (Escanear Páginas)
                 BookActionsBarSection(
@@ -169,6 +189,106 @@ public struct BookDetailView: View {
         .overlay {
             if isProcessing {
                 OCRProcessingOverlay(message: processingProgressText)
+            }
+        }
+        #if canImport(Translation)
+        .background {
+            if #available(iOS 17.4, macOS 15.0, *) {
+                SystemTranslationContainer(
+                    trigger: $isTranslationTriggered,
+                    onTranslate: { session in
+                        await translateWithSession(session)
+                    }
+                )
+            }
+        }
+        #endif
+    }
+    
+    // MARK: - Ações de Tradução
+    
+    private func triggerTranslation() {
+        #if canImport(Translation)
+        if #available(iOS 17.4, macOS 15.0, *) {
+            isProcessing = true
+            processingProgressText = "Preparando tradução para Português..."
+            isTranslationTriggered.toggle()
+            return
+        }
+        #endif
+        fallbackTranslateBook()
+    }
+    
+    #if canImport(Translation)
+    @available(iOS 17.4, macOS 15.0, *)
+    private func translateWithSession(_ session: TranslationSession) async {
+        await MainActor.run {
+            isProcessing = true
+            processingProgressText = "Iniciando tradução..."
+        }
+        
+        let parser = TextParser()
+        var failed = false
+        
+        for (index, page) in book.sortedPages.enumerated() {
+            await MainActor.run {
+                processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+            }
+            
+            do {
+                let response = try await session.translate(page.rawText)
+                let parsed = parser.parse(rawText: response.targetText)
+                
+                await MainActor.run {
+                    page.setTranslation(text: response.targetText, words: parsed.words)
+                }
+            } catch {
+                print("TranslationSession fallback: \(error.localizedDescription)")
+                failed = true
+                break
+            }
+        }
+        
+        if failed {
+            await MainActor.run {
+                fallbackTranslateBook()
+            }
+        } else {
+            await MainActor.run {
+                book.toggleTranslation(active: true)
+                try? modelContext.save()
+                isProcessing = false
+            }
+        }
+    }
+    #endif
+    
+    private func fallbackTranslateBook() {
+        Task {
+            await MainActor.run {
+                isProcessing = true
+                processingProgressText = "Processando tradução para Português..."
+            }
+            
+            let parser = TextParser()
+            for (index, page) in book.sortedPages.enumerated() {
+                await MainActor.run {
+                    processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+                }
+                
+                let lang = book.detectedLanguageCode ?? "en"
+                let translated = BookTranslationFallback.translate(text: page.rawText, from: lang)
+                let parsed = parser.parse(rawText: translated)
+                
+                await MainActor.run {
+                    page.setTranslation(text: translated, words: parsed.words)
+                }
+            }
+            
+            await MainActor.run {
+                book.toggleTranslation(active: true)
+                try? modelContext.save()
+                isProcessing = false
             }
         }
     }
@@ -356,6 +476,24 @@ private struct BookHeaderSection: View {
             .padding(.vertical, 10)
             .background(Color.bookCardBg)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            
+            // Badge de Idioma Original e Status de Tradução
+            HStack(spacing: 6) {
+                Text("\(book.detectedLanguageInfo.flag) \(book.detectedLanguageInfo.name)")
+                    .font(.caption.bold())
+                
+                if book.hasTranslation {
+                    Text("•")
+                        .foregroundStyle(.secondary)
+                    Text(book.isTranslationActive ? "Traduzido (PT)" : "Texto Original")
+                        .font(.caption.bold())
+                        .foregroundStyle(book.isTranslationActive ? .green : .secondary)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(Color.bookCardBg)
+            .clipShape(Capsule())
             
             // Barra de Progresso
             if book.totalWords > 0 {
@@ -552,14 +690,24 @@ private struct PageRowItem: View {
                                 .clipShape(Capsule())
                         }
                         
+                        if page.isShowingTranslation {
+                            Text("🇧🇷 PT")
+                                .font(.system(size: 9, weight: .bold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.green.opacity(0.18))
+                                .foregroundStyle(.green)
+                                .clipShape(Capsule())
+                        }
+                        
                         Spacer()
                         
-                        Text("\(page.wordCount) palavras")
+                        Text("\(page.activeWords.count) palavras")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
                     
-                    Text(page.previewSnippet)
+                    Text(page.isShowingTranslation ? (page.translatedText ?? page.rawText) : page.previewSnippet)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
@@ -609,6 +757,119 @@ private struct OCRProcessingOverlay: View {
     }
 }
 
+// MARK: - Banner de Tradução de Livro Estrangeiro
+
+private struct BookTranslationBannerSection: View {
+    let book: Book
+    let onTranslateTapped: () -> Void
+    let onToggleTranslation: (Bool) -> Void
+    
+    var body: some View {
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                Text(book.detectedLanguageInfo.flag)
+                    .font(.system(size: 32))
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text("Livro em \(book.detectedLanguageInfo.name)")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        
+                        if book.hasTranslation {
+                            Text("TRADUZIDO")
+                                .font(.system(size: 9, weight: .bold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.green)
+                                .foregroundStyle(.white)
+                                .clipShape(Capsule())
+                        }
+                    }
+                    
+                    Text(book.hasTranslation 
+                         ? (book.isTranslationActive ? "Leitura RSVP em Português ativada." : "Leitura RSVP no idioma original.")
+                         : "Deseja traduzir todo o conteúdo para ler via RSVP em Português?")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                if !book.hasTranslation {
+                    Button(action: onTranslateTapped) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "character.bubble")
+                            Text("Traduzir")
+                                .fontWeight(.bold)
+                        }
+                        .font(.caption)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+            
+            if book.hasTranslation {
+                HStack(spacing: 12) {
+                    Picker("Idioma de Leitura", selection: Binding(
+                        get: { book.isTranslationActive },
+                        set: { onToggleTranslation($0) }
+                    )) {
+                        Text("🇧🇷 Ler em Português").tag(true)
+                        Text("\(book.detectedLanguageInfo.flag) Idioma Original").tag(false)
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    Button {
+                        onTranslateTapped()
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(8)
+                            .background(Color.secondary.opacity(0.12))
+                            .clipShape(Circle())
+                    }
+                    .help("Re-traduzir / Atualizar páginas")
+                }
+            }
+        }
+        .padding(16)
+        .background(Color.bookCardBg)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.horizontal, 20)
+    }
+}
+
+#if canImport(Translation)
+@available(iOS 17.4, macOS 15.0, *)
+private struct SystemTranslationContainer: View {
+    @Binding var trigger: Bool
+    let onTranslate: (TranslationSession) async -> Void
+    
+    @State private var config: TranslationSession.Configuration?
+    
+    var body: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .translationTask(config) { session in
+                await onTranslate(session)
+            }
+            .onChange(of: trigger) { _, newValue in
+                guard newValue else { return }
+                if config == nil {
+                    config = TranslationSession.Configuration(target: Locale.Language(identifier: "pt-BR"))
+                } else {
+                    config?.invalidate()
+                }
+            }
+    }
+}
+#endif
 
 private extension Color {
     static var bookGroupedBg: Color {

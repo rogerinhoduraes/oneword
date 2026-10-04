@@ -199,6 +199,11 @@ public struct LibraryView: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     
+                    if book.isForeignLanguage {
+                        Text(book.hasTranslation ? "\(book.detectedLanguageInfo.flag) ➔ 🇧🇷" : book.detectedLanguageInfo.flag)
+                            .font(.caption2)
+                    }
+                    
                     Spacer()
                     
                     if book.totalWords > 0 {

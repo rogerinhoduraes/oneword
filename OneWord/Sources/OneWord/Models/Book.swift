@@ -37,6 +37,12 @@ public final class Book {
     @Relationship(deleteRule: .cascade)
     public var sessions: [ReadingSession] = []
     
+    /// Código ISO do idioma original detectado do livro (ex: "en", "es", "fr", "pt").
+    public var detectedLanguageCode: String?
+    
+    /// Indica se o leitor RSVP e as páginas estão atualmente projetando a tradução em Português.
+    public var isTranslationActive: Bool = false
+    
     public init(
         id: UUID = UUID(),
         title: String,
@@ -45,7 +51,9 @@ public final class Book {
         coverThemeColor: String = "#1E40AF",
         createdAt: Date = Date(),
         lastAccessedAt: Date = Date(),
-        currentGlobalWordIndex: Int = 0
+        currentGlobalWordIndex: Int = 0,
+        detectedLanguageCode: String? = nil,
+        isTranslationActive: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -55,6 +63,8 @@ public final class Book {
         self.createdAt = createdAt
         self.lastAccessedAt = lastAccessedAt
         self.currentGlobalWordIndex = currentGlobalWordIndex
+        self.detectedLanguageCode = detectedLanguageCode
+        self.isTranslationActive = isTranslationActive
     }
     
     // MARK: - Computed Properties
@@ -69,25 +79,46 @@ public final class Book {
         pages.count
     }
     
-    /// Total acumulado de palavras de todas as páginas do livro.
+    /// Total acumulado de palavras de todas as páginas do livro (considera tradução se ativa).
     public var totalWords: Int {
-        pages.reduce(0) { $0 + $1.words.count }
+        if isTranslationActive {
+            return pages.reduce(0) { $0 + $1.activeWords.count }
+        }
+        return pages.reduce(0) { $0 + $1.words.count }
     }
     
-    /// Array unificado com todas as palavras do livro em ordem sequencial de páginas.
+    /// Array unificado com todas as palavras do livro em ordem sequencial de páginas (considera tradução se ativa).
     public var allWords: [String] {
-        sortedPages.flatMap { $0.words }
+        if isTranslationActive {
+            return sortedPages.flatMap { $0.activeWords }
+        }
+        return sortedPages.flatMap { $0.words }
     }
     
-    /// Deslocamentos globais de índice onde cada página se inicia.
+    /// Deslocamentos globais de índice onde cada página se inicia (considera tradução se ativa).
     public var pageOffsets: [Int] {
         var offsets: [Int] = []
         var runningOffset = 0
         for page in sortedPages {
             offsets.append(runningOffset)
-            runningOffset += page.words.count
+            runningOffset += (isTranslationActive ? page.activeWords.count : page.words.count)
         }
         return offsets
+    }
+    
+    /// Indica se pelo menos uma página do livro foi traduzida para Português.
+    public var hasTranslation: Bool {
+        sortedPages.contains { $0.translatedWords != nil && !$0.translatedWords!.isEmpty }
+    }
+    
+    /// Metadados do idioma original detectado no livro.
+    public var detectedLanguageInfo: DetectedLanguageInfo {
+        BookTranslationService.languageInfo(for: detectedLanguageCode)
+    }
+    
+    /// Indica se o livro foi escaneado em língua estrangeira (diferente de português).
+    public var isForeignLanguage: Bool {
+        !detectedLanguageInfo.isPortuguese
     }
     
     /// Porcentagem de leitura concluída do livro (0.0 a 1.0).
@@ -167,20 +198,54 @@ public final class Book {
         self.lastAccessedAt = Date()
     }
     
-    /// Adiciona uma nova página escaneada ao livro, calculando automaticamente o próximo número de página.
+    /// Adiciona uma nova página escaneada ao livro, detectando o idioma automaticamente se necessário.
     @discardableResult
     public func addPage(rawText: String, words: [String], imageData: Data? = nil) -> BookPage {
         let nextNumber = (pages.map { $0.pageNumber }.max() ?? 0) + 1
+        
+        let detected = BookTranslationService().detectLanguage(for: rawText)
+        if self.detectedLanguageCode == nil, let detected {
+            self.detectedLanguageCode = detected
+        }
+        
         let newPage = BookPage(
             pageNumber: nextNumber,
             rawText: rawText,
             words: words,
             pageImageData: imageData,
-            book: self
+            book: self,
+            originalLanguage: detected ?? self.detectedLanguageCode
         )
         pages.append(newPage)
         lastAccessedAt = Date()
         return newPage
+    }
+    
+    /// Alterna a visualização e leitura entre o idioma original e a tradução para o Português.
+    public func toggleTranslation(active: Bool) {
+        self.isTranslationActive = active
+        for page in pages {
+            page.isShowingTranslation = active
+        }
+        self.currentGlobalWordIndex = min(self.currentGlobalWordIndex, self.totalWords)
+        self.lastAccessedAt = Date()
+    }
+    
+    /// Aplica texto e palavras traduzidas a uma página específica.
+    public func applyTranslation(forPageNumber pageNum: Int, translatedText: String, translatedWords: [String]) {
+        guard let page = pages.first(where: { $0.pageNumber == pageNum }) else { return }
+        page.setTranslation(text: translatedText, words: translatedWords)
+        self.lastAccessedAt = Date()
+    }
+    
+    /// Remove todas as traduções armazenadas do livro.
+    public func clearAllTranslations() {
+        self.isTranslationActive = false
+        for page in pages {
+            page.clearTranslation()
+        }
+        self.currentGlobalWordIndex = min(self.currentGlobalWordIndex, self.totalWords)
+        self.lastAccessedAt = Date()
     }
     
     /// Tempo total estimado de leitura do livro na velocidade WPM especificada (em minutos).

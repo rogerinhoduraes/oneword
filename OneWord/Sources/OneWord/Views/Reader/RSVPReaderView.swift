@@ -105,11 +105,27 @@ public struct RSVPReaderView: View {
             
             Spacer()
             
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                // Toggle de Tradução Rápida (Português vs Original)
+                if viewModel.hasTranslation {
+                    Button {
+                        triggerHapticFeedback()
+                        viewModel.toggleTranslation()
+                    } label: {
+                        Text(viewModel.isTranslationActive ? "🇧🇷 PT" : "\(viewModel.book?.detectedLanguageInfo.flag ?? "🌐") Orig.")
+                            .font(.caption2.bold())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(viewModel.isTranslationActive ? Color.green.opacity(0.18) : Color.secondary.opacity(0.15))
+                            .foregroundStyle(viewModel.isTranslationActive ? Color.green : viewModel.settings.theme.textColor)
+                            .clipShape(Capsule())
+                    }
+                }
+                
                 // Badge com WPM atual
                 Text("\(Int(viewModel.wpmBinding)) WPM")
                     .font(.caption.bold().monospacedDigit())
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(Color.accentColor.opacity(0.12))
                     .foregroundStyle(Color.accentColor)

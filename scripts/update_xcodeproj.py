@@ -32,6 +32,9 @@ proj_release_conf_id = gen_id()
 target_debug_conf_id = gen_id()
 target_release_conf_id = gen_id()
 
+assets_fref_id = gen_id()
+assets_bfile_id = gen_id()
+
 source_file_refs = []
 source_build_files = []
 
@@ -43,13 +46,14 @@ for fname, rel_path in source_files:
 
 pbx = f"""// !$*UTF8*$!
 {{
-	archiveVersion = 1;
-	classes = {{
-	}};
-	objectVersion = 56;
-	objects = {{
+\tarchiveVersion = 1;
+\tclasses = {{
+\t}};
+\tobjectVersion = 56;
+\tobjects = {{
 
 /* Begin PBXBuildFile section */
+\t\t{assets_bfile_id} /* Assets.xcassets in Resources */ = {{isa = PBXBuildFile; fileRef = {assets_fref_id} /* Assets.xcassets */; }};
 """
 
 for fname, bfile_id, fref_id in source_build_files:
@@ -59,6 +63,7 @@ pbx += f"""/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 \t\t{app_product_id} /* OneWord.app */ = {{isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneWord.app; sourceTree = BUILT_PRODUCTS_DIR; }};
+\t\t{assets_fref_id} /* Assets.xcassets */ = {{isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Sources/OneWord/Resources/Assets.xcassets"; sourceTree = "<group>"; }};
 """
 
 for fname, rel_path, fref_id in source_file_refs:
@@ -96,6 +101,7 @@ pbx += f"""/* End PBXFileReference section */
 \t\t{sources_group_id} /* OneWord Sources */ = {{
 \t\t\tisa = PBXGroup;
 \t\t\tchildren = (
+\t\t\t\t{assets_fref_id} /* Assets.xcassets */,
 """
 
 for fname, _, fref_id in source_file_refs:
@@ -163,6 +169,7 @@ pbx += f"""\t\t\t);
 \t\t\tisa = PBXResourcesBuildPhase;
 \t\t\tbuildActionMask = 2147483647;
 \t\t\tfiles = (
+\t\t\t\t{assets_bfile_id} /* Assets.xcassets in Resources */,
 \t\t\t);
 \t\t\trunOnlyForDeploymentPostprocessing = 0;
 \t\t}};
@@ -200,9 +207,10 @@ pbx += f"""\t\t\t);
 \t\t\t\tGCC_NO_COMMON_BLOCKS = YES;
 \t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;
 \t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (
-\t\t\t\t\t\"DEBUG=1\",\n\t\t\t\t\t\"$(inherited)\",
+\t\t\t\t\t\"DEBUG=1\",
+\t\t\t\t\t\"$(inherited)\",
 \t\t\t\t);
-\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 17.0;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 18.0;
 \t\t\t\tMTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 \t\t\t\tONLY_ACTIVE_ARCH = YES;
 \t\t\t\tSDKROOT = iphoneos;
@@ -225,7 +233,7 @@ pbx += f"""\t\t\t);
 \t\t\t\tENABLE_NS_ASSERTIONS = NO;
 \t\t\t\tENABLE_STRICT_OBJC_MSGSEND = YES;
 \t\t\t\tGCC_NO_COMMON_BLOCKS = YES;
-\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 17.0;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 18.0;
 \t\t\t\tMTL_ENABLE_DEBUG_INFO = NO;
 \t\t\t\tSDKROOT = iphoneos;
 \t\t\t\tSWIFT_COMPILATION_MODE = \"wholemodule\";
@@ -312,4 +320,4 @@ os.makedirs("OneWord.xcodeproj", exist_ok=True)
 with open("OneWord.xcodeproj/project.pbxproj", "w") as f:
     f.write(pbx)
 
-print("Generated OneWord.xcodeproj successfully!")
+print("Generated OneWord.xcodeproj successfully with Assets.xcassets included!")

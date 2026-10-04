@@ -134,6 +134,38 @@ public final class RSVPReaderViewModel {
         engine.currentSplitWord
     }
     
+    /// Indica se o item em leitura possui tradução para Português disponível.
+    public var hasTranslation: Bool {
+        book?.hasTranslation ?? false
+    }
+    
+    /// Indica se a leitura atual está exibindo a versão traduzida para Português.
+    public var isTranslationActive: Bool {
+        book?.isTranslationActive ?? false
+    }
+    
+    /// Alterna a leitura do livro entre o idioma original e o português traduzido em tempo real.
+    public func toggleTranslation() {
+        guard let book, book.hasTranslation else { return }
+        let wasPlaying = engine.isPlaying
+        if wasPlaying {
+            engine.pause()
+        }
+        
+        let currentProgress = engine.progress
+        book.toggleTranslation(active: !book.isTranslationActive)
+        
+        let words = book.allWords
+        guard !words.isEmpty else { return }
+        let newIndex = min(Int(currentProgress * Double(words.count)), words.count - 1)
+        engine.load(words: words, initialIndex: max(0, newIndex))
+        persistProgress(to: newIndex, forceDiskSave: true)
+        
+        if wasPlaying {
+            engine.play()
+        }
+    }
+    
     /// Indica se o leitor está em reprodução contínua.
     public var isPlaying: Bool {
         engine.isPlaying

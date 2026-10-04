@@ -459,5 +459,103 @@ final class OneWordTests: XCTestCase {
         XCTAssertEqual(vm.currentWord, "poeira")
         XCTAssertEqual(book.currentGlobalWordIndex, 5)
     }
+    
+    // MARK: - Testes de Tradução e Idiomas Internacionais
+    
+    func testLanguageDetection() {
+        let service = BookTranslationService()
+        
+        let enText = "Deep work is the ability to focus without distraction on a cognitively demanding task."
+        XCTAssertEqual(service.detectLanguage(for: enText), "en")
+        
+        let ptText = "A técnica RSVP permite leitura dinâmica e foco cognitivo cirúrgico."
+        XCTAssertEqual(service.detectLanguage(for: ptText), "pt")
+        
+        let infoEN = BookTranslationService.languageInfo(for: "en")
+        XCTAssertEqual(infoEN.name, "Inglês")
+        XCTAssertEqual(infoEN.flag, "🇺🇸")
+        XCTAssertFalse(infoEN.isPortuguese)
+        
+        let infoPT = BookTranslationService.languageInfo(for: "pt")
+        XCTAssertEqual(infoPT.name, "Português")
+        XCTAssertEqual(infoPT.flag, "🇧🇷")
+        XCTAssertTrue(infoPT.isPortuguese)
+    }
+    
+    @MainActor
+    func testBookPageTranslationAndActiveWords() {
+        let page = BookPage(
+            pageNumber: 1,
+            rawText: "Focus is power.",
+            words: ["Focus", "is", "power."],
+            originalLanguage: "en"
+        )
+        
+        XCTAssertEqual(page.activeWords, ["Focus", "is", "power."])
+        XCTAssertFalse(page.isShowingTranslation)
+        
+        // Aplica tradução
+        page.setTranslation(
+            text: "Foco é poder.",
+            words: ["Foco", "é", "poder."]
+        )
+        
+        XCTAssertTrue(page.isShowingTranslation)
+        XCTAssertEqual(page.activeWords, ["Foco", "é", "poder."])
+        XCTAssertEqual(page.activeRawText, "Foco é poder.")
+        
+        // Limpa tradução
+        page.clearTranslation()
+        XCTAssertFalse(page.isShowingTranslation)
+        XCTAssertEqual(page.activeWords, ["Focus", "is", "power."])
+    }
+    
+    @MainActor
+    func testBookTranslationToggleAndWordAggregation() {
+        let book = Book(title: "Deep Work", author: "Cal Newport", detectedLanguageCode: "en")
+        let p1 = book.addPage(rawText: "Deep work matters.", words: ["Deep", "work", "matters."])
+        
+        XCTAssertTrue(book.isForeignLanguage)
+        XCTAssertEqual(book.detectedLanguageInfo.name, "Inglês")
+        XCTAssertFalse(book.hasTranslation)
+        XCTAssertEqual(book.allWords, ["Deep", "work", "matters."])
+        
+        // Aplica tradução à página 1
+        p1.setTranslation(text: "Trabalho focado importa.", words: ["Trabalho", "focado", "importa."])
+        XCTAssertTrue(book.hasTranslation)
+        
+        // Ativa tradução no livro
+        book.toggleTranslation(active: true)
+        XCTAssertTrue(book.isTranslationActive)
+        XCTAssertEqual(book.allWords, ["Trabalho", "focado", "importa."])
+        
+        // Desativa para voltar ao original
+        book.toggleTranslation(active: false)
+        XCTAssertFalse(book.isTranslationActive)
+        XCTAssertEqual(book.allWords, ["Deep", "work", "matters."])
+    }
+    
+    @MainActor
+    func testRSVPReaderViewModelTranslationToggle() {
+        let book = Book(title: "The Art of Focus", author: "Author", detectedLanguageCode: "en")
+        let page = book.addPage(rawText: "Focus creates clarity.", words: ["Focus", "creates", "clarity."])
+        page.setTranslation(text: "O foco cria clareza.", words: ["O", "foco", "cria", "clareza."])
+        
+        // Inicia leitor com texto original
+        let vm = RSVPReaderViewModel(book: book, initialWPM: 300)
+        XCTAssertTrue(vm.hasTranslation)
+        XCTAssertFalse(vm.isTranslationActive)
+        XCTAssertEqual(vm.currentWord, "Focus")
+        
+        // Alterna tradução para Português em tempo real
+        vm.toggleTranslation()
+        XCTAssertTrue(vm.isTranslationActive)
+        XCTAssertEqual(vm.currentWord, "O")
+        
+        // Alterna de volta para Inglês
+        vm.toggleTranslation()
+        XCTAssertFalse(vm.isTranslationActive)
+        XCTAssertEqual(vm.currentWord, "Focus")
+    }
 }
 

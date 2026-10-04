@@ -63,6 +63,38 @@ public struct OneWordApp: App {
                     try? context.save()
                 }
                 
+                // Seed de Livro Internacional em Inglês para testar a tradução para Português
+                let currentBooks = (try? context.fetch(FetchDescriptor<Book>())) ?? []
+                if !currentBooks.contains(where: { $0.title == "Deep Work" }) {
+                    let bookEN = Book(
+                        title: "Deep Work",
+                        author: "Cal Newport",
+                        coverThemeColor: "#7C3AED",
+                        detectedLanguageCode: "en"
+                    )
+                    
+                    let p1Text = """
+                    Deep work is the ability to focus without distraction on a cognitively demanding task. It's a skill that allows you to quickly master complicated information and produce better results in less time. In today's economy, deep focus has become a superpower.
+                    """
+                    let p1Words = p1Text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+                    bookEN.addPage(rawText: p1Text, words: p1Words)
+                    
+                    let p2Text = """
+                    To produce at your peak level you need to work for extended periods with full concentration on a single task free from all distraction. The RSVP technique allows you to absorb complex paragraphs with maximum speed and clarity.
+                    """
+                    let p2Words = p2Text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+                    bookEN.addPage(rawText: p2Text, words: p2Words)
+                    
+                    let p3Text = """
+                    Small habits don't add up; they multiply over time. By dedicating ten minutes daily to rapid reading, your book absorption rate doubles in just a few weeks.
+                    """
+                    let p3Words = p3Text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+                    bookEN.addPage(rawText: p3Text, words: p3Words)
+                    
+                    context.insert(bookEN)
+                    try? context.save()
+                }
+                
                 // Seed de Documentos avulsos
                 let count = (try? context.fetchCount(FetchDescriptor<Document>())) ?? 0
                 if count == 0 {
