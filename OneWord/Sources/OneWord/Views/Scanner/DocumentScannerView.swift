@@ -39,6 +39,7 @@ public struct DocumentScannerView: View {
     #endif
     
     @State private var isShowingFileImporter: Bool = false
+    @State private var translateToPortugueseOnSave: Bool = true
     
     /// Callback opcional chamado quando o documento é criado (para abrir o leitor diretamente).
     public var onDocumentSaved: ((Document) -> Void)?
@@ -245,11 +246,11 @@ public struct DocumentScannerView: View {
                 }
                 
                 // Badges de metadados extraídos
-                HStack(spacing: 16) {
+                HStack(spacing: 12) {
                     if let result = viewModel.scanResult {
                         Label("\(result.wordCount) palavras", systemImage: "text.word.spacing")
                             .font(.caption.weight(.medium))
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .background(Color.accentColor.opacity(0.12))
                             .foregroundStyle(Color.accentColor)
@@ -257,12 +258,43 @@ public struct DocumentScannerView: View {
                         
                         Label(String(format: "%.0f%% precisão", result.averageConfidence * 100), systemImage: "checkmark.seal")
                             .font(.caption.weight(.medium))
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .background(Color.green.opacity(0.12))
                             .foregroundStyle(.green)
                             .clipShape(Capsule())
                     }
+                }
+                
+                // Detecção de Idioma Estrangeiro e Opção de Tradução para Português
+                let detectedLang = BookTranslationService.detectLanguage(for: viewModel.editableText)
+                let langInfo = BookTranslationService.languageInfo(for: detectedLang)
+                
+                if !langInfo.isPortuguese {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("\(langInfo.flag) Idioma Detectado:")
+                                .font(.caption.bold())
+                                .foregroundStyle(.primary)
+                            Text(langInfo.name)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                        
+                        Toggle(isOn: $translateToPortugueseOnSave) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "character.bubble")
+                                    .foregroundStyle(.indigo)
+                                Text("Traduzir para Português 🇧🇷")
+                                    .font(.subheadline.weight(.medium))
+                            }
+                        }
+                        .tint(.indigo)
+                    }
+                    .padding(14)
+                    .background(Color.indigo.opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 
                 // Seção de Texto Higienizado
@@ -280,7 +312,11 @@ public struct DocumentScannerView: View {
                 
                 // Ação de Salvamento
                 Button {
-                    if let doc = viewModel.saveDocument(in: modelContext) {
+                    let doc = viewModel.saveDocument(
+                        in: modelContext,
+                        translateToPortuguese: translateToPortugueseOnSave
+                    )
+                    if let doc {
                         onDocumentSaved?(doc)
                         dismiss()
                     }

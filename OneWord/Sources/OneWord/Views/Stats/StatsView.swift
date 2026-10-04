@@ -35,7 +35,9 @@ private extension Color {
 public struct StatsView: View {
     @Query(sort: \ReadingSession.date, order: .reverse) private var sessions: [ReadingSession]
     @State private var viewModel = StatsViewModel()
+    @State private var habitTracker = ReadingHabitTracker.shared
     @State private var chartMetric: ChartMetric = .words
+    @State private var isShowingBenchmark: Bool = false
     
     public enum ChartMetric: String, CaseIterable, Identifiable {
         case words = "Palavras"
@@ -59,23 +61,146 @@ public struct StatsView: View {
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
                     
-                    // Hero Card: Tempo Economizado
+                    // 1. Ofensiva Diária (Streak) e Meta
+                    streakAndHabitCard
+                    
+                    // 2. Card de Aferição de WPM e Compreensão Cognitiva
+                    wpmBenchmarkCard
+                    
+                    // 3. Hero Card: Tempo Economizado
                     heroTimeSavedCard
                     
-                    // Grid de Métricas Secundárias
+                    // 4. Grid de Métricas Secundárias
                     metricsGrid
                     
-                    // Gráfico de Desempenho (Swift Charts)
+                    // 5. Gráfico de Desempenho (Swift Charts)
                     performanceChartSection
                     
-                    // Histórico Recente de Sessões
+                    // 6. Conquistas & Medalhas Desbloqueáveis
+                    achievementsSection
+                    
+                    // 7. Histórico Recente de Sessões
                     recentSessionsSection
                 }
                 .padding(.vertical)
             }
             .background(Color.statsBackground)
             .navigationTitle("Estatísticas")
+            .sheet(isPresented: $isShowingBenchmark) {
+                WPMBenchmarkView()
+            }
         }
+    }
+    
+    // MARK: - 1. Ofensiva Diária (Streak) e Metas
+    
+    private var streakAndHabitCard: some View {
+        let currentStreak = habitTracker.calculateStreak(from: sessions)
+        let wordsToday = habitTracker.wordsReadToday(from: sessions)
+        let goalProgress = habitTracker.dailyGoalProgress(from: sessions)
+        
+        return VStack(spacing: 14) {
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                        .font(.title2)
+                    Text("\(currentStreak) \(currentStreak == 1 ? "Dia" : "Dias")")
+                        .font(.title2.bold())
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Recorde: \(habitTracker.bestStreak) dias")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("Ofensiva de Foco")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.orange)
+                }
+            }
+            
+            Divider()
+            
+            VStack(spacing: 8) {
+                HStack {
+                    Text("Meta Diária: \(wordsToday) / \(habitTracker.dailyWordGoal) palavras")
+                        .font(.subheadline.weight(.medium))
+                    Spacer()
+                    Text("\(Int(goalProgress * 100))%")
+                        .font(.subheadline.bold().monospacedDigit())
+                        .foregroundStyle(goalProgress >= 1.0 ? .green : .blue)
+                }
+                
+                ProgressView(value: goalProgress)
+                    .tint(goalProgress >= 1.0 ? .green : .blue)
+            }
+        }
+        .padding(18)
+        .background(Color.statsCardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(.horizontal)
+    }
+    
+    // MARK: - 2. Card de Aferição de WPM
+    
+    private var wpmBenchmarkCard: some View {
+        let lastWPM = habitTracker.lastBenchmarkWPM
+        let lastScore = habitTracker.lastBenchmarkScore
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Aferição de Velocidade & Retenção", systemImage: "brain.head.profile")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.purple)
+                
+                Spacer()
+                
+                Button {
+                    isShowingBenchmark = true
+                } label: {
+                    Text(lastWPM != nil ? "Refazer Teste" : "Iniciar Teste")
+                        .font(.caption.bold())
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.purple.opacity(0.15))
+                        .foregroundStyle(.purple)
+                        .clipShape(Capsule())
+                }
+            }
+            
+            if let wpm = lastWPM, let score = lastScore {
+                HStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(wpm) WPM")
+                            .font(.title3.bold().monospacedDigit())
+                        Text("Velocidade Calibrada")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(Int(score * 100))%")
+                            .font(.title3.bold().monospacedDigit())
+                            .foregroundStyle(.green)
+                        Text("Retenção Foveal")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+            } else {
+                Text("Calibre sua velocidade ideal com um texto padronizado e teste de compreensão foveal.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(18)
+        .background(Color.statsCardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(.horizontal)
     }
     
     // MARK: - Hero Card
@@ -251,6 +376,65 @@ public struct StatsView: View {
         .background(Color.statsCardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .padding(.horizontal)
+    }
+    
+    // MARK: - Conquistas e Medalhas
+    
+    private var achievementsSection: some View {
+        let achievements = habitTracker.evaluateAchievements(sessions: sessions)
+        let unlockedCount = achievements.filter { $0.isUnlocked }.count
+        
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Label("Conquistas & Foco", systemImage: "trophy.fill")
+                    .font(.headline)
+                    .foregroundStyle(.yellow)
+                Spacer()
+                Text("\(unlockedCount) de \(achievements.count) desbloqueadas")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(achievements) { item in
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(item.isUnlocked ? Color.yellow.opacity(0.18) : Color.secondary.opacity(0.1))
+                                .frame(width: 42, height: 42)
+                            
+                            Image(systemName: item.iconName)
+                                .font(.headline)
+                                .foregroundStyle(item.isUnlocked ? .yellow : .secondary)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.title)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(item.isUnlocked ? .primary : .secondary)
+                                .lineLimit(1)
+                            
+                            Text(item.subtitle)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(Color.statsCardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(item.isUnlocked ? Color.yellow.opacity(0.3) : Color.clear, lineWidth: 1)
+                    )
+                }
+            }
+            .padding(.horizontal)
+        }
     }
     
     // MARK: - Recent Sessions

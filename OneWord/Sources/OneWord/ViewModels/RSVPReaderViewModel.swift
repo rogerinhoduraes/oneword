@@ -36,7 +36,25 @@ public final class RSVPReaderViewModel {
     public var isShowingSettings: Bool = false
     
     /// Preferências visuais (tema, fonte, tamanho e guias ORP).
-    public var settings: ReaderSettings = ReaderSettings()
+    public var settings: ReaderSettings = ReaderSettings() {
+        didSet {
+            applySettings()
+        }
+    }
+    
+    /// Controle de exibição do dicionário de termos da Apple.
+    public var isShowingWordDefinition: Bool = false
+    public var wordToDefine: String = ""
+    
+    /// Aplica as preferências de ergonomia cognitiva diretamente ao motor RSVP.
+    public func applySettings() {
+        engine.config.smartWPMEnabled = settings.smartWPMEnabled
+        engine.config.chunkSize = settings.chunkSize
+        engine.config.bimodalAudioEnabled = settings.bimodalAudioEnabled
+        if settings.bimodalAudioEnabled && engine.bimodalSynthesizer == nil {
+            engine.bimodalSynthesizer = BimodalSpeechSynthesizer()
+        }
+    }
     
     // MARK: - Inicializadores
     
@@ -136,30 +154,104 @@ public final class RSVPReaderViewModel {
     
     /// Indica se o item em leitura possui tradução para Português disponível.
     public var hasTranslation: Bool {
-        book?.hasTranslation ?? false
+        book?.hasTranslation ?? document?.hasTranslation ?? false
     }
     
     /// Indica se a leitura atual está exibindo a versão traduzida para Português.
     public var isTranslationActive: Bool {
-        book?.isTranslationActive ?? false
+        book?.isTranslationActive ?? document?.isTranslationActive ?? false
     }
     
-    /// Alterna a leitura do livro entre o idioma original e o português traduzido em tempo real.
-    public func toggleTranslation() {
-        guard let book, book.hasTranslation else { return }
+    /// Indica se o item sendo lido é originário de um idioma estrangeiro.
+    public var isForeignLanguage: Bool {
+        if let book { return book.isForeignLanguage }
+        if let document { return document.isForeignLanguage }
+        return false
+    }
+    
+    /// Bandeira emoji do idioma original.
+    public var originalLanguageFlag: String {
+        if let book { return book.detectedLanguageInfo.flag }
+        if let document { return document.detectedLanguageInfo.flag }
+        return "🌐"
+    }
+    
+    /// Nome do idioma original em português.
+    public var originalLanguageName: String {
+        if let book { return book.detectedLanguageInfo.name }
+        if let document { return document.detectedLanguageInfo.name }
+        return "Original"
+    }
+    
+    /// Traduz instantaneamente o item atual para Português e ativa o modo traduzido mantendo a posição.
+    public func translateNow() {
         let wasPlaying = engine.isPlaying
         if wasPlaying {
             engine.pause()
         }
         
         let currentProgress = engine.progress
-        book.toggleTranslation(active: !book.isTranslationActive)
+        let parser = TextParser()
         
-        let words = book.allWords
-        guard !words.isEmpty else { return }
-        let newIndex = min(Int(currentProgress * Double(words.count)), words.count - 1)
-        engine.load(words: words, initialIndex: max(0, newIndex))
-        persistProgress(to: newIndex, forceDiskSave: true)
+        if let book {
+            let lang = book.detectedLanguageCode ?? "en"
+            for page in book.sortedPages {
+                let translated = BookTranslationFallback.translate(text: page.rawText, from: lang)
+                let parsed = parser.parse(rawText: translated)
+                page.setTranslation(text: translated, words: parsed.words)
+            }
+            book.toggleTranslation(active: true)
+            let words = book.allWords
+            let newIndex = min(Int(currentProgress * Double(words.count)), max(0, words.count - 1))
+            engine.load(words: words, initialIndex: max(0, newIndex))
+            persistProgress(to: newIndex, forceDiskSave: true)
+        } else if let document, let content = document.content {
+            let lang = document.detectedLanguageCode ?? "en"
+            let translated = BookTranslationFallback.translate(text: content.rawText, from: lang)
+            let parsed = parser.parse(rawText: translated)
+            document.applyTranslation(text: translated, words: parsed.words)
+            document.toggleTranslation(active: true)
+            let words = document.activeWords
+            let newIndex = min(Int(currentProgress * Double(words.count)), max(0, words.count - 1))
+            engine.load(words: words, initialIndex: max(0, newIndex))
+            persistProgress(to: newIndex, forceDiskSave: true)
+        }
+        
+        if wasPlaying {
+            engine.play()
+        }
+    }
+    
+    /// Alterna a leitura entre o idioma original e o português traduzido em tempo real.
+    /// Se a tradução ainda não estiver gerada, aciona a tradução instantânea.
+    public func toggleTranslation() {
+        if !hasTranslation && isForeignLanguage {
+            translateNow()
+            return
+        }
+        
+        let wasPlaying = engine.isPlaying
+        if wasPlaying {
+            engine.pause()
+        }
+        
+        let currentProgress = engine.progress
+        
+        if let book, book.hasTranslation {
+            book.toggleTranslation(active: !book.isTranslationActive)
+            let words = book.allWords
+            guard !words.isEmpty else { return }
+            let newIndex = min(Int(currentProgress * Double(words.count)), words.count - 1)
+            engine.load(words: words, initialIndex: max(0, newIndex))
+            persistProgress(to: newIndex, forceDiskSave: true)
+        } else if let document, document.hasTranslation {
+            document.toggleTranslation(active: !document.isTranslationActive)
+            let words = document.activeWords
+            guard !words.isEmpty else { return }
+            let newIndex = min(Int(currentProgress * Double(words.count)), words.count - 1)
+            engine.load(words: words, initialIndex: max(0, newIndex))
+            persistProgress(to: newIndex, forceDiskSave: true)
+        }
         
         if wasPlaying {
             engine.play()
@@ -210,11 +302,40 @@ public final class RSVPReaderViewModel {
     
     // MARK: - Comandos de Controle
     
+    /// Abre a visualização do dicionário para a palavra atualmente pausada.
+    public func showDefinitionForCurrentWord() {
+        let word = currentWord
+        guard !word.isEmpty else { return }
+        wordToDefine = word
+        isShowingWordDefinition = true
+    }
+    
     /// Alterna reprodução entre Play e Pause.
     public func togglePlayPause() {
-        engine.togglePlayPause()
-        if !engine.isPlaying {
+        if engine.isPlaying {
+            engine.pause()
+            LiveActivityManager.shared.updateSession(
+                currentWord: currentWord,
+                wordsRead: currentIndex,
+                totalWords: totalWords,
+                remainingMinutes: engine.remainingMinutes,
+                wpm: engine.config.wpm,
+                isPlaying: false
+            )
             persistProgress(to: engine.currentIndex, forceDiskSave: true)
+        } else {
+            applySettings()
+            engine.play()
+            LiveActivityManager.shared.startSession(
+                title: title,
+                author: book?.author,
+                currentWord: currentWord,
+                wordsRead: currentIndex,
+                totalWords: totalWords,
+                remainingMinutes: engine.remainingMinutes,
+                wpm: engine.config.wpm,
+                isPlaying: true
+            )
         }
     }
     
@@ -254,6 +375,7 @@ public final class RSVPReaderViewModel {
     /// Pausa a reprodução, força o salvamento do progresso e registra a sessão de leitura.
     public func onDisappear() {
         engine.pause()
+        LiveActivityManager.shared.endSession()
         persistProgress(to: engine.currentIndex, forceDiskSave: true)
         recordSessionIfNeeded()
     }

@@ -61,7 +61,11 @@ public struct RSVPReaderView: View {
         }
         .sheet(isPresented: $viewModel.isShowingSettings) {
             readerSettingsSheet
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: $viewModel.isShowingWordDefinition) {
+            WordDefinitionSheetView(word: viewModel.wordToDefine)
+                .presentationDetents([.medium, .large])
         }
         #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
@@ -107,18 +111,26 @@ public struct RSVPReaderView: View {
             
             HStack(spacing: 8) {
                 // Toggle de Tradução Rápida (Português vs Original)
-                if viewModel.hasTranslation {
+                if viewModel.hasTranslation || viewModel.isForeignLanguage {
                     Button {
                         triggerHapticFeedback()
                         viewModel.toggleTranslation()
                     } label: {
-                        Text(viewModel.isTranslationActive ? "🇧🇷 PT" : "\(viewModel.book?.detectedLanguageInfo.flag ?? "🌐") Orig.")
-                            .font(.caption2.bold())
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(viewModel.isTranslationActive ? Color.green.opacity(0.18) : Color.secondary.opacity(0.15))
-                            .foregroundStyle(viewModel.isTranslationActive ? Color.green : viewModel.settings.theme.textColor)
-                            .clipShape(Capsule())
+                        HStack(spacing: 3) {
+                            if viewModel.isTranslationActive {
+                                Text("🇧🇷 PT")
+                            } else if viewModel.hasTranslation {
+                                Text("\(viewModel.originalLanguageFlag) Orig.")
+                            } else {
+                                Text("🇧🇷 Traduzir")
+                            }
+                        }
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(viewModel.isTranslationActive ? Color.green.opacity(0.18) : Color.secondary.opacity(0.15))
+                        .foregroundStyle(viewModel.isTranslationActive ? Color.green : viewModel.settings.theme.textColor)
+                        .clipShape(Capsule())
                     }
                 }
                 
@@ -166,23 +178,49 @@ public struct RSVPReaderView: View {
                         }
                     }
                     
-                    // Exibição da palavra com destaque focal no ORP
-                    HStack(spacing: 0) {
-                        let split = viewModel.currentSplitWord
-                        
-                        Text(split.prefix)
-                            .foregroundColor(viewModel.settings.theme.textColor)
-                        
-                        Text(String(split.focalCharacter))
-                            .foregroundColor(.red) // Ponto focal ORP em vermelho (estilo Spritz)
-                        
-                        Text(split.suffix)
-                            .foregroundColor(viewModel.settings.theme.textColor)
+                    // Exibição da palavra com destaque focal no ORP ou múltiplos chunks
+                    if viewModel.settings.chunkSize > 1 {
+                        let chunk = viewModel.engine.currentChunkWords
+                        HStack(spacing: 8) {
+                            ForEach(Array(chunk.enumerated()), id: \.offset) { index, word in
+                                if index == 0 {
+                                    let split = ORPHelper.splitWord(word)
+                                    HStack(spacing: 0) {
+                                        Text(split.prefix)
+                                            .foregroundColor(viewModel.settings.theme.textColor)
+                                        Text(String(split.focalCharacter))
+                                            .foregroundColor(.red)
+                                        Text(split.suffix)
+                                            .foregroundColor(viewModel.settings.theme.textColor)
+                                    }
+                                } else {
+                                    Text(word)
+                                        .foregroundColor(viewModel.settings.theme.textColor.opacity(0.85))
+                                }
+                            }
+                        }
+                        .font(viewModel.settings.font.font(size: max(22, viewModel.settings.fontSize - CGFloat(viewModel.settings.chunkSize * 4))))
+                        .multilineTextAlignment(.center)
+                        .frame(height: 75)
+                        .contentTransition(.identity)
+                    } else {
+                        HStack(spacing: 0) {
+                            let split = viewModel.currentSplitWord
+                            
+                            Text(split.prefix)
+                                .foregroundColor(viewModel.settings.theme.textColor)
+                            
+                            Text(String(split.focalCharacter))
+                                .foregroundColor(.red) // Ponto focal ORP em vermelho (estilo Spritz)
+                            
+                            Text(split.suffix)
+                                .foregroundColor(viewModel.settings.theme.textColor)
+                        }
+                        .font(viewModel.settings.font.font(size: viewModel.settings.fontSize))
+                        .multilineTextAlignment(.center)
+                        .frame(height: 75)
+                        .contentTransition(.identity)
                     }
-                    .font(viewModel.settings.font.font(size: viewModel.settings.fontSize))
-                    .multilineTextAlignment(.center)
-                    .frame(height: 75)
-                    .contentTransition(.identity)
                     
                     // Marcador visual inferior do ORP
                     if viewModel.settings.showORPNotch {
@@ -200,6 +238,26 @@ public struct RSVPReaderView: View {
                 .onTapGesture {
                     triggerHapticFeedback()
                     viewModel.togglePlayPause()
+                }
+                
+                // Botão de Definição rápida no dicionário quando pausado
+                if !viewModel.isPlaying && !viewModel.currentWord.isEmpty {
+                    Button {
+                        viewModel.showDefinitionForCurrentWord()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.book.closed.fill")
+                            Text("Dicionário: \(viewModel.currentWord)")
+                                .lineLimit(1)
+                        }
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(Color.secondary.opacity(0.12))
+                        .foregroundStyle(viewModel.settings.theme.textColor.opacity(0.8))
+                        .clipShape(Capsule())
+                    }
+                    .padding(.top, -6)
                 }
             }
         }
@@ -394,6 +452,22 @@ public struct RSVPReaderView: View {
                     }
                 }
                 
+                Section("Ergonomia Cognitiva & Modos RSVP") {
+                    Toggle("Smart WPM (Ritmo Adaptativo)", isOn: $viewModel.settings.smartWPMEnabled)
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Palavras por Quadro (Chunking)")
+                        Picker("Palavras por Quadro", selection: $viewModel.settings.chunkSize) {
+                            Text("1 Palavra").tag(1)
+                            Text("2 Palavras").tag(2)
+                            Text("3 Palavras").tag(3)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    
+                    Toggle("Modo Bimodal (Áudio Sincronizado)", isOn: $viewModel.settings.bimodalAudioEnabled)
+                }
+                
                 Section("Auxílio de Fixação Óptica") {
                     Toggle("Exibir Marcadores de Fixação (ORP)", isOn: $viewModel.settings.showORPNotch)
                 }
@@ -405,6 +479,7 @@ public struct RSVPReaderView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Concluir") {
+                        viewModel.applySettings()
                         viewModel.isShowingSettings = false
                     }
                 }
@@ -415,7 +490,7 @@ public struct RSVPReaderView: View {
     // MARK: - Ações e Feedback Háptico
     
     private func adjustWPM(by delta: Int) {
-        triggerHapticFeedback()
+        HapticEngine.shared.tickSpeedChange()
         let current = Int(viewModel.wpmBinding)
         viewModel.wpmBinding = Double(current + delta)
     }

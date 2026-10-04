@@ -32,13 +32,20 @@ public final class BookTranslationService: Sendable {
     /// Detecta o idioma dominante de uma amostra de texto usando o NaturalLanguage da Apple (100% offline).
     /// - Parameter text: Texto textual a ser analisado.
     /// - Returns: Código ISO do idioma (ex: "en", "es", "fr", "pt") ou nil se indeterminado.
-    public func detectLanguage(for text: String) -> String? {
+    public static func detectLanguage(for text: String) -> String? {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(trimmed)
         return recognizer.dominantLanguage?.rawValue
+    }
+    
+    /// Detecta o idioma dominante de uma amostra de texto usando o NaturalLanguage da Apple (100% offline).
+    /// - Parameter text: Texto textual a ser analisado.
+    /// - Returns: Código ISO do idioma (ex: "en", "es", "fr", "pt") ou nil se indeterminado.
+    public func detectLanguage(for text: String) -> String? {
+        Self.detectLanguage(for: text)
     }
     
     /// Retorna informações estruturadas (nome amigável em português e bandeira emoji) para um código de idioma.

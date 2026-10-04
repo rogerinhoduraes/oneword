@@ -117,7 +117,7 @@ public final class DocumentScannerViewModel {
     /// - Parameter context: Contexto SwiftData (`ModelContext`).
     /// - Returns: Instância de `Document` persistida ou `nil` se texto estiver vazio.
     @discardableResult
-    public func saveDocument(in context: ModelContext) -> Document? {
+    public func saveDocument(in context: ModelContext, translateToPortuguese: Bool = false) -> Document? {
         let finalTitle = editableTitle.trimmingCharacters(in: .whitespaces).isEmpty ? "Documento Escaneado" : editableTitle
         let (_, words) = parser.parse(rawText: editableText)
         
@@ -126,12 +126,22 @@ public final class DocumentScannerViewModel {
             return nil
         }
         
+        let detectedLang = BookTranslationService.detectLanguage(for: editableText)
         let newDocument = Document(
             title: finalTitle,
             rawText: editableText,
             words: words,
-            initialWordIndex: 0
+            initialWordIndex: 0,
+            originalLanguage: detectedLang
         )
+        
+        if translateToPortuguese, newDocument.isForeignLanguage {
+            let lang = detectedLang ?? "en"
+            let translated = BookTranslationFallback.translate(text: editableText, from: lang)
+            let (_, translatedWords) = parser.parse(rawText: translated)
+            newDocument.applyTranslation(text: translated, words: translatedWords)
+            newDocument.toggleTranslation(active: true)
+        }
         
         context.insert(newDocument)
         

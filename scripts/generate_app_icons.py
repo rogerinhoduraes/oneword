@@ -9,7 +9,7 @@ import os
 import json
 from PIL import Image, ImageFilter
 
-MASTER_ICON_PATH = "/Users/rogerioduraes/.gemini/antigravity/brain/750d76fa-c717-4590-96dd-a8098ec92802/oneword_app_icon_1024_master.png"
+MASTER_ICON_PATH = "/Users/rogerioduraes/.gemini/antigravity/brain/750d76fa-c717-4590-96dd-a8098ec92802/oneword_minimalist_v3_clean.png"
 OUTPUT_DIR = "OneWord/Sources/OneWord/Resources/Assets.xcassets/AppIcon.appiconset"
 
 ICON_SPECS = [

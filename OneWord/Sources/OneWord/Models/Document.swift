@@ -61,10 +61,16 @@ public final class Document {
         title: String,
         rawText: String,
         words: [String],
-        initialWordIndex: Int = 0
+        initialWordIndex: Int = 0,
+        originalLanguage: String? = nil
     ) {
         let docId = UUID()
-        let newContent = DocumentContent(rawText: rawText, words: words)
+        let detectedLang = originalLanguage ?? BookTranslationService.detectLanguage(for: rawText)
+        let newContent = DocumentContent(
+            rawText: rawText,
+            words: words,
+            originalLanguage: detectedLang
+        )
         let newProgress = ReadingProgress(currentWordIndex: initialWordIndex)
         
         self.init(
@@ -82,9 +88,54 @@ public final class Document {
     
     // MARK: - Propriedades Computadas
     
-    /// Total de palavras no documento.
+    /// Total de palavras ativas no documento (considera tradução se ativada).
     public var totalWords: Int {
-        content?.words.count ?? 0
+        content?.activeWords.count ?? 0
+    }
+    
+    /// Sequência ordenada de palavras ativas para leitura RSVP.
+    public var activeWords: [String] {
+        content?.activeWords ?? []
+    }
+    
+    /// Código do idioma original detectado no documento.
+    public var detectedLanguageCode: String? {
+        content?.originalLanguage
+    }
+    
+    /// Informações formatadas do idioma detectado (Nome e Bandeira).
+    public var detectedLanguageInfo: DetectedLanguageInfo {
+        BookTranslationService.languageInfo(for: detectedLanguageCode)
+    }
+    
+    /// Indica se o documento está em idioma estrangeiro (não é português).
+    public var isForeignLanguage: Bool {
+        !detectedLanguageInfo.isPortuguese
+    }
+    
+    /// Indica se o documento já possui versão traduzida para Português.
+    public var hasTranslation: Bool {
+        content?.translatedWords != nil && !(content?.translatedWords?.isEmpty ?? true)
+    }
+    
+    /// Indica se a leitura atual está exibindo o texto traduzido.
+    public var isTranslationActive: Bool {
+        content?.isShowingTranslation ?? false
+    }
+    
+    /// Alterna a exibição entre o idioma original e o português traduzido.
+    public func toggleTranslation(active: Bool) {
+        content?.isShowingTranslation = active
+    }
+    
+    /// Aplica a tradução para Português no documento.
+    public func applyTranslation(text: String, words: [String]) {
+        content?.setTranslation(text: text, words: words)
+    }
+    
+    /// Limpa a tradução existente.
+    public func clearTranslation() {
+        content?.clearTranslation()
     }
     
     /// Índice da palavra atual sendo lida (zero-based).
@@ -94,8 +145,8 @@ public final class Document {
     
     /// Palavra atual a ser exibida no leitor RSVP.
     public var currentWord: String? {
-        guard let words = content?.words,
-              currentWordIndex >= 0 && currentWordIndex < words.count else {
+        let words = activeWords
+        guard currentWordIndex >= 0 && currentWordIndex < words.count else {
             return nil
         }
         return words[currentWordIndex]

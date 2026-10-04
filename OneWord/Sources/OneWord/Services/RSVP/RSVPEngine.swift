@@ -64,10 +64,28 @@ public final class RSVPEngine: RSVPEngineProtocol {
         return words[currentIndex]
     }
     
+    /// Lista de palavras do chunk atual (se chunkSize > 1).
+    public var currentChunkWords: [String] {
+        guard !words.isEmpty, currentIndex >= 0 && currentIndex < words.count else {
+            return []
+        }
+        let size = max(1, config.chunkSize)
+        let end = min(currentIndex + size, words.count)
+        return Array(words[currentIndex..<end])
+    }
+    
+    /// Texto unificado do chunk atual.
+    public var currentChunkText: String {
+        currentChunkWords.joined(separator: " ")
+    }
+    
     /// Decomposição da palavra atual nos 3 segmentos visuais para fixação no ORP.
     public var currentSplitWord: ORPSplitWord {
         ORPHelper.splitWord(currentWord)
     }
+    
+    /// Síntese bimodal de fala sincronizada.
+    public var bimodalSynthesizer: BimodalSpeechSynthesizer?
     
     /// Indica se o leitor está reproduzindo ativamente palavras.
     public var isPlaying: Bool {
@@ -130,6 +148,7 @@ public final class RSVPEngine: RSVPEngineProtocol {
     public func pause() {
         taskHolder.task?.cancel()
         taskHolder.task = nil
+        bimodalSynthesizer?.pause()
         
         if state == .playing {
             state = .paused
@@ -159,6 +178,7 @@ public final class RSVPEngine: RSVPEngineProtocol {
     public func seek(to index: Int) {
         let clampedIndex = min(max(0, index), words.count)
         self.currentIndex = clampedIndex
+        bimodalSynthesizer?.stop()
         
         if clampedIndex >= words.count && !words.isEmpty {
             state = .completed
@@ -215,6 +235,7 @@ public final class RSVPEngine: RSVPEngineProtocol {
     /// Reinicia a leitura para o início do documento.
     public func reset() {
         pause()
+        bimodalSynthesizer?.stop()
         seek(to: 0)
         state = .idle
     }
@@ -236,8 +257,16 @@ public final class RSVPEngine: RSVPEngineProtocol {
                     break
                 }
                 
-                let word = self.words[self.currentIndex]
-                let duration = self.config.duration(for: word)
+                let stepSize = max(1, self.config.chunkSize)
+                let chunk = self.currentChunkWords
+                guard !chunk.isEmpty else { break }
+                
+                let duration = stepSize > 1 ? self.config.duration(for: chunk) : self.config.duration(for: self.currentWord)
+                
+                if self.config.bimodalAudioEnabled {
+                    let spokenText = chunk.joined(separator: " ")
+                    self.bimodalSynthesizer?.speak(text: spokenText, wpm: self.config.wpm)
+                }
                 
                 // Converte segundos em nanossegundos (1s = 1_000_000_000 ns)
                 let sleepNanoseconds = UInt64(max(0.01, duration) * 1_000_000_000)
@@ -251,8 +280,8 @@ public final class RSVPEngine: RSVPEngineProtocol {
                 
                 guard !Task.isCancelled, self.state == .playing else { break }
                 
-                let nextIndex = self.currentIndex + 1
-                self.sessionWordsReadCount += 1
+                let nextIndex = self.currentIndex + stepSize
+                self.sessionWordsReadCount += chunk.count
                 
                 // Aplica aceleração gradual no Modo Treinador (Speed Ramp)
                 if self.config.speedRampEnabled && (self.sessionWordsReadCount % self.config.speedRampIntervalWords == 0) {

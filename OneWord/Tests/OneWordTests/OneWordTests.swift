@@ -557,5 +557,251 @@ final class OneWordTests: XCTestCase {
         XCTAssertFalse(vm.isTranslationActive)
         XCTAssertEqual(vm.currentWord, "Focus")
     }
+    
+    @MainActor
+    func testDocumentTranslationAndLanguageDetection() {
+        let englishText = "The ability to perform deep work is becoming increasingly rare at exactly the same time it is becoming increasingly valuable in our economy."
+        let words = englishText.split(separator: " ").map(String.init)
+        
+        let doc = Document(title: "Deep Work Article", rawText: englishText, words: words)
+        
+        XCTAssertTrue(doc.isForeignLanguage)
+        XCTAssertEqual(doc.detectedLanguageCode, "en")
+        XCTAssertEqual(doc.detectedLanguageInfo.name, "Inglês")
+        XCTAssertEqual(doc.detectedLanguageInfo.flag, "🇺🇸")
+        XCTAssertFalse(doc.hasTranslation)
+        XCTAssertFalse(doc.isTranslationActive)
+        XCTAssertEqual(doc.totalWords, words.count)
+        
+        // Aplica tradução
+        let portugueseText = "A habilidade de realizar trabalho focado está se tornando cada vez mais rara exatamente no mesmo momento em que se torna mais valiosa."
+        let ptWords = portugueseText.split(separator: " ").map(String.init)
+        doc.applyTranslation(text: portugueseText, words: ptWords)
+        
+        XCTAssertTrue(doc.hasTranslation)
+        XCTAssertTrue(doc.isTranslationActive)
+        XCTAssertEqual(doc.totalWords, ptWords.count)
+        XCTAssertEqual(doc.activeWords.first, "A")
+        
+        // Desativa tradução
+        doc.toggleTranslation(active: false)
+        XCTAssertFalse(doc.isTranslationActive)
+        XCTAssertEqual(doc.totalWords, words.count)
+        XCTAssertEqual(doc.activeWords.first, "The")
+    }
+    
+    @MainActor
+    func testRSVPReaderViewModelDocumentAutoTranslation() {
+        let englishText = "Focus is the new superpower."
+        let words = ["Focus", "is", "the", "new", "superpower."]
+        let doc = Document(title: "Superpower Article", rawText: englishText, words: words)
+        
+        let vm = RSVPReaderViewModel(document: doc, initialWPM: 300)
+        XCTAssertTrue(vm.isForeignLanguage)
+        XCTAssertEqual(vm.originalLanguageFlag, "🇺🇸")
+        XCTAssertFalse(vm.hasTranslation)
+        XCTAssertFalse(vm.isTranslationActive)
+        
+        // Dispara tradução instantânea via toggle
+        vm.toggleTranslation()
+        XCTAssertTrue(vm.hasTranslation)
+        XCTAssertTrue(vm.isTranslationActive)
+        XCTAssertEqual(vm.currentWord, "Foco")
+        
+        // Alterna de volta para o original
+        vm.toggleTranslation()
+        XCTAssertFalse(vm.isTranslationActive)
+        XCTAssertEqual(vm.currentWord, "Focus")
+    }
+    
+    // MARK: - Testes da Fase 4: Ingestão de Novos Formatos (ePub & Web)
+    
+    func testEPUBParserHTMLCleaningAndEntityDecoding() {
+        let parser = EPUBParser()
+        let sampleHTML = """
+        <html>
+        <head><title>Capítulo Teste</title><style>.hidden { display: none; }</style></head>
+        <body>
+            <script>console.log('ignored');</script>
+            <h1>O Poder do Hábito</h1>
+            <p>Ler &amp; aprender &mdash; um processo cont&iacute;nuo.</p>
+            <p>Palavra &quot;chave&quot; no RSVP.</p>
+        </body>
+        </html>
+        """
+        
+        let cleaned = parser.extractCleanText(fromHTML: sampleHTML)
+        XCTAssertFalse(cleaned.contains("<script>"))
+        XCTAssertFalse(cleaned.contains("<style>"))
+        XCTAssertFalse(cleaned.contains("&amp;"))
+        XCTAssertTrue(cleaned.contains("Ler & aprender — um processo contínuo."))
+        XCTAssertTrue(cleaned.contains("Palavra \"chave\" no RSVP."))
+    }
+    
+    @MainActor
+    func testEPUBImportServicePlainTextImport() throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: Book.self, BookPage.self, ReadingSession.self, configurations: config)
+        let context = container.mainContext
+        
+        let sampleText = """
+        Capítulo Primeiro.
+        Este é um texto importado com sucesso para a biblioteca do OneWord.
+        Cada capítulo gera páginas foveais confortáveis para o motor RSVP.
+        """
+        
+        let book = try EPUBImportService().importPlainText(text: sampleText, title: "Ensaio Foveal", author: "Pesquisador", context: context)
+        
+        XCTAssertEqual(book.title, "Ensaio Foveal")
+        XCTAssertEqual(book.author, "Pesquisador")
+        XCTAssertFalse(book.pages.isEmpty)
+        XCTAssertGreaterThan(book.totalWords, 0)
+    }
+    
+    func testWebArticleExtractorFromHTML() {
+        let extractor = WebArticleExtractor()
+        let articleHTML = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta property="og:title" content="A Revolução da Atenção Foveal" />
+            <meta name="author" content="Dr. Silveira" />
+        </head>
+        <body>
+            <nav><a href="/home">Home</a></nav>
+            <article>
+                <h1>A Revolução da Atenção Foveal</h1>
+                <p>A fóvea representa o ponto crítico de acuidade da retina humana.</p>
+                <p>Eliminando a dispersão sacádica, a velocidade de leitura dispara.</p>
+            </article>
+            <footer>Copyright 2026</footer>
+        </body>
+        </html>
+        """
+        
+        let article = extractor.extract(fromHTML: articleHTML)
+        XCTAssertEqual(article.title, "A Revolução da Atenção Foveal")
+        XCTAssertEqual(article.author, "Dr. Silveira")
+        XCTAssertTrue(article.words.contains("fóvea"))
+        XCTAssertTrue(article.words.contains("retina"))
+        XCTAssertFalse(article.words.contains("Copyright"))
+        XCTAssertGreaterThan(article.wordCount, 10)
+    }
+    
+    // MARK: - Testes da Fase 4: Ergonomia Cognitiva & Smart WPM
+    
+    func testAdaptiveReadingPacerCognitiveLoad() {
+        let pacer = AdaptiveReadingPacer()
+        
+        // Palavra curta comum ("de") vs palavra longa ("extraordinariamente")
+        let shortWordFactor = pacer.cognitiveLoadMultiplier(for: "de")
+        let longWordFactor = pacer.cognitiveLoadMultiplier(for: "extraordinariamente")
+        XCTAssertLessThan(shortWordFactor, longWordFactor)
+        
+        // Pontuação forte (ponto final) vs palavra intermediária
+        let commaFactor = pacer.cognitiveLoadMultiplier(for: "pausa,")
+        let periodFactor = pacer.cognitiveLoadMultiplier(for: "conclusão.")
+        XCTAssertGreaterThan(periodFactor, commaFactor)
+        
+        // Número com dígitos
+        let numberFactor = pacer.cognitiveLoadMultiplier(for: "2026")
+        XCTAssertGreaterThan(numberFactor, 1.0)
+        
+        // Duração adaptativa calculada
+        let durShort = pacer.duration(for: "o", baseWPM: 300, isSmartWPMEnabled: true)
+        let durLong = pacer.duration(for: "extraordinariamente.", baseWPM: 300, isSmartWPMEnabled: true)
+        XCTAssertLessThan(durShort, durLong)
+    }
+    
+    @MainActor
+    func testRSVPEngineMultiWordChunking() {
+        var config = RSVPConfiguration(wpm: 300)
+        config.chunkSize = 2
+        
+        let engine = RSVPEngine(config: config)
+        let words = ["A", "leitura", "acelerada", "amplia", "o", "foco."]
+        engine.load(words: words)
+        
+        XCTAssertEqual(engine.currentChunkWords, ["A", "leitura"])
+        XCTAssertEqual(engine.currentChunkText, "A leitura")
+        
+        // Avança 2 palavras (tamanho do chunk)
+        engine.seek(to: 2)
+        XCTAssertEqual(engine.currentChunkWords, ["acelerada", "amplia"])
+        
+        // Avança para o final
+        engine.seek(to: 4)
+        XCTAssertEqual(engine.currentChunkWords, ["o", "foco."])
+    }
+    
+    // MARK: - Testes da Fase 4: Hábitos, Streaks & Benchmark
+    
+    @MainActor
+    func testReadingHabitTrackerStreakCalculation() {
+        let tracker = ReadingHabitTracker()
+        
+        let calendar = Calendar.current
+        let today = Date()
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        let twoDaysAgo = calendar.date(byAdding: .day, value: -2, to: today)!
+        
+        let session1 = ReadingSession(date: today, durationSeconds: 300, wordsRead: 1500, averageWPM: 300, documentTitle: "Doc 1")
+        let session2 = ReadingSession(date: yesterday, durationSeconds: 240, wordsRead: 1200, averageWPM: 300, documentTitle: "Doc 2")
+        let session3 = ReadingSession(date: twoDaysAgo, durationSeconds: 180, wordsRead: 900, averageWPM: 300, documentTitle: "Doc 3")
+        
+        let streak = tracker.calculateStreak(from: [session1, session2, session3])
+        XCTAssertEqual(streak, 3)
+        
+        let wordsToday = tracker.wordsReadToday(from: [session1, session2, session3])
+        XCTAssertEqual(wordsToday, 1500)
+    }
+    
+    @MainActor
+    func testReadingHabitTrackerAchievements() {
+        let tracker = ReadingHabitTracker()
+        
+        let session = ReadingSession(date: Date(), durationSeconds: 600, wordsRead: 6000, averageWPM: 400, documentTitle: "Livro 1")
+        let achievements = tracker.evaluateAchievements(sessions: [session])
+        
+        let firstFocus = achievements.first(where: { $0.id == "first_focus" })
+        XCTAssertEqual(firstFocus?.isUnlocked, true)
+        
+        let barrier350 = achievements.first(where: { $0.id == "barrier_350" })
+        XCTAssertEqual(barrier350?.isUnlocked, true)
+        
+        let words5k = achievements.first(where: { $0.id == "words_5k" })
+        XCTAssertEqual(words5k?.isUnlocked, true)
+    }
+    
+    @MainActor
+    func testWPMBenchmarkScoringAndEffectiveWPM() {
+        let vm = WPMBenchmarkViewModel(initialWPM: 400)
+        
+        // Responde todas as 4 perguntas corretamente
+        vm.selectAnswer(questionId: 1, optionIndex: 0)
+        vm.selectAnswer(questionId: 2, optionIndex: 1)
+        vm.selectAnswer(questionId: 3, optionIndex: 0)
+        vm.selectAnswer(questionId: 4, optionIndex: 0)
+        
+        XCTAssertTrue(vm.isAllQuestionsAnswered)
+        XCTAssertEqual(vm.correctAnswersCount, 4)
+        XCTAssertEqual(vm.accuracyPercentage, 1.0)
+        XCTAssertEqual(vm.effectiveWPM, 400)
+        
+        vm.finishBenchmark()
+        XCTAssertEqual(vm.currentStage, .results)
+        
+        // Simula 2 acertos de 4 (50%)
+        let vmPartial = WPMBenchmarkViewModel(initialWPM: 400)
+        vmPartial.selectAnswer(questionId: 1, optionIndex: 0)
+        vmPartial.selectAnswer(questionId: 2, optionIndex: 0) // Errada
+        vmPartial.selectAnswer(questionId: 3, optionIndex: 0)
+        vmPartial.selectAnswer(questionId: 4, optionIndex: 1) // Errada
+        
+        XCTAssertEqual(vmPartial.correctAnswersCount, 2)
+        XCTAssertEqual(vmPartial.accuracyPercentage, 0.5)
+        XCTAssertEqual(vmPartial.effectiveWPM, 200)
+    }
 }
+
 

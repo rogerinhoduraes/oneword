@@ -78,17 +78,26 @@ public struct ReaderSettings: Sendable, Equatable {
     public var font: ReaderFont = .rounded
     public var fontSize: CGFloat = 46.0
     public var showORPNotch: Bool = true
+    public var smartWPMEnabled: Bool = true
+    public var chunkSize: Int = 1
+    public var bimodalAudioEnabled: Bool = false
     
     public init(
         theme: ReaderTheme = .system,
         font: ReaderFont = .rounded,
         fontSize: CGFloat = 46.0,
-        showORPNotch: Bool = true
+        showORPNotch: Bool = true,
+        smartWPMEnabled: Bool = true,
+        chunkSize: Int = 1,
+        bimodalAudioEnabled: Bool = false
     ) {
         self.theme = theme
         self.font = font
         self.fontSize = fontSize
         self.showORPNotch = showORPNotch
+        self.smartWPMEnabled = smartWPMEnabled
+        self.chunkSize = min(max(chunkSize, 1), 3)
+        self.bimodalAudioEnabled = bimodalAudioEnabled
     }
 }
 

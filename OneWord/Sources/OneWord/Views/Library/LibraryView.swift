@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 /// Tela principal da Biblioteca do OneWord.
 /// Oferece estante de Livros estilo Apple Books (com capas físicas escaneadas ou tipográficas,
@@ -19,6 +20,8 @@ public struct LibraryView: View {
     @State private var viewModel = LibraryViewModel()
     @State private var libraryTab: LibraryTab = .books
     @State private var isShowingAddBookSheet: Bool = false
+    @State private var isShowingEPUBPicker: Bool = false
+    @State private var isShowingQuickImportSheet: Bool = false
     @State private var selectedBookForNavigation: Book?
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
@@ -61,8 +64,22 @@ public struct LibraryView: View {
                         Button {
                             isShowingAddBookSheet = true
                         } label: {
-                            Label("Novo Livro", systemImage: "book.badge.plus")
+                            Label("Novo Livro Físico", systemImage: "book.badge.plus")
                         }
+                        
+                        Button {
+                            isShowingEPUBPicker = true
+                        } label: {
+                            Label("Importar Livro Digital (.epub / .txt)", systemImage: "arrow.down.doc.fill")
+                        }
+                        
+                        Button {
+                            isShowingQuickImportSheet = true
+                        } label: {
+                            Label("Importar Artigo Web ou Texto", systemImage: "link.badge.plus")
+                        }
+                        
+                        Divider()
                         
                         Button {
                             viewModel.isShowingScannerSheet = true
@@ -81,9 +98,29 @@ public struct LibraryView: View {
                     self.selectedBookForNavigation = newBook
                 }
             }
+            .sheet(isPresented: $isShowingQuickImportSheet) {
+                QuickImportSheetView { newDoc in
+                    viewModel.selectedDocumentForReading = newDoc
+                }
+            }
             .sheet(isPresented: $viewModel.isShowingScannerSheet) {
                 DocumentScannerView { newDoc in
                     viewModel.selectedDocumentForReading = newDoc
+                }
+            }
+            .fileImporter(
+                isPresented: $isShowingEPUBPicker,
+                allowedContentTypes: [.epub, .plainText],
+                allowsMultipleSelection: false
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    guard let url = urls.first else { return }
+                    if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
+                        self.selectedBookForNavigation = newBook
+                    }
+                case .failure:
+                    break
                 }
             }
             #if os(iOS)
@@ -269,6 +306,38 @@ public struct LibraryView: View {
                             .onTapGesture {
                                 viewModel.selectedDocumentForReading = document
                             }
+                            .contextMenu {
+                                Button {
+                                    viewModel.selectedDocumentForReading = document
+                                } label: {
+                                    Label("Ler com RSVP", systemImage: "play.fill")
+                                }
+                                
+                                if document.isForeignLanguage {
+                                    Button {
+                                        translateOrToggleDocument(document)
+                                    } label: {
+                                        Label(
+                                            document.hasTranslation ? (document.isTranslationActive ? "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))" : "Exibir em Português 🇧🇷") : "Traduzir para Português 🇧🇷",
+                                            systemImage: "character.bubble"
+                                        )
+                                    }
+                                }
+                                
+                                Button {
+                                    viewModel.resetProgress(for: document)
+                                } label: {
+                                    Label("Reiniciar Leitura", systemImage: "arrow.counterclockwise")
+                                }
+                                
+                                Divider()
+                                
+                                Button(role: .destructive) {
+                                    viewModel.deleteDocument(document, in: modelContext)
+                                } label: {
+                                    Label("Excluir", systemImage: "trash")
+                                }
+                            }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
                                     viewModel.deleteDocument(document, in: modelContext)
@@ -277,6 +346,18 @@ public struct LibraryView: View {
                                 }
                             }
                             .swipeActions(edge: .leading) {
+                                if document.isForeignLanguage {
+                                    Button {
+                                        translateOrToggleDocument(document)
+                                    } label: {
+                                        Label(
+                                            document.hasTranslation ? (document.isTranslationActive ? "Ver Original" : "Ver em Português") : "Traduzir",
+                                            systemImage: "character.bubble"
+                                        )
+                                    }
+                                    .tint(.indigo)
+                                }
+                                
                                 Button {
                                     viewModel.resetProgress(for: document)
                                 } label: {
@@ -329,6 +410,29 @@ public struct LibraryView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 
+                if document.isForeignLanguage {
+                    Button {
+                        translateOrToggleDocument(document)
+                    } label: {
+                        HStack(spacing: 3) {
+                            if document.isTranslationActive {
+                                Text("🇧🇷 Traduzido")
+                            } else if document.hasTranslation {
+                                Text("\(document.detectedLanguageInfo.flag) Original")
+                            } else {
+                                Text("\(document.detectedLanguageInfo.flag) Traduzir 🇧🇷")
+                            }
+                        }
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(document.isTranslationActive ? Color.green.opacity(0.18) : Color.indigo.opacity(0.14))
+                        .foregroundStyle(document.isTranslationActive ? Color.green : Color.indigo)
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.borderless)
+                }
+                
                 Spacer()
                 
                 let remaining = document.remainingReadingTimeMinutes(wpm: 300)
@@ -370,8 +474,25 @@ public struct LibraryView: View {
             }
             .padding(.top, 8)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
+    }
+    
+    // MARK: - Ações de Tradução de Artigos
+    
+    private func translateOrToggleDocument(_ document: Document) {
+        if !document.hasTranslation {
+            let lang = document.detectedLanguageCode ?? "en"
+            if let content = document.content {
+                let translated = BookTranslationFallback.translate(text: content.rawText, from: lang)
+                let parser = TextParser()
+                let parsed = parser.parse(rawText: translated)
+                document.applyTranslation(text: translated, words: parsed.words)
+                document.toggleTranslation(active: true)
+                try? modelContext.save()
+            }
+        } else {
+            document.toggleTranslation(active: !document.isTranslationActive)
+            try? modelContext.save()
+        }
     }
 }
 

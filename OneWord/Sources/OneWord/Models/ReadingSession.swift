@@ -56,6 +56,10 @@ public final class ReadingSession {
         self.book = book
     }
     
+    /// Aliases para integração com telemetria e metas de leitura
+    public var startedAt: Date { date }
+    public var wpm: Int { averageWPM }
+    
     /// Tempo que uma pessoa média (lendo a 200 WPM) levaria para ler essas mesmas palavras.
     public var baselineDurationSeconds: Double {
         let baselineWPM = 200.0

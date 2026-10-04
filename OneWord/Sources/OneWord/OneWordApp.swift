@@ -121,6 +121,26 @@ public struct OneWordApp: App {
                     try? context.save()
                 }
                 
+                // Seed de Artigo Internacional em Inglês para testar tradução de artigos
+                let currentDocs = (try? context.fetch(FetchDescriptor<Document>())) ?? []
+                if !currentDocs.contains(where: { $0.title == "How to Do Great Work" }) {
+                    let parser = TextParser()
+                    let docENText = """
+                    If you want to do great work, the most important thing is to choose a problem you have a natural aptitude for and a deep interest in.
+                    There is an immense amount of ambition in the world, but focused effort directed toward meaningful problems is exceptionally rare.
+                    By cultivating consistent habits and eliminating peripheral noise, your ability to create lasting value expands exponentially.
+                    """
+                    let (_, docENWords) = parser.parse(rawText: docENText)
+                    let docEN = Document(
+                        title: "How to Do Great Work",
+                        rawText: docENText,
+                        words: docENWords,
+                        originalLanguage: "en"
+                    )
+                    context.insert(docEN)
+                    try? context.save()
+                }
+                
                 // Seed de sessões de demonstração se não houver nenhuma
                 let sessionCount = (try? context.fetchCount(FetchDescriptor<ReadingSession>())) ?? 0
                 if sessionCount == 0 {

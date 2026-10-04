@@ -208,7 +208,7 @@ public struct BookDetailView: View {
     // MARK: - Ações de Tradução
     
     private func triggerTranslation() {
-        #if canImport(Translation)
+        #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(iOS 17.4, macOS 15.0, *) {
             isProcessing = true
             processingProgressText = "Preparando tradução para Português..."
