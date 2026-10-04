@@ -61,7 +61,7 @@ public struct LibraryView: View {
                         Button {
                             isShowingAddBookSheet = true
                         } label: {
-                            Label("Novo Livro", systemImage: "book.closed.badge.plus")
+                            Label("Novo Livro", systemImage: "book.badge.plus")
                         }
                         
                         Button {
@@ -232,7 +232,7 @@ public struct LibraryView: View {
             Button {
                 isShowingAddBookSheet = true
             } label: {
-                Label("Adicionar Meu Primeiro Livro", systemImage: "book.closed.badge.plus")
+                Label("Adicionar Meu Primeiro Livro", systemImage: "book.badge.plus")
                     .font(.headline)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 14)
