@@ -22,8 +22,8 @@ public struct BookDetailView: View {
     @Bindable public var book: Book
     
     // Controle de Leitura RSVP
-    @State private var readingReaderViewModel: RSVPReaderViewModel?
     @State private var isShowingReader: Bool = false
+    @State private var readingStartPage: Int? = nil
     
     // Escaneamento de Páginas
     @State private var isShowingDocumentScanner: Bool = false
@@ -120,15 +120,19 @@ public struct BookDetailView: View {
         }
         #if os(iOS)
         .fullScreenCover(isPresented: $isShowingReader) {
-            if let readingReaderViewModel {
-                RSVPReaderView(viewModel: readingReaderViewModel)
-            }
+            RSVPReaderView(
+                book: book,
+                startPageNumber: readingStartPage,
+                modelContext: modelContext
+            )
         }
         #else
         .sheet(isPresented: $isShowingReader) {
-            if let readingReaderViewModel {
-                RSVPReaderView(viewModel: readingReaderViewModel)
-            }
+            RSVPReaderView(
+                book: book,
+                startPageNumber: readingStartPage,
+                modelContext: modelContext
+            )
         }
         #endif
         #if canImport(VisionKit) && canImport(UIKit)
@@ -172,12 +176,7 @@ public struct BookDetailView: View {
     // MARK: - Ações de Leitura & Processamento
     
     private func startReading(fromPage pageNumber: Int?) {
-        let vm = RSVPReaderViewModel(
-            book: book,
-            startPageNumber: pageNumber,
-            modelContext: modelContext
-        )
-        self.readingReaderViewModel = vm
+        self.readingStartPage = pageNumber
         self.isShowingReader = true
     }
     

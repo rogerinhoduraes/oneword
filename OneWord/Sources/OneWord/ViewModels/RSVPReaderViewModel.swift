@@ -232,16 +232,21 @@ public final class RSVPReaderViewModel {
     private let diskSaveInterval: Int = 30 // Salva no disco a cada 30 palavras para evitar I/O excessivo
     
     private func persistProgress(to index: Int, forceDiskSave: Bool = false) {
-        if let book {
-            book.updateProgress(to: index)
-        } else if let document {
-            document.updateProgress(to: index)
-        }
-        
         wordsSinceLastDiskSave += 1
         
+        // Atualiza e persiste nos modelos SwiftData apenas em checkpoints
+        // (a cada 30 palavras, ao pausar, retroceder, avançar, sair ou concluir).
+        // Isso previne que a estante da biblioteca e a tela de detalhes do livro
+        // fiquem disparando reavaliações do SwiftUI 10 vezes por segundo durante a leitura.
         if forceDiskSave || wordsSinceLastDiskSave >= diskSaveInterval || engine.isCompleted {
             wordsSinceLastDiskSave = 0
+            
+            if let book {
+                book.updateProgress(to: index)
+            } else if let document {
+                document.updateProgress(to: index)
+            }
+            
             if let modelContext {
                 try? modelContext.save()
             }
