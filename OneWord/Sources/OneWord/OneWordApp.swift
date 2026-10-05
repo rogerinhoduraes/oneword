@@ -204,6 +204,10 @@ public struct OneWordApp: App {
                     OneWordLocalServer.shared.start(context: sharedModelContainer.mainContext)
                     #endif
                 }
+                .task {
+                    await PurchaseManager.shared.prepare()
+                    await AdConsentManager.shared.start()
+                }
                 .onOpenURL { url in
                     Task { @MainActor in
                         do {

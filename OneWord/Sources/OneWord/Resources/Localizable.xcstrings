@@ -10115,6 +10115,210 @@
           }
         }
       }
+    },
+    "Remover anúncios": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove ads"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar anuncios"
+          }
+        }
+      }
+    },
+    "Não foi possível carregar a compra. Tente novamente.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load the purchase. Please try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo cargar la compra. Inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "A compra não foi concluída.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The purchase wasn't completed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compra no se completó."
+          }
+        }
+      }
+    },
+    "Nenhuma compra encontrada para restaurar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No purchases found to restore."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontraron compras para restaurar."
+          }
+        }
+      }
+    },
+    "Não foi possível restaurar as compras.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't restore purchases."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron restaurar las compras."
+          }
+        }
+      }
+    },
+    "Anúncios": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ads"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuncios"
+          }
+        }
+      }
+    },
+    "Anúncios removidos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ads removed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuncios eliminados"
+          }
+        }
+      }
+    },
+    "Obrigado por apoiar o OneWord! Você não verá mais anúncios.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you for supporting OneWord! You won't see ads anymore."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Gracias por apoyar OneWord! Ya no verás anuncios."
+          }
+        }
+      }
+    },
+    "O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. Com uma compra única, ele some para sempre. O leitor nunca tem anúncios.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord is free and shows a small banner in the Library and Stats. With a one-time purchase, it goes away for good. The reader never shows ads."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord es gratis y muestra un pequeño banner en la Biblioteca y en las Estadísticas. Con una compra única, desaparece para siempre. El lector nunca muestra anuncios."
+          }
+        }
+      }
+    },
+    "Restaurar compras": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore Purchases"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        }
+      }
+    },
+    "Opções de privacidade de anúncios": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ad privacy options"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opciones de privacidad de anuncios"
+          }
+        }
+      }
+    },
+    "Remover anúncios por %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove ads for %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar anuncios por %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

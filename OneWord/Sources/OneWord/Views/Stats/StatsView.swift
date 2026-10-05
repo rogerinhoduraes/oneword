@@ -39,6 +39,7 @@ public struct StatsView: View {
     @State private var chartMetric: ChartMetric = .words
     @State private var isShowingBenchmark: Bool = false
     @State private var isShowingReadingGuide: Bool = false
+    @State private var isShowingRemoveAds: Bool = false
     
     public enum ChartMetric: String, CaseIterable, Identifiable {
         case words = "Palavras"
@@ -85,9 +86,16 @@ public struct StatsView: View {
                     
                     // 7. Histórico Recente de Sessões
                     recentSessionsSection
+                    
+                    Button("Remover anúncios") {
+                        isShowingRemoveAds = true
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 }
                 .padding(.vertical)
             }
+            .adBannerInset(unitID: AdConfig.statsBannerUnitID)
             .background(Color.statsBackground)
             .navigationTitle("Estatísticas")
             .toolbar {
@@ -99,6 +107,9 @@ public struct StatsView: View {
                     }
                     .help("Guia: Técnicas de Leitura & Recursos")
                 }
+            }
+            .sheet(isPresented: $isShowingRemoveAds) {
+                RemoveAdsView()
             }
             .sheet(isPresented: $isShowingBenchmark) {
                 WPMBenchmarkView()

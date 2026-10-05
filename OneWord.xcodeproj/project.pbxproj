@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1C0FFEE0000000000000E04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */; };
+		A1C0FFEE0000000000000E03 /* Sources/OneWord/Views/Ads/AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */; };
+		A1C0FFEE0000000000000E02 /* Sources/OneWord/Services/Store/PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */; };
+		A1C0FFEE0000000000000E01 /* Sources/OneWord/Services/Ads/AdConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D01 /* Sources/OneWord/Services/Ads/AdConsentManager.swift */; };
+		A1C0FFEE0000000000000E00 /* Sources/OneWord/Services/Ads/AdConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D00 /* Sources/OneWord/Services/Ads/AdConfig.swift */; };
 		A1C0FFEE00000000000000C3 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0FFEE00000000000000C2 /* GoogleMobileAds */; };
 		A1C0FFEE00000000000000B2 /* Sources/OneWord/Resources/InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */; };
 		A1C0FFEE00000000000000B1 /* Sources/OneWord/Resources/Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */; };
@@ -82,6 +87,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Views/Ads/RemoveAdsView.swift; sourceTree = "<group>"; };
+		A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Views/Ads/AdBannerView.swift; sourceTree = "<group>"; };
+		A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/Store/PurchaseManager.swift; sourceTree = "<group>"; };
+		A1C0FFEE0000000000000D01 /* Sources/OneWord/Services/Ads/AdConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/Ads/AdConsentManager.swift; sourceTree = "<group>"; };
+		A1C0FFEE0000000000000D00 /* Sources/OneWord/Services/Ads/AdConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/Ads/AdConfig.swift; sourceTree = "<group>"; };
 		A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Sources/OneWord/Resources/InfoPlist.xcstrings; sourceTree = "<group>"; };
 		A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Sources/OneWord/Resources/Localizable.xcstrings; sourceTree = "<group>"; };
 		00D045766F544FE5A31EE1F5 /* Sources/OneWord/ViewModels/RSVPReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/ViewModels/RSVPReaderViewModel.swift; sourceTree = "<group>"; };
@@ -182,6 +192,11 @@
 				A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */,
 				A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */,
 				B893BF358C574E8BB62B2FAA /* Sources/OneWord/Resources/Assets.xcassets */,
+				A1C0FFEE0000000000000D00 /* Sources/OneWord/Services/Ads/AdConfig.swift */,
+				A1C0FFEE0000000000000D01 /* Sources/OneWord/Services/Ads/AdConsentManager.swift */,
+				A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */,
+				A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */,
+				A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */,
 				11ECAAB3A36B4FC8B1A0856C /* Sources/OneWord/OneWordApp.swift */,
 				5A26880F1B7F43FAA719F0C2 /* Sources/OneWord/ViewModels/DocumentScannerViewModel.swift */,
 				B7100D8E0A624CA9B08DF176 /* Sources/OneWord/ViewModels/LibraryViewModel.swift */,
@@ -341,6 +356,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C0FFEE0000000000000E04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift in Sources */,
+				A1C0FFEE0000000000000E03 /* Sources/OneWord/Views/Ads/AdBannerView.swift in Sources */,
+				A1C0FFEE0000000000000E02 /* Sources/OneWord/Services/Store/PurchaseManager.swift in Sources */,
+				A1C0FFEE0000000000000E01 /* Sources/OneWord/Services/Ads/AdConsentManager.swift in Sources */,
+				A1C0FFEE0000000000000E00 /* Sources/OneWord/Services/Ads/AdConfig.swift in Sources */,
 				14FC6C1C319D4E889F30D167 /* Sources/OneWord/OneWordApp.swift in Sources */,
 				1F0D634391BE46D3978A7797 /* Sources/OneWord/ViewModels/DocumentScannerViewModel.swift in Sources */,
 				3E4E9BF96B0D4A47B6FA47F7 /* Sources/OneWord/ViewModels/LibraryViewModel.swift in Sources */,
@@ -483,6 +503,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oneword.rsvp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -563,6 +584,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oneword.rsvp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -24,6 +24,7 @@ public struct LibraryView: View {
     @State private var isShowingQuickImportSheet: Bool = false
     @State private var isShowingFlashcardReview: Bool = false
     @State private var isShowingReadingGuide: Bool = false
+    @State private var isShowingRemoveAds: Bool = false
     @State private var selectedBookForNavigation: Book?
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
@@ -58,6 +59,7 @@ public struct LibraryView: View {
                     }
                 }
             }
+            .adBannerInset(unitID: AdConfig.libraryBannerUnitID)
             .navigationTitle("OneWord")
             .searchable(text: $viewModel.searchText, prompt: "Buscar na biblioteca...")
             .toolbar {
@@ -106,12 +108,23 @@ public struct LibraryView: View {
                         } label: {
                             Label("Guia: Técnicas & Recursos", systemImage: "brain.head.profile")
                         }
+                        
+                        Divider()
+                        
+                        Button {
+                            isShowingRemoveAds = true
+                        } label: {
+                            Label("Remover anúncios", systemImage: "nosign")
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
                             .foregroundStyle(.blue)
                     }
                 }
+            }
+            .sheet(isPresented: $isShowingRemoveAds) {
+                RemoveAdsView()
             }
             .sheet(isPresented: $isShowingFlashcardReview) {
                 FlashcardReviewView()
