@@ -162,19 +162,19 @@ public final class RSVPReaderViewModel {
     
     /// Título do item em leitura.
     public var title: String {
-        book?.title ?? document?.title ?? "Leitura"
+        book?.title ?? document?.title ?? String(localized: "Leitura")
     }
     
     /// Subtítulo descritivo de posição (ex: página do livro).
     public var subtitle: String {
         if let book {
             let livePage = book.pageInfo(forGlobalWordIndex: engine.currentIndex)?.page.pageNumber ?? book.currentPageNumber
-            return "Página \(livePage) de \(max(1, book.totalPages))"
+            return String(localized: "Página \(livePage) de \(max(1, book.totalPages))")
         } else if let document {
             if document.isTranslationActive {
-                return "🇧🇷 Português (Traduzido)"
+                return String(localized: "🇧🇷 Português (Traduzido)")
             } else if document.isForeignLanguage {
-                return "\(document.detectedLanguageInfo.flag) \(document.detectedLanguageInfo.name) (Original)"
+                return String(localized: "\(document.detectedLanguageInfo.flag) \(document.detectedLanguageInfo.name) (Original)")
             }
         }
         return ""
@@ -230,7 +230,7 @@ public final class RSVPReaderViewModel {
     public var originalLanguageName: String {
         if let book { return book.detectedLanguageInfo.name }
         if let document { return document.detectedLanguageInfo.name }
-        return "Original"
+        return String(localized: "Original")
     }
     
     /// Traduz instantaneamente o item atual para Português e ativa o modo traduzido mantendo a posição.
@@ -344,9 +344,9 @@ public final class RSVPReaderViewModel {
         let minutes = engine.remainingMinutes
         if minutes < 1.0 {
             let seconds = Int(minutes * 60)
-            return "\(max(1, seconds)) seg rest."
+            return String(localized: "\(max(1, seconds)) seg rest.")
         } else {
-            return String(format: "%.1f min rest.", minutes)
+            return String(format: String(localized: "%.1f min rest."), minutes)
         }
     }
     

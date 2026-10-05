@@ -59,7 +59,7 @@ public final class EPUBParser: Sendable {
     public func parse(data: Data) throws -> EPUBBook {
         let zipEntries = try unzipEntries(from: data)
         guard !zipEntries.isEmpty else {
-            throw EPUBError.invalidArchive("Arquivo ePub vazio ou corrompido.")
+            throw EPUBError.invalidArchive(String(localized: "Arquivo ePub vazio ou corrompido."))
         }
         
         // 1. Localiza META-INF/container.xml para descobrir o arquivo .opf
@@ -82,7 +82,7 @@ public final class EPUBParser: Sendable {
         let opfString = String(data: opfData, encoding: .utf8) ?? String(decoding: opfData, as: UTF8.self)
         
         let title = extractRegexValue(pattern: "<dc:title[^>]*>([^<]+)</dc:title>", from: opfString) ?? "Livro Digital"
-        let author = extractRegexValue(pattern: "<dc:creator[^>]*>([^<]+)</dc:creator>", from: opfString) ?? "Autor Desconhecido"
+        let author = extractRegexValue(pattern: "<dc:creator[^>]*>([^<]+)</dc:creator>", from: opfString) ?? String(localized: "Autor Desconhecido")
         
         // 3. Analisa Manifest e Spine
         let manifest = parseManifest(from: opfString)
@@ -111,7 +111,7 @@ public final class EPUBParser: Sendable {
             
             guard !words.isEmpty else { continue }
             
-            let chapterTitle = extractChapterTitle(fromHTML: chapterHtml) ?? "Capítulo \(index + 1)"
+            let chapterTitle = extractChapterTitle(fromHTML: chapterHtml) ?? String(localized: "Capítulo \(index + 1)")
             
             chapters.append(EPUBChapter(
                 title: chapterTitle,
@@ -438,13 +438,13 @@ public enum EPUBError: LocalizedError, Sendable {
     public var errorDescription: String? {
         switch self {
         case .invalidArchive(let msg):
-            return "Arquivo ePub inválido: \(msg)"
+            return String(localized: "Arquivo ePub inválido: \(msg)")
         case .missingContainerXML:
-            return "Estrutura ePub corrompida: META-INF/container.xml não encontrado."
+            return String(localized: "Estrutura ePub corrompida: META-INF/container.xml não encontrado.")
         case .missingOPFFile:
-            return "Arquivo de metadados (.opf) não encontrado no pacote ePub."
+            return String(localized: "Arquivo de metadados (.opf) não encontrado no pacote ePub.")
         case .noReadableChapters:
-            return "Nenhum capítulo legível encontrado no livro digital."
+            return String(localized: "Nenhum capítulo legível encontrado no livro digital.")
         }
     }
 }

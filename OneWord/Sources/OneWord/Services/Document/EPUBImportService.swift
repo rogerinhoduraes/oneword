@@ -51,7 +51,7 @@ public final class EPUBImportService: Sendable {
         
         let book = Book(
             title: effectiveTitle,
-            author: epubBook.author.isEmpty ? "Autor Desconhecido" : epubBook.author,
+            author: epubBook.author.isEmpty ? String(localized: "Autor Desconhecido") : epubBook.author,
             coverImageData: epubBook.coverImageData,
             coverThemeColor: randomThemeColor()
         )

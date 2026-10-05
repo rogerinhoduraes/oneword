@@ -251,7 +251,7 @@ public struct BookDetailView: View {
         #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(iOS 17.4, macOS 15.0, *) {
             isProcessing = true
-            processingProgressText = "Preparando tradução para Português..."
+            processingProgressText = String(localized: "Preparando tradução para Português...")
             isTranslationTriggered.toggle()
             return
         }
@@ -264,7 +264,7 @@ public struct BookDetailView: View {
     private func translateWithSession(_ session: TranslationSession) async {
         await MainActor.run {
             isProcessing = true
-            processingProgressText = "Iniciando tradução..."
+            processingProgressText = String(localized: "Iniciando tradução...")
         }
         
         let parser = TextParser()
@@ -272,7 +272,7 @@ public struct BookDetailView: View {
         
         for (index, page) in book.sortedPages.enumerated() {
             await MainActor.run {
-                processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+                processingProgressText = String(localized: "Traduzindo página \(index + 1) de \(book.totalPages)...")
             }
             
             do {
@@ -307,13 +307,13 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Processando tradução para Português..."
+                processingProgressText = String(localized: "Processando tradução para Português...")
             }
             
             let parser = TextParser()
             for (index, page) in book.sortedPages.enumerated() {
                 await MainActor.run {
-                    processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+                    processingProgressText = String(localized: "Traduzindo página \(index + 1) de \(book.totalPages)...")
                 }
                 
                 let lang = book.detectedLanguageCode ?? "en"
@@ -359,14 +359,14 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Iniciando reconhecimento de texto..."
+                processingProgressText = String(localized: "Iniciando reconhecimento de texto...")
             }
             
             let ocrService = VisionOCRService()
             
             for (index, image) in images.enumerated() {
                 await MainActor.run {
-                    processingProgressText = "Processando OCR: Página \(index + 1) de \(images.count)..."
+                    processingProgressText = String(localized: "Processando OCR: Página \(index + 1) de \(images.count)...")
                 }
                 
                 do {
@@ -399,7 +399,7 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Carregando fotos da galeria..."
+                processingProgressText = String(localized: "Carregando fotos da galeria...")
             }
             
             #if canImport(UIKit)
@@ -428,7 +428,7 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Extraindo páginas do PDF..."
+                processingProgressText = String(localized: "Extraindo páginas do PDF...")
             }
             
             let pdfService = PDFImportService()
@@ -525,7 +525,7 @@ private struct BookHeaderSection: View {
                 if book.hasTranslation {
                     Text("•")
                         .foregroundStyle(.secondary)
-                    Text(book.isTranslationActive ? "Traduzido (PT)" : "Texto Original")
+                    Text(book.isTranslationActive ? String(localized: "Traduzido (PT)") : String(localized: "Texto Original"))
                         .font(.caption.bold())
                         .foregroundStyle(book.isTranslationActive ? .green : .secondary)
                 }
@@ -578,15 +578,15 @@ private struct BookHeaderSection: View {
     
     private var buttonTitle: String {
         if book.totalWords == 0 {
-            return "Escaneie páginas para ler"
+            return String(localized: "Escaneie páginas para ler")
         }
         if book.currentGlobalWordIndex == 0 {
-            return "Iniciar Leitura RSVP"
+            return String(localized: "Iniciar Leitura RSVP")
         }
         if book.isCompleted {
-            return "Ler Livro Novamente"
+            return String(localized: "Ler Livro Novamente")
         }
-        return "Continuar da Pág. \(book.currentPageNumber)"
+        return String(localized: "Continuar da Pág. \(book.currentPageNumber)")
     }
 }
 
@@ -664,7 +664,7 @@ private struct BookPagesIndexSection: View {
                 
                 Spacer()
                 
-                Text("\(book.totalPages) \(book.totalPages == 1 ? "página" : "páginas")")
+                Text("\(book.totalPages) \(book.totalPages == 1 ? String(localized: "página") : String(localized: "páginas"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -828,8 +828,8 @@ private struct BookTranslationBannerSection: View {
                     }
                     
                     Text(book.hasTranslation 
-                         ? (book.isTranslationActive ? "Leitura RSVP em Português ativada." : "Leitura RSVP no idioma original.")
-                         : "Deseja traduzir todo o conteúdo para ler via RSVP em Português?")
+                         ? (book.isTranslationActive ? String(localized: "Leitura RSVP em Português ativada.") : String(localized: "Leitura RSVP no idioma original."))
+                         : String(localized: "Deseja traduzir todo o conteúdo para ler via RSVP em Português?"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -911,24 +911,24 @@ private struct BookAISection: View {
             
             HStack(spacing: 10) {
                 aiCardButton(
-                    title: "Resumo",
-                    subtitle: "5 Pontos",
+                    title: String(localized: "Resumo"),
+                    subtitle: String(localized: "5 Pontos"),
                     systemImage: "doc.text.below.ecg",
                     color: .purple,
                     action: onSummaryTapped
                 )
                 
                 aiCardButton(
-                    title: "Flashcards",
-                    subtitle: "Mnemônica",
+                    title: String(localized: "Flashcards"),
+                    subtitle: String(localized: "Mnemônica"),
                     systemImage: "rectangle.stack.fill",
                     color: .blue,
                     action: onFlashcardsTapped
                 )
                 
                 aiCardButton(
-                    title: "Quiz",
-                    subtitle: "Retenção",
+                    title: String(localized: "Quiz"),
+                    subtitle: String(localized: "Retenção"),
                     systemImage: "checkmark.bubble.fill",
                     color: .green,
                     action: onQuizTapped

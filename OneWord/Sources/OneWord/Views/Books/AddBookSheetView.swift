@@ -54,7 +54,7 @@ public struct AddBookSheetView: View {
                     HStack {
                         Spacer()
                         BookCoverView(
-                            title: title.isEmpty ? "Título do Livro" : title,
+                            title: title.isEmpty ? String(localized: "Título do Livro") : title,
                             author: author,
                             coverImageData: coverImageData,
                             themeColorHex: selectedThemeHex,

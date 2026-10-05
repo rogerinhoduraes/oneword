@@ -48,7 +48,7 @@ public final class WebArticleExtractor: Sendable {
     }
     
     /// Analisa uma string HTML ou texto bruto diretamente (ex: colado pelo usuário).
-    public func extract(fromHTML html: String, sourceURL: URL? = nil, fallbackTitle: String = "Artigo da Web") -> ExtractedArticle {
+    public func extract(fromHTML html: String, sourceURL: URL? = nil, fallbackTitle: String = String(localized: "Artigo da Web")) -> ExtractedArticle {
         // Se a string não contiver tags HTML evidentes, trata como texto puro
         if !html.contains("<") || !html.contains(">") {
             let clean = html.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -191,11 +191,11 @@ public enum WebExtractorError: LocalizedError, Sendable {
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "A URL fornecida é inválida."
+            return String(localized: "A URL fornecida é inválida.")
         case .httpError(let code):
-            return "Erro HTTP \(code) ao baixar o artigo."
+            return String(localized: "Erro HTTP \(code) ao baixar o artigo.")
         case .emptyContent:
-            return "Nenhum texto legível foi encontrado nesta página."
+            return String(localized: "Nenhum texto legível foi encontrado nesta página.")
         }
     }
 }

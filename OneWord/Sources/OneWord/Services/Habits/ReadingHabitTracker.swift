@@ -135,73 +135,73 @@ public final class ReadingHabitTracker {
         let list: [Achievement] = [
             Achievement(
                 id: "first_focus",
-                title: "Primeiro Foco",
-                subtitle: "Conclua a primeira sessão de leitura rápida.",
+                title: String(localized: "Primeiro Foco"),
+                subtitle: String(localized: "Conclua a primeira sessão de leitura rápida."),
                 iconName: "target",
-                category: "Início",
+                category: String(localized: "Início"),
                 isUnlocked: !sessions.isEmpty,
                 progress: sessions.isEmpty ? 0.0 : 1.0
             ),
             Achievement(
                 id: "barrier_350",
-                title: "Quebrando a Barreira",
-                subtitle: "Leia em velocidade de 350 WPM ou superior.",
+                title: String(localized: "Quebrando a Barreira"),
+                subtitle: String(localized: "Leia em velocidade de 350 WPM ou superior."),
                 iconName: "bolt.fill",
-                category: "Velocidade",
+                category: String(localized: "Velocidade"),
                 isUnlocked: maxWPM >= 350,
                 progress: min(1.0, Double(maxWPM) / 350.0)
             ),
             Achievement(
                 id: "hyper_speed_500",
-                title: "Hiper-Velocidade",
-                subtitle: "Domine a leitura a 500 WPM no RSVP.",
+                title: String(localized: "Hiper-Velocidade"),
+                subtitle: String(localized: "Domine a leitura a 500 WPM no RSVP."),
                 iconName: "hare.fill",
-                category: "Velocidade",
+                category: String(localized: "Velocidade"),
                 isUnlocked: maxWPM >= 500,
                 progress: min(1.0, Double(maxWPM) / 500.0)
             ),
             Achievement(
                 id: "words_5k",
-                title: "Devorador de Páginas",
-                subtitle: "Leia mais de 5.000 palavras no OneWord.",
+                title: String(localized: "Devorador de Páginas"),
+                subtitle: String(localized: "Leia mais de 5.000 palavras no OneWord."),
                 iconName: "book.fill",
-                category: "Volume",
+                category: String(localized: "Volume"),
                 isUnlocked: totalWords >= 5000,
                 progress: min(1.0, Double(totalWords) / 5000.0)
             ),
             Achievement(
                 id: "words_20k",
-                title: "Biblioteca Viva",
-                subtitle: "Acumule 20.000 palavras lidas.",
+                title: String(localized: "Biblioteca Viva"),
+                subtitle: String(localized: "Acumule 20.000 palavras lidas."),
                 iconName: "books.vertical.fill",
-                category: "Volume",
+                category: String(localized: "Volume"),
                 isUnlocked: totalWords >= 20000,
                 progress: min(1.0, Double(totalWords) / 20000.0)
             ),
             Achievement(
                 id: "streak_3",
-                title: "Chama Constante",
-                subtitle: "Mantenha uma ofensiva de 3 dias consecutivos.",
+                title: String(localized: "Chama Constante"),
+                subtitle: String(localized: "Mantenha uma ofensiva de 3 dias consecutivos."),
                 iconName: "flame.fill",
-                category: "Hábito",
+                category: String(localized: "Hábito"),
                 isUnlocked: streak >= 3,
                 progress: min(1.0, Double(streak) / 3.0)
             ),
             Achievement(
                 id: "streak_7",
-                title: "Mestre do Hábito",
-                subtitle: "Mantenha uma ofensiva de 7 dias consecutivos.",
+                title: String(localized: "Mestre do Hábito"),
+                subtitle: String(localized: "Mantenha uma ofensiva de 7 dias consecutivos."),
                 iconName: "crown.fill",
-                category: "Hábito",
+                category: String(localized: "Hábito"),
                 isUnlocked: streak >= 7,
                 progress: min(1.0, Double(streak) / 7.0)
             ),
             Achievement(
                 id: "perfect_retention",
-                title: "Retenção Perfeita",
-                subtitle: "Obtenha 100% de acertos no Teste de Compreensão.",
+                title: String(localized: "Retenção Perfeita"),
+                subtitle: String(localized: "Obtenha 100% de acertos no Teste de Compreensão."),
                 iconName: "brain.head.profile",
-                category: "Cognição",
+                category: String(localized: "Cognição"),
                 isUnlocked: benchmarkScore >= 0.99,
                 progress: benchmarkScore
             )

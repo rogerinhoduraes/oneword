@@ -202,7 +202,7 @@ public final class Document {
     /// - Parameter maxLength: Quantidade máxima de caracteres (default: 120).
     /// - Returns: Texto com reticências se exceder o limite.
     public func previewSnippet(maxLength: Int = 120) -> String {
-        guard let raw = content?.activeRawText, !raw.isEmpty else { return "Documento sem texto disponível." }
+        guard let raw = content?.activeRawText, !raw.isEmpty else { return String(localized: "Documento sem texto disponível.") }
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.count <= maxLength {
             return trimmed

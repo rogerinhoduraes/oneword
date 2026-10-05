@@ -87,7 +87,7 @@ public struct FlashcardReviewView: View {
         ZStack {
             // Face da Frente (Pergunta)
             cardFace(
-                tag: "PERGUNTA / TERMO",
+                tag: String(localized: "PERGUNTA / TERMO"),
                 systemImage: "questionmark.circle.fill",
                 accentColor: .blue,
                 text: card.front
@@ -101,7 +101,7 @@ public struct FlashcardReviewView: View {
             
             // Face do Verso (Resposta)
             cardFace(
-                tag: "RESPOSTA / CONCEITO",
+                tag: String(localized: "RESPOSTA / CONCEITO"),
                 systemImage: "brain.head.profile",
                 accentColor: .green,
                 text: card.back
@@ -182,10 +182,10 @@ public struct FlashcardReviewView: View {
                 .foregroundStyle(.secondary)
             
             HStack(spacing: 10) {
-                ratingButton(title: "Esqueci", rating: .again, color: .red)
-                ratingButton(title: "Difícil", rating: .hard, color: .orange)
-                ratingButton(title: "Bom", rating: .good, color: .blue)
-                ratingButton(title: "Fácil", rating: .easy, color: .green)
+                ratingButton(title: String(localized: "Esqueci"), rating: .again, color: .red)
+                ratingButton(title: String(localized: "Difícil"), rating: .hard, color: .orange)
+                ratingButton(title: String(localized: "Bom"), rating: .good, color: .blue)
+                ratingButton(title: String(localized: "Fácil"), rating: .easy, color: .green)
             }
         }
     }

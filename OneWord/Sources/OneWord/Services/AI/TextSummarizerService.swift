@@ -61,10 +61,10 @@ public final class TextSummarizerService: Sendable {
     }
     
     /// Gera um resumo de 3 a 5 pontos focais a partir do texto de um capítulo ou artigo.
-    public func summarize(text: String, title: String = "Resumo Executivo", maxBullets: Int = 4) -> ExecutiveSummary {
+    public func summarize(text: String, title: String = String(localized: "Resumo Executivo"), maxBullets: Int = 4) -> ExecutiveSummary {
         let cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanText.isEmpty else {
-            return ExecutiveSummary(title: title, bullets: ["Conteúdo indisponível para resumo."], wordCount: 0)
+            return ExecutiveSummary(title: title, bullets: [String(localized: "Conteúdo indisponível para resumo.")], wordCount: 0)
         }
         
         let sentences = extractSentences(from: cleanText)
@@ -96,14 +96,14 @@ public final class TextSummarizerService: Sendable {
     
     /// Gera o contexto neurocognitivo de Priming (Pré-leitura ativa) para preparar a rede atencional antes do RSVP.
     /// Baseado na ativação pré-frontal de esquemas prévios e no Efeito de Pré-questionamento (Pre-questioning Effect).
-    public func generatePrimingContext(from text: String, title: String = "Leitura Focada") -> CognitivePrimingContext {
+    public func generatePrimingContext(from text: String, title: String = String(localized: "Leitura Focada")) -> CognitivePrimingContext {
         let cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanText.isEmpty else {
             return CognitivePrimingContext(
                 title: title,
-                anchorConcepts: ["Foco", "Atenção", "Leitura"],
-                keyInsights: ["Conteúdo inicial para calibração visual foveal."],
-                focusQuestion: "Qual é a ideia principal que o autor deseja transmitir neste texto?",
+                anchorConcepts: [String(localized: "Foco"), String(localized: "Atenção"), String(localized: "Leitura")],
+                keyInsights: [String(localized: "Conteúdo inicial para calibração visual foveal.")],
+                focusQuestion: String(localized: "Qual é a ideia principal que o autor deseja transmitir neste texto?"),
                 estimatedReadingSeconds: 30
             )
         }
@@ -119,15 +119,15 @@ public final class TextSummarizerService: Sendable {
         
         // 2. Extração dos insights estruturais (resumo curto de 2 a 3 sentenças)
         let summary = summarize(text: cleanText, title: title, maxBullets: 3)
-        let bullets = summary.bullets.isEmpty ? ["Observe a progressão dos argumentos principais."] : summary.bullets
+        let bullets = summary.bullets.isEmpty ? [String(localized: "Observe a progressão dos argumentos principais.")] : summary.bullets
         
         // 3. Elaboração da questão focal norteadora (Efeito de Pré-questionamento)
-        let mainConcept = topConcepts.first ?? "o tema central"
+        let mainConcept = topConcepts.first ?? String(localized: "o tema central")
         let focusQuestion: String
         if let firstBullet = bullets.first, firstBullet.count > 20 {
-            focusQuestion = "Ao acompanhar as palavras no RSVP, foque em identificar como o autor desenvolve o papel de \"\(mainConcept)\"."
+            focusQuestion = String(localized: "Ao acompanhar as palavras no RSVP, foque em identificar como o autor desenvolve o papel de \"\(mainConcept)\".")
         } else {
-            focusQuestion = "Qual é o objetivo principal e a tese defendida pelo autor neste trecho?"
+            focusQuestion = String(localized: "Qual é o objetivo principal e a tese defendida pelo autor neste trecho?")
         }
         
         let wordCount = cleanText.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.count

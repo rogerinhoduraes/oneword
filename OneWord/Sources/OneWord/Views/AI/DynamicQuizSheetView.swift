@@ -167,7 +167,7 @@ public struct DynamicQuizSheetView: View {
                         isCompleted = true
                     }
                 } label: {
-                    Text(currentQuestionIndex + 1 < questions.count ? "Próxima Pergunta" : "Ver Resultado")
+                    Text(currentQuestionIndex + 1 < questions.count ? String(localized: "Próxima Pergunta") : String(localized: "Ver Resultado"))
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -200,7 +200,7 @@ public struct DynamicQuizSheetView: View {
                     .foregroundStyle(.secondary)
             }
             
-            Text(percentage >= 75 ? "Excelente retenção cognitiva! Sua taxa de fixação durante a leitura foi de alto nível." : "Bom treino de foco! A prática contínua de RSVP acelera a absorção natural de conceitos.")
+            Text(percentage >= 75 ? String(localized: "Excelente retenção cognitiva! Sua taxa de fixação durante a leitura foi de alto nível.") : String(localized: "Bom treino de foco! A prática contínua de RSVP acelera a absorção natural de conceitos."))
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)

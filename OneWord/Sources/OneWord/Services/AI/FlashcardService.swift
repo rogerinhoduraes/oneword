@@ -49,7 +49,7 @@ public final class FlashcardService {
                     
                     if term.count >= 3 && term.count <= 45 && definition.count >= 15 {
                         let card = Flashcard(
-                            front: "O que é: \(term)?",
+                            front: String(localized: "O que é: \(term)?"),
                             back: "\(term.capitalized) \(trigger.trimmingCharacters(in: .whitespaces)) \(definition).",
                             sourceTitle: sourceTitle
                         )

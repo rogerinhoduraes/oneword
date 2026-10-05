@@ -41,51 +41,51 @@ public final class WPMBenchmarkViewModel {
     public let engine: RSVPEngine
     
     // Texto padronizado de calibração foveal
-    public static let benchmarkText = """
+    public static let benchmarkText = String(localized: """
     A leitura tradicional impõe uma barreira biológica mecânica: os movimentos sacádicos dos olhos.
     A cada fração de segundo, os músculos oculares saltam de uma palavra para a outra, consumindo cerca de oitenta por cento do tempo total apenas reposicionando o foco na página.
     A técnica RSVP resolve essa limitação física ao projetar cada palavra diretamente sobre a fóvea central da retina, a região de máxima acuidade visual humana.
     Com a eliminação dos saltos sacádicos, a subvocalização involuntária diminui progressivamente e o córtex cerebral passa a sintetizar parágrafos inteiros com maior clareza e muito menor fadiga óptica.
-    """
+    """)
     
     public let questions: [BenchmarkQuestion] = [
         BenchmarkQuestion(
             id: 1,
-            text: "O que são os movimentos sacádicos descritos no texto?",
+            text: String(localized: "O que são os movimentos sacádicos descritos no texto?"),
             options: [
-                "Saltos mecânicos dos olhos entre palavras na página",
-                "Movimentos articulatórios dos lábios",
-                "Contrações involuntárias das pálpebras"
+                String(localized: "Saltos mecânicos dos olhos entre palavras na página"),
+                String(localized: "Movimentos articulatórios dos lábios"),
+                String(localized: "Contrações involuntárias das pálpebras")
             ],
             correctIndex: 0
         ),
         BenchmarkQuestion(
             id: 2,
-            text: "Quanto do tempo total da leitura tradicional é consumido apenas reposicionando a visão?",
+            text: String(localized: "Quanto do tempo total da leitura tradicional é consumido apenas reposicionando a visão?"),
             options: [
-                "Cerca de 20%",
-                "Cerca de 80%",
-                "Menos de 10%"
+                String(localized: "Cerca de 20%"),
+                String(localized: "Cerca de 80%"),
+                String(localized: "Menos de 10%")
             ],
             correctIndex: 1
         ),
         BenchmarkQuestion(
             id: 3,
-            text: "Por que a projeção foveal na retina é fundamental no RSVP?",
+            text: String(localized: "Por que a projeção foveal na retina é fundamental no RSVP?"),
             options: [
-                "Porque é a região anatômica de máxima acuidade visual",
-                "Para evitar que a tela emita luz azul",
-                "Para forçar o movimento constante do globo ocular"
+                String(localized: "Porque é a região anatômica de máxima acuidade visual"),
+                String(localized: "Para evitar que a tela emita luz azul"),
+                String(localized: "Para forçar o movimento constante do globo ocular")
             ],
             correctIndex: 0
         ),
         BenchmarkQuestion(
             id: 4,
-            text: "Qual dos benefícios abaixo é diretamente citado no texto?",
+            text: String(localized: "Qual dos benefícios abaixo é diretamente citado no texto?"),
             options: [
-                "Diminuição da subvocalização e menor fadiga óptica",
-                "Aumento obrigatório no esforço muscular",
-                "Necessidade de piscar duas vezes mais"
+                String(localized: "Diminuição da subvocalização e menor fadiga óptica"),
+                String(localized: "Aumento obrigatório no esforço muscular"),
+                String(localized: "Necessidade de piscar duas vezes mais")
             ],
             correctIndex: 0
         )
@@ -149,13 +149,13 @@ public final class WPMBenchmarkViewModel {
     public var readerClassification: (title: String, subtitle: String, color: String) {
         let eff = effectiveWPM
         if eff >= 450 {
-            return ("Mestre do RSVP", "Velocidade e retenção em nível de alta performance.", "#10B981")
+            return (String(localized: "Mestre do RSVP"), String(localized: "Velocidade e retenção em nível de alta performance."), "#10B981")
         } else if eff >= 300 {
-            return ("Leitor Acelerado", "Ótima compreensão foveal com cadência acima da média.", "#3B82F6")
+            return (String(localized: "Leitor Acelerado"), String(localized: "Ótima compreensão foveal com cadência acima da média."), "#3B82F6")
         } else if eff >= 200 {
-            return ("Leitor Eficiente", "Ritmo consistente com excelente equilíbrio de assimilação.", "#8B5CF6")
+            return (String(localized: "Leitor Eficiente"), String(localized: "Ritmo consistente com excelente equilíbrio de assimilação."), "#8B5CF6")
         } else {
-            return ("Em Calibração", "Foque na fixação confortável antes de acelerar o ritmo.", "#F59E0B")
+            return (String(localized: "Em Calibração"), String(localized: "Foque na fixação confortável antes de acelerar o ritmo."), "#F59E0B")
         }
     }
 }

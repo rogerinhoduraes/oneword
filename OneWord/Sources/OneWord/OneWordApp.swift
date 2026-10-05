@@ -197,10 +197,12 @@ public struct OneWordApp: App {
                 }
                 #endif
                 .onAppear {
+                    #if os(macOS)
                     OneWordLocalServer.shared.onDocumentReceived = { document in
                         self.deepLinkDocument = document
                     }
                     OneWordLocalServer.shared.start(context: sharedModelContainer.mainContext)
+                    #endif
                 }
                 .onOpenURL { url in
                     Task { @MainActor in

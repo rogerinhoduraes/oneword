@@ -116,14 +116,14 @@ public struct DocumentScannerView: View {
                     guard let url = urls.first else { return }
                     importDocumentFile(at: url)
                 case .failure(let error):
-                    viewModel.errorMessage = "Falha ao selecionar arquivo: \(error.localizedDescription)"
+                    viewModel.errorMessage = String(localized: "Falha ao selecionar arquivo: \(error.localizedDescription)")
                     viewModel.showErrorAlert = true
                 }
             }
             .alert("Aviso de OCR", isPresented: $viewModel.showErrorAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(viewModel.errorMessage ?? "Ocorreu um erro no processamento.")
+                Text(viewModel.errorMessage ?? String(localized: "Ocorreu um erro no processamento."))
             }
         }
     }
@@ -256,7 +256,7 @@ public struct DocumentScannerView: View {
                             .foregroundStyle(Color.accentColor)
                             .clipShape(Capsule())
                         
-                        Label(String(format: "%.0f%% precisão", result.averageConfidence * 100), systemImage: "checkmark.seal")
+                        Label(String(format: String(localized: "%.0f%% precisão"), result.averageConfidence * 100), systemImage: "checkmark.seal")
                             .font(.caption.weight(.medium))
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
@@ -381,7 +381,7 @@ public struct DocumentScannerView: View {
             )
             viewModel.isReviewingScannedContent = true
         } catch {
-            viewModel.errorMessage = "Erro ao importar arquivo: \(error.localizedDescription)"
+            viewModel.errorMessage = String(localized: "Erro ao importar arquivo: \(error.localizedDescription)")
             viewModel.showErrorAlert = true
         }
     }

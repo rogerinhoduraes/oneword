@@ -76,7 +76,7 @@ public struct SocialShareCardView: View {
     }
     
     private var shareCardText: String {
-        "Acabei de ler \(wordsRead) palavras a \(averageWPM) WPM no @OneWordApp e economizei \(Int(max(1, timeSavedMinutes))) minutos com leitura rápida foveal! 🚀📖"
+        String(localized: "Acabei de ler \(wordsRead) palavras a \(averageWPM) WPM no @OneWordApp e economizei \(Int(max(1, timeSavedMinutes))) minutos com leitura rápida foveal! 🚀📖")
     }
     
     // MARK: - Cartão Gráfico
@@ -146,7 +146,7 @@ public struct SocialShareCardView: View {
             HStack {
                 Image(systemName: "bolt.fill")
                     .foregroundStyle(.yellow)
-                Text(String(format: "+%.0f minutos economizados", max(1, timeSavedMinutes)))
+                Text(String(format: String(localized: "+%.0f minutos economizados"), max(1, timeSavedMinutes)))
                     .font(.subheadline.bold())
                     .foregroundStyle(.white)
             }

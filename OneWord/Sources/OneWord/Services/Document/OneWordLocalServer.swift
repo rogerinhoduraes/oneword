@@ -34,6 +34,7 @@ public final class OneWordLocalServer: ObservableObject {
         do {
             let parameters = NWParameters.tcp
             parameters.allowLocalEndpointReuse = true
+            parameters.requiredInterfaceType = .loopback
             
             guard let nwPort = NWEndpoint.Port(rawValue: port) else {
                 print("[OneWord LocalServer] Porta inválida: \(port)")

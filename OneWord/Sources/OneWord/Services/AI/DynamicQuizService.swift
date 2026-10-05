@@ -14,7 +14,7 @@ public final class DynamicQuizService: Sendable {
     public init() {}
     
     /// Gera de 3 a 5 perguntas de múltipla escolha a partir do texto do documento.
-    public func generateQuiz(from text: String, title: String = "Questionário do Livro", count: Int = 3) -> [BenchmarkQuestion] {
+    public func generateQuiz(from text: String, title: String = String(localized: "Questionário do Livro"), count: Int = 3) -> [BenchmarkQuestion] {
         let sentences = text.components(separatedBy: CharacterSet(charactersIn: ".!?\n"))
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { $0.count > 35 && $0.components(separatedBy: .whitespaces).count >= 7 }
@@ -46,7 +46,7 @@ public final class DynamicQuizService: Sendable {
             
             let question = BenchmarkQuestion(
                 id: usedIndices.count + 1,
-                text: "Complete o sentido do trecho lido:\n\"\(maskedSentence)\"",
+                text: String(localized: "Complete o sentido do trecho lido:\n\"\(maskedSentence)\""),
                 options: options,
                 correctIndex: correctIndex
             )

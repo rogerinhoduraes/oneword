@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1C0FFEE00000000000000C3 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0FFEE00000000000000C2 /* GoogleMobileAds */; };
+		A1C0FFEE00000000000000B2 /* Sources/OneWord/Resources/InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */; };
+		A1C0FFEE00000000000000B1 /* Sources/OneWord/Resources/Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */; };
 		03661D9F20094C0F84857E2C /* Sources/OneWord/Services/AppleEcosystem/LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61BCCA0AAEF45B5BA1C7EEA /* Sources/OneWord/Services/AppleEcosystem/LiveActivityManager.swift */; };
 		0FB18F06AE5C4F6CA6722198 /* Sources/OneWord/Services/AppleEcosystem/HapticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C041D14055D24F4E91335653 /* Sources/OneWord/Services/AppleEcosystem/HapticEngine.swift */; };
 		113307F39E3943A5AB439737 /* Sources/OneWord/Services/AI/DynamicQuizService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13808D7C15542979543232E /* Sources/OneWord/Services/AI/DynamicQuizService.swift */; };
@@ -79,6 +82,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Sources/OneWord/Resources/InfoPlist.xcstrings; sourceTree = "<group>"; };
+		A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Sources/OneWord/Resources/Localizable.xcstrings; sourceTree = "<group>"; };
 		00D045766F544FE5A31EE1F5 /* Sources/OneWord/ViewModels/RSVPReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/ViewModels/RSVPReaderViewModel.swift; sourceTree = "<group>"; };
 		05628F6A76C94104B313FD29 /* Sources/OneWord/Views/Library/LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Views/Library/LibraryView.swift; sourceTree = "<group>"; };
 		07C1A4E3C02747479AEF9CAD /* Sources/OneWord/Services/OCR/TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/OCR/TextParser.swift; sourceTree = "<group>"; };
@@ -156,6 +161,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C0FFEE00000000000000C3 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +179,8 @@
 		BE12B83640194EC8AE22DFA9 /* OneWord Sources */ = {
 			isa = PBXGroup;
 			children = (
+				A1C0FFEE00000000000000A1 /* Sources/OneWord/Resources/Localizable.xcstrings */,
+				A1C0FFEE00000000000000A2 /* Sources/OneWord/Resources/InfoPlist.xcstrings */,
 				B893BF358C574E8BB62B2FAA /* Sources/OneWord/Resources/Assets.xcassets */,
 				11ECAAB3A36B4FC8B1A0856C /* Sources/OneWord/OneWordApp.swift */,
 				5A26880F1B7F43FAA719F0C2 /* Sources/OneWord/ViewModels/DocumentScannerViewModel.swift */,
@@ -271,6 +279,9 @@
 			dependencies = (
 			);
 			name = OneWord;
+			packageProductDependencies = (
+				A1C0FFEE00000000000000C2 /* GoogleMobileAds */,
+			);
 			productName = OneWord;
 			productReference = 9E5B17718B2547F9B1A3B7A8 /* OneWord.app */;
 			productType = "com.apple.product-type.application";
@@ -295,9 +306,14 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"pt-BR",
+				es,
 				Base,
 			);
 			mainGroup = F7F7C8DA7D394BC7876D881C;
+			packageReferences = (
+				A1C0FFEE00000000000000C1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = 31F66780FDBA4704A29FA482 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -313,6 +329,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5ECA08A9932F4136B8434CC0 /* Sources/OneWord/Resources/Assets.xcassets in Resources */,
+				A1C0FFEE00000000000000B2 /* Sources/OneWord/Resources/InfoPlist.xcstrings in Resources */,
+				A1C0FFEE00000000000000B1 /* Sources/OneWord/Resources/Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +590,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1C0FFEE00000000000000C1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1C0FFEE00000000000000C2 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1C0FFEE00000000000000C1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7B9A140CD86041779AC91769 /* Project object */;
 }

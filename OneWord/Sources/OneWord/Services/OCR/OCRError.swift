@@ -32,45 +32,45 @@ public enum OCRError: LocalizedError, Sendable, Equatable {
     public var errorDescription: String? {
         switch self {
         case .invalidImageData:
-            return "Dados de imagem inválidos ou corrompidos."
+            return String(localized: "Dados de imagem inválidos ou corrompidos.")
         case .cgImageCreationFailed:
-            return "Não foi possível converter a imagem para CGImage para processamento gráfico."
+            return String(localized: "Não foi possível converter a imagem para CGImage para processamento gráfico.")
         case .recognitionFailed(let reason):
-            return "Falha no reconhecimento de texto via Vision: \(reason)"
+            return String(localized: "Falha no reconhecimento de texto via Vision: \(reason)")
         case .noTextDetected:
-            return "Nenhum texto legível foi detectado na página escaneada. Tente capturar com melhor iluminação e enquadramento."
+            return String(localized: "Nenhum texto legível foi detectado na página escaneada. Tente capturar com melhor iluminação e enquadramento.")
         case .cameraPermissionDenied:
-            return "Acesso à câmera não autorizado. Habilite a permissão nas configurações do sistema."
+            return String(localized: "Acesso à câmera não autorizado. Habilite a permissão nas configurações do sistema.")
         case .cancelled:
-            return "Operação de captura cancelada."
+            return String(localized: "Operação de captura cancelada.")
         }
     }
     
     public var failureReason: String? {
         switch self {
         case .invalidImageData:
-            return "O buffer de imagem não contém um formato de imagem reconhecido."
+            return String(localized: "O buffer de imagem não contém um formato de imagem reconhecido.")
         case .cgImageCreationFailed:
-            return "A renderização de bitmap da imagem falhou."
+            return String(localized: "A renderização de bitmap da imagem falhou.")
         case .recognitionFailed(let reason):
             return reason
         case .noTextDetected:
-            return "O motor de OCR não encontrou regiões com probabilidade suficiente de caracteres de texto."
+            return String(localized: "O motor de OCR não encontrou regiões com probabilidade suficiente de caracteres de texto.")
         case .cameraPermissionDenied:
-            return "Permissão negada pelo usuário no iOS."
+            return String(localized: "Permissão negada pelo usuário no iOS.")
         case .cancelled:
-            return "O fluxo foi interrompido voluntariamente."
+            return String(localized: "O fluxo foi interrompido voluntariamente.")
         }
     }
     
     public var recoverySuggestion: String? {
         switch self {
         case .noTextDetected:
-            return "Certifique-se de que a página está bem iluminada, sem reflexos e com o texto focado."
+            return String(localized: "Certifique-se de que a página está bem iluminada, sem reflexos e com o texto focado.")
         case .cameraPermissionDenied:
-            return "Acesse Ajustes > OneWord e autorize o uso da Câmera."
+            return String(localized: "Acesse Ajustes > OneWord e autorize o uso da Câmera.")
         default:
-            return "Tente novamente ou selecione uma imagem diferente da galeria."
+            return String(localized: "Tente novamente ou selecione uma imagem diferente da galeria.")
         }
     }
 }

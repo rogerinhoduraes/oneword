@@ -14,7 +14,7 @@ public struct QuickClipboardReaderView: View {
     @State private var textInput: String
     
     public init(initialText: String = "") {
-        let text = initialText.isEmpty ? "Selecione e copie qualquer texto para ler instantaneamente com foco total no OneWord." : initialText
+        let text = initialText.isEmpty ? String(localized: "Selecione e copie qualquer texto para ler instantaneamente com foco total no OneWord.") : initialText
         _textInput = State(initialValue: text)
         let words = text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         let config = RSVPConfiguration(wpm: 350, smartWPMEnabled: true)
@@ -120,7 +120,7 @@ public struct QuickClipboardReaderView: View {
             
             // Guia de Atalhos de Teclado
             HStack(spacing: 16) {
-                keyboardShortcutHint(key: "Espaço", action: engine.isPlaying ? "Pausar" : "Iniciar")
+                keyboardShortcutHint(key: String(localized: "Espaço"), action: engine.isPlaying ? String(localized: "Pausar") : String(localized: "Iniciar"))
                 keyboardShortcutHint(key: "← / →", action: "-10 / +10")
                 keyboardShortcutHint(key: "↑ / ↓", action: "WPM")
             }

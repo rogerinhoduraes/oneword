@@ -56,7 +56,7 @@ public struct StatsView: View {
                     // Timeframe Picker
                     Picker("Período", selection: $viewModel.selectedTimeframe) {
                         ForEach(StatsViewModel.Timeframe.allCases) { timeframe in
-                            Text(timeframe.rawValue).tag(timeframe)
+                            Text(LocalizedStringKey(timeframe.rawValue)).tag(timeframe)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -122,7 +122,7 @@ public struct StatsView: View {
                     Image(systemName: "flame.fill")
                         .foregroundStyle(.orange)
                         .font(.title2)
-                    Text("\(currentStreak) \(currentStreak == 1 ? "Dia" : "Dias")")
+                    Text("\(currentStreak) \(currentStreak == 1 ? String(localized: "Dia") : String(localized: "Dias"))")
                         .font(.title2.bold())
                 }
                 
@@ -177,7 +177,7 @@ public struct StatsView: View {
                 Button {
                     isShowingBenchmark = true
                 } label: {
-                    Text(lastWPM != nil ? "Refazer Teste" : "Iniciar Teste")
+                    Text(lastWPM != nil ? String(localized: "Refazer Teste") : String(localized: "Iniciar Teste"))
                         .font(.caption.bold())
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
@@ -375,29 +375,29 @@ public struct StatsView: View {
         
         return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             MetricCard(
-                title: "Palavras",
+                title: String(localized: "Palavras"),
                 value: "\(totalWords)",
                 icon: "character.book.closed.fill",
                 accentColor: .blue
             )
             
             MetricCard(
-                title: "WPM Médio",
+                title: String(localized: "WPM Médio"),
                 value: "\(avgWPM)",
                 icon: "speedometer",
                 accentColor: .orange
             )
             
             MetricCard(
-                title: "eWPM Efetivo",
+                title: String(localized: "eWPM Efetivo"),
                 value: "\(avgEffWPM)",
                 icon: "brain.head.profile",
                 accentColor: .purple
             )
             
             MetricCard(
-                title: "Ofensiva",
-                value: "\(streak) \(streak == 1 ? "dia" : "dias")",
+                title: String(localized: "Ofensiva"),
+                value: "\(streak) \(streak == 1 ? String(localized: "dia") : String(localized: "dias"))",
                 icon: "flame.fill",
                 accentColor: .red
             )
@@ -420,7 +420,7 @@ public struct StatsView: View {
                 
                 Picker("Métrica", selection: $chartMetric) {
                     ForEach(ChartMetric.allCases) { metric in
-                        Text(metric.rawValue).tag(metric)
+                        Text(LocalizedStringKey(metric.rawValue)).tag(metric)
                     }
                 }
                 .pickerStyle(.menu)
@@ -563,7 +563,7 @@ public struct StatsView: View {
                                 .clipShape(Circle())
                             
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(session.documentTitle.isEmpty ? "Sem Título" : session.documentTitle)
+                                Text(session.documentTitle.isEmpty ? String(localized: "Sem Título") : session.documentTitle)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .lineLimit(1)

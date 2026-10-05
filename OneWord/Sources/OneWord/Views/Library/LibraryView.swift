@@ -41,7 +41,7 @@ public struct LibraryView: View {
                 // Seletor de Categoria (Livros vs Artigos)
                 Picker("Biblioteca", selection: $libraryTab) {
                     ForEach(LibraryTab.allCases) { tab in
-                        Text(tab.rawValue).tag(tab)
+                        Text(LocalizedStringKey(tab.rawValue)).tag(tab)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -308,7 +308,7 @@ public struct LibraryView: View {
                 }
                 
                 HStack {
-                    Text("\(book.totalPages) \(book.totalPages == 1 ? "pág." : "págs.")")
+                    Text("\(book.totalPages) \(book.totalPages == 1 ? String(localized: "pág.") : String(localized: "págs."))")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     
@@ -394,7 +394,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))" : "Exibir em Português 🇧🇷") : "Traduzir para Português 🇧🇷",
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))") : String(localized: "Exibir em Português 🇧🇷")) : String(localized: "Traduzir para Português 🇧🇷"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -427,7 +427,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? "Ver Original" : "Ver em Português") : "Traduzir",
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Ver Original") : String(localized: "Ver em Português")) : String(localized: "Traduzir"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -512,7 +512,7 @@ public struct LibraryView: View {
                 Spacer()
                 
                 let remaining = document.remainingReadingTimeMinutes(wpm: 300)
-                Label(remaining < 1.0 ? "Menos de 1 min" : String(format: "%.0f min rest.", remaining), systemImage: "clock")
+                Label(remaining < 1.0 ? String(localized: "Menos de 1 min") : String(format: String(localized: "%.0f min rest."), remaining), systemImage: "clock")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

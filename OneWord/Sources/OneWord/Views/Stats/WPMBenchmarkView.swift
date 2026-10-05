@@ -302,21 +302,21 @@ public struct WPMBenchmarkView: View {
             // Cards de Métricas
             HStack(spacing: 12) {
                 metricBox(
-                    title: "WPM Testado",
+                    title: String(localized: "WPM Testado"),
                     value: "\(viewModel.testWPM)",
                     icon: "speedometer",
                     tint: .blue
                 )
                 
                 metricBox(
-                    title: "Compreensão",
+                    title: String(localized: "Compreensão"),
                     value: "\(Int(viewModel.accuracyPercentage * 100))%",
                     icon: "brain.head.profile",
                     tint: .purple
                 )
                 
                 metricBox(
-                    title: "WPM Efetivo",
+                    title: String(localized: "WPM Efetivo"),
                     value: "\(viewModel.effectiveWPM)",
                     icon: "bolt.fill",
                     tint: .green

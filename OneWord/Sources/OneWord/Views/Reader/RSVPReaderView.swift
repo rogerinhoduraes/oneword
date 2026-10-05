@@ -154,7 +154,7 @@ public struct RSVPReaderView: View {
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
                 .buttonStyle(.plain)
-                .accessibilityLabel(viewModel.readerMode == .rsvp ? "Mudar para modo Biônico" : "Mudar para modo RSVP foveal")
+                .accessibilityLabel(viewModel.readerMode == .rsvp ? String(localized: "Mudar para modo Biônico") : String(localized: "Mudar para modo RSVP foveal"))
                 
                 // Menu de Ações Secundárias (Decluttering da barra superior)
                 Menu {
@@ -371,9 +371,9 @@ public struct RSVPReaderView: View {
                 )
                 .contentShape(Rectangle())
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(viewModel.isPlaying ? viewModel.currentWord : "Palavra atual: \(viewModel.currentWord)")
+                .accessibilityLabel(viewModel.isPlaying ? viewModel.currentWord : String(localized: "Palavra atual: \(viewModel.currentWord)"))
                 .accessibilityValue("Palavra \(min(viewModel.currentIndex + 1, viewModel.totalWords)) de \(viewModel.totalWords), \(viewModel.progressPercentageFormatted)")
-                .accessibilityHint("Toque duas vezes para \(viewModel.isPlaying ? "pausar" : "iniciar") a leitura")
+                .accessibilityHint(viewModel.isPlaying ? String(localized: "Toque duas vezes para pausar a leitura") : String(localized: "Toque duas vezes para iniciar a leitura"))
                 .accessibilityAddTraits(.isButton)
                 .onTapGesture {
                     triggerHapticFeedback()
@@ -609,7 +609,7 @@ public struct RSVPReaderView: View {
                         .shadow(color: Color.accentColor.opacity(0.25), radius: 8, x: 0, y: 3)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(viewModel.isPlaying ? "Pausar leitura" : "Iniciar leitura")
+                .accessibilityLabel(viewModel.isPlaying ? String(localized: "Pausar leitura") : String(localized: "Iniciar leitura"))
                 
                 Spacer()
                 
@@ -665,7 +665,7 @@ public struct RSVPReaderView: View {
                                             }
                                         }
                                         
-                                        Text(theme.rawValue)
+                                        Text(LocalizedStringKey(theme.rawValue))
                                             .font(.caption2)
                                             .foregroundStyle(viewModel.settings.theme == theme ? Color.primary : Color.secondary)
                                             .lineLimit(1)
@@ -682,7 +682,7 @@ public struct RSVPReaderView: View {
                 Section("Tipografia") {
                     Picker("Estilo de Fonte", selection: $viewModel.settings.font) {
                         ForEach(ReaderFont.allCases) { font in
-                            Text(font.rawValue).tag(font)
+                            Text(LocalizedStringKey(font.rawValue)).tag(font)
                         }
                     }
                     
@@ -702,7 +702,7 @@ public struct RSVPReaderView: View {
                 Section("Modos de Leitura & Ergonomia") {
                     Picker("Modo de Leitura", selection: $viewModel.readerMode) {
                         ForEach(RSVPReaderViewModel.ReaderMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(LocalizedStringKey(mode.rawValue)).tag(mode)
                         }
                     }
                     
