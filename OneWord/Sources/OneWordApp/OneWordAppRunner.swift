@@ -30,8 +30,8 @@ struct OneWordAppRunner: App {
             let bookCount = (try? context.fetchCount(FetchDescriptor<Book>())) ?? 0
             if bookCount == 0 {
                 let book1 = Book(
-                    title: "A Revolução do Foco",
-                    author: "Cal Newport & OneWord Labs",
+                    title: "Guia de Leitura Rápida",
+                    author: "OneWord",
                     coverThemeColor: "#1E40AF"
                 )
                 let p1Text = "A atenção humana é o ativo mais escasso da modernidade. Quando lemos sem distrações, nosso cérebro alcança o estado de fluxo."
