@@ -172,7 +172,7 @@ public final class RSVPReaderViewModel {
             return String(localized: "Página \(livePage) de \(max(1, book.totalPages))")
         } else if let document {
             if document.isTranslationActive {
-                return String(localized: "🇧🇷 Português (Traduzido)")
+                return String(localized: "\(AppLanguage.flag) \(AppLanguage.name) (Traduzido)")
             } else if document.isForeignLanguage {
                 return String(localized: "\(document.detectedLanguageInfo.flag) \(document.detectedLanguageInfo.name) (Original)")
             }

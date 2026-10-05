@@ -128,7 +128,7 @@ public final class StatsViewModel {
         let daysCount = (selectedTimeframe == .week) ? 7 : (selectedTimeframe == .month ? 30 : 14)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "pt_BR")
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = (daysCount <= 7) ? "EEE" : "dd/MM"
         
         var metrics: [DailyReadingMetric] = []

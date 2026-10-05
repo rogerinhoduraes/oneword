@@ -78,7 +78,7 @@ public final class BookTranslationService: Sendable {
         case "ru":
             return DetectedLanguageInfo(code: "ru", name: String(localized: "Russo"), flag: "🇷🇺", isPortuguese: false)
         default:
-            let localizedName = Locale(identifier: "pt_BR").localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
+            let localizedName = Locale(identifier: AppLanguage.code).localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
             return DetectedLanguageInfo(code: code, name: localizedName, flag: "🌐", isPortuguese: false)
         }
     }

@@ -38,7 +38,9 @@ public final class FlashcardService {
         
         let definitionTriggers = [
             " é ", " são ", " significa ", " consiste em ", " refere-se a ",
-            " define-se como ", " funciona como ", " tem como objetivo "
+            " define-se como ", " funciona como ", " tem como objetivo ",
+            " is ", " are ", " means ", " refers to ", " consists of ", " is defined as ",
+            " es ", " son ", " consiste en ", " se refiere a ", " se define como "
         ]
         
         for sentence in sentences {

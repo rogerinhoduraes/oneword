@@ -123,7 +123,8 @@ public final class Book {
     
     /// Indica se o livro foi escaneado em língua estrangeira (diferente de português).
     public var isForeignLanguage: Bool {
-        !detectedLanguageInfo.isPortuguese
+        guard let code = detectedLanguageCode, !code.isEmpty else { return false }
+        return BookTranslationService.languageInfo(for: code).code != AppLanguage.code
     }
     
     /// Porcentagem de leitura concluída do livro (0.0 a 1.0).

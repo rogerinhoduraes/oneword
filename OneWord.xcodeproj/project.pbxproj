@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1C0FFEE0000000000000E10 /* Sources/OneWord/Services/Translation/AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D10 /* Sources/OneWord/Services/Translation/AppLanguage.swift */; };
 		A1C0FFEE0000000000000E04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */; };
 		A1C0FFEE0000000000000E03 /* Sources/OneWord/Views/Ads/AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */; };
 		A1C0FFEE0000000000000E02 /* Sources/OneWord/Services/Store/PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */; };
@@ -87,6 +88,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A1C0FFEE0000000000000D10 /* Sources/OneWord/Services/Translation/AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/Translation/AppLanguage.swift; sourceTree = "<group>"; };
 		A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Views/Ads/RemoveAdsView.swift; sourceTree = "<group>"; };
 		A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Views/Ads/AdBannerView.swift; sourceTree = "<group>"; };
 		A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/OneWord/Services/Store/PurchaseManager.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				A1C0FFEE0000000000000D02 /* Sources/OneWord/Services/Store/PurchaseManager.swift */,
 				A1C0FFEE0000000000000D03 /* Sources/OneWord/Views/Ads/AdBannerView.swift */,
 				A1C0FFEE0000000000000D04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift */,
+				A1C0FFEE0000000000000D10 /* Sources/OneWord/Services/Translation/AppLanguage.swift */,
 				11ECAAB3A36B4FC8B1A0856C /* Sources/OneWord/OneWordApp.swift */,
 				5A26880F1B7F43FAA719F0C2 /* Sources/OneWord/ViewModels/DocumentScannerViewModel.swift */,
 				B7100D8E0A624CA9B08DF176 /* Sources/OneWord/ViewModels/LibraryViewModel.swift */,
@@ -356,6 +359,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C0FFEE0000000000000E10 /* Sources/OneWord/Services/Translation/AppLanguage.swift in Sources */,
 				A1C0FFEE0000000000000E04 /* Sources/OneWord/Views/Ads/RemoveAdsView.swift in Sources */,
 				A1C0FFEE0000000000000E03 /* Sources/OneWord/Views/Ads/AdBannerView.swift in Sources */,
 				A1C0FFEE0000000000000E02 /* Sources/OneWord/Services/Store/PurchaseManager.swift in Sources */,

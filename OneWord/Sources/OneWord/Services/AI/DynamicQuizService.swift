@@ -59,11 +59,27 @@ public final class DynamicQuizService: Sendable {
     }
     
     private func generateDistractor(for word: String, offset: Int) -> String {
-        let pool = [
-            "dispersão", "aceleração", "mecanismo", "foco", "leitura",
-            "processamento", "retenção", "memória", "atenção", "fóvea",
-            "estabilidade", "frequência", "amplitude", "interferência", "continuidade"
-        ]
+        let pool: [String]
+        switch AppLanguage.code {
+        case "pt":
+            pool = [
+                "dispersão", "aceleração", "mecanismo", "foco", "leitura",
+                "processamento", "retenção", "memória", "atenção", "fóvea",
+                "estabilidade", "frequência", "amplitude", "interferência", "continuidade"
+            ]
+        case "es":
+            pool = [
+                "dispersión", "aceleración", "mecanismo", "enfoque", "lectura",
+                "procesamiento", "retención", "memoria", "atención", "fóvea",
+                "estabilidad", "frecuencia", "amplitud", "interferencia", "continuidad"
+            ]
+        default:
+            pool = [
+                "dispersion", "acceleration", "mechanism", "focus", "reading",
+                "processing", "retention", "memory", "attention", "fovea",
+                "stability", "frequency", "amplitude", "interference", "continuity"
+            ]
+        }
         let lower = word.lowercased()
         let available = pool.filter { $0 != lower }
         let index = abs(word.hashValue + offset) % available.count

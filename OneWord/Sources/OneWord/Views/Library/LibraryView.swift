@@ -326,7 +326,7 @@ public struct LibraryView: View {
                         .foregroundStyle(.secondary)
                     
                     if book.isForeignLanguage {
-                        Text(book.hasTranslation ? "\(book.detectedLanguageInfo.flag) ➔ 🇧🇷" : book.detectedLanguageInfo.flag)
+                        Text(book.hasTranslation ? "\(book.detectedLanguageInfo.flag) ➔ \(AppLanguage.flag)" : book.detectedLanguageInfo.flag)
                             .font(.caption2)
                     }
                     
@@ -407,7 +407,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))") : String(localized: "Exibir em Português 🇧🇷")) : String(localized: "Traduzir para Português 🇧🇷"),
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))") : String(localized: "Exibir em \(AppLanguage.name) \(AppLanguage.flag)")) : String(localized: "Traduzir para \(AppLanguage.name) \(AppLanguage.flag)"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -440,7 +440,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Ver Original") : String(localized: "Ver em Português")) : String(localized: "Traduzir"),
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Ver Original") : String(localized: "Ver em \(AppLanguage.name)")) : String(localized: "Traduzir"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -505,11 +505,11 @@ public struct LibraryView: View {
                     } label: {
                         HStack(spacing: 3) {
                             if document.isTranslationActive {
-                                Text("🇧🇷 Traduzido")
+                                Text("\(AppLanguage.flag) Traduzido")
                             } else if document.hasTranslation {
                                 Text("\(document.detectedLanguageInfo.flag) Original")
                             } else {
-                                Text("\(document.detectedLanguageInfo.flag) Traduzir 🇧🇷")
+                                Text("\(document.detectedLanguageInfo.flag) Traduzir \(AppLanguage.flag)")
                             }
                         }
                         .font(.caption2.bold())

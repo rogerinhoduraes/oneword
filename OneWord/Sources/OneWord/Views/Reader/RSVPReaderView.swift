@@ -167,9 +167,9 @@ public struct RSVPReaderView: View {
                             if viewModel.isTranslationActive {
                                 Label("Ver Texto Original (\(viewModel.originalLanguageName))", systemImage: "globe")
                             } else if viewModel.hasTranslation {
-                                Label("Ver Tradução em Português", systemImage: "character.book.closed")
+                                Label("Ver tradução em \(AppLanguage.name)", systemImage: "character.book.closed")
                             } else {
-                                Label("Traduzir para Português", systemImage: "translate")
+                                Label("Traduzir para \(AppLanguage.name)", systemImage: "translate")
                             }
                         }
                     }

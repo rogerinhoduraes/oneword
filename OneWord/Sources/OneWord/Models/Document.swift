@@ -124,7 +124,8 @@ public final class Document {
     
     /// Indica se o documento está em idioma estrangeiro (não é português).
     public var isForeignLanguage: Bool {
-        !detectedLanguageInfo.isPortuguese
+        guard let code = detectedLanguageCode, !code.isEmpty else { return false }
+        return BookTranslationService.languageInfo(for: code).code != AppLanguage.code
     }
     
     /// Indica se o documento já possui versão traduzida para Português.

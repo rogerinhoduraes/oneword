@@ -78,6 +78,9 @@ public enum BookTranslationFallback {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return "" }
         
+        // O dicionário só cobre inglês → português. Nos demais pares, mantém o texto original.
+        guard AppLanguage.code == "pt", languageCode.lowercased().hasPrefix("en") else { return trimmed }
+        
         // Seed do Artigo "How to Do Great Work"
         if trimmed.localizedCaseInsensitiveContains("If you want to do great work") ||
            trimmed.localizedCaseInsensitiveContains("choose a problem you have a natural aptitude") {

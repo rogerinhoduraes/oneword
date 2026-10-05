@@ -251,7 +251,7 @@ public struct BookDetailView: View {
         #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(iOS 17.4, macOS 15.0, *) {
             isProcessing = true
-            processingProgressText = String(localized: "Preparando tradução para Português...")
+            processingProgressText = String(localized: "Preparando tradução para \(AppLanguage.name)...")
             isTranslationTriggered.toggle()
             return
         }
@@ -307,7 +307,7 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = String(localized: "Processando tradução para Português...")
+                processingProgressText = String(localized: "Processando tradução para \(AppLanguage.name)...")
             }
             
             let parser = TextParser()
@@ -731,7 +731,7 @@ private struct PageRowItem: View {
                         }
                         
                         if page.isShowingTranslation {
-                            Text("🇧🇷 PT")
+                            Text("\(AppLanguage.flag) \(AppLanguage.code.uppercased())")
                                 .font(.system(size: 9, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -828,8 +828,8 @@ private struct BookTranslationBannerSection: View {
                     }
                     
                     Text(book.hasTranslation 
-                         ? (book.isTranslationActive ? String(localized: "Leitura RSVP em Português ativada.") : String(localized: "Leitura RSVP no idioma original."))
-                         : String(localized: "Deseja traduzir todo o conteúdo para ler via RSVP em Português?"))
+                         ? (book.isTranslationActive ? String(localized: "Leitura RSVP em \(AppLanguage.name) ativada.") : String(localized: "Leitura RSVP no idioma original."))
+                         : String(localized: "Deseja traduzir todo o conteúdo para ler via RSVP em \(AppLanguage.name)?"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -859,7 +859,7 @@ private struct BookTranslationBannerSection: View {
                         get: { book.isTranslationActive },
                         set: { onToggleTranslation($0) }
                     )) {
-                        Text("🇧🇷 Ler em Português").tag(true)
+                        Text("\(AppLanguage.flag) Ler em \(AppLanguage.name)").tag(true)
                         Text("\(book.detectedLanguageInfo.flag) Idioma Original").tag(false)
                     }
                     .pickerStyle(.segmented)
@@ -987,7 +987,7 @@ private struct SystemTranslationContainer: View {
             .onChange(of: trigger) { _, newValue in
                 guard newValue else { return }
                 if config == nil {
-                    config = TranslationSession.Configuration(target: Locale.Language(identifier: "pt-BR"))
+                    config = TranslationSession.Configuration(target: AppLanguage.translationTarget)
                 } else {
                     config?.invalidate()
                 }
