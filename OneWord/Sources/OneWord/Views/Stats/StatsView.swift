@@ -87,7 +87,7 @@ public struct StatsView: View {
                     // 7. Histórico Recente de Sessões
                     recentSessionsSection
                     
-                    Button("Remover anúncios") {
+                    Button(PurchaseManager.isPurchaseEnabled ? "Remover anúncios" : "Anúncios e privacidade") {
                         isShowingRemoveAds = true
                     }
                     .font(.footnote)

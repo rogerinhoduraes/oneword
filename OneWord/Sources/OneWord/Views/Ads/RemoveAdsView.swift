@@ -20,17 +20,24 @@ struct RemoveAdsView: View {
                     .foregroundStyle(purchases.hasRemovedAds ? .green : .blue)
                     .padding(.top, 24)
                 
-                Text(purchases.hasRemovedAds ? "Anúncios removidos" : "Remover anúncios")
-                    .font(.title2.bold())
+                if PurchaseManager.isPurchaseEnabled {
+                    Text(purchases.hasRemovedAds ? "Anúncios removidos" : "Remover anúncios")
+                        .font(.title2.bold())
+                } else {
+                    Text("Anúncios e privacidade")
+                        .font(.title2.bold())
+                }
                 
-                Text(purchases.hasRemovedAds
-                     ? "Obrigado por apoiar o OneWord! Você não verá mais anúncios."
-                     : "O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. Com uma compra única, ele some para sempre. O leitor nunca tem anúncios.")
+                Text(PurchaseManager.isPurchaseEnabled
+                     ? (purchases.hasRemovedAds
+                        ? "Obrigado por apoiar o OneWord! Você não verá mais anúncios."
+                        : "O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. Com uma compra única, ele some para sempre. O leitor nunca tem anúncios.")
+                     : "O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. O leitor nunca tem anúncios.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
                 
-                if !purchases.hasRemovedAds {
+                if PurchaseManager.isPurchaseEnabled && !purchases.hasRemovedAds {
                     Button {
                         Task { await purchases.purchase() }
                     } label: {
@@ -52,10 +59,12 @@ struct RemoveAdsView: View {
                     .padding(.horizontal)
                 }
                 
-                Button("Restaurar compras") {
-                    Task { await purchases.restore() }
+                if PurchaseManager.isPurchaseEnabled {
+                    Button("Restaurar compras") {
+                        Task { await purchases.restore() }
+                    }
+                    .disabled(purchases.isWorking)
                 }
-                .disabled(purchases.isWorking)
                 
                 if consent.canShowPrivacyOptions && !purchases.hasRemovedAds {
                     Button("Opções de privacidade de anúncios") {
@@ -83,7 +92,7 @@ struct RemoveAdsView: View {
                     Button("Fechar") { dismiss() }
                 }
             }
-            .task { await purchases.prepare() }
+            .task { if PurchaseManager.isPurchaseEnabled { await purchases.prepare() } }
         }
     }
 }

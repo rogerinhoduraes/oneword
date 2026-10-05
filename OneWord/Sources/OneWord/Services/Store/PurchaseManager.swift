@@ -14,6 +14,9 @@ import Observation
 public final class PurchaseManager {
     public static let shared = PurchaseManager()
     
+    /// Mantenha `false` até o produto existir no App Store Connect e o Acordo de apps pagos estar ativo.
+    nonisolated public static let isPurchaseEnabled = false
+    
     nonisolated public static let removeAdsID = "com.oneword.removeads"
     private static let cacheKey = "oneword.hasRemovedAds"
     

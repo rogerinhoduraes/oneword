@@ -10540,6 +10540,40 @@
           }
         }
       }
+    },
+    "Anúncios e privacidade": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ads & privacy"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuncios y privacidad"
+          }
+        }
+      }
+    },
+    "O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. O leitor nunca tem anúncios.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord is free and shows a small banner in the Library and Stats. The reader never shows ads."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord es gratis y muestra un pequeño banner en la Biblioteca y en las Estadísticas. El lector nunca muestra anuncios."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

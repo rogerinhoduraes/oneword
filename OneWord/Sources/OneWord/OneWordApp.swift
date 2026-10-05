@@ -205,7 +205,7 @@ public struct OneWordApp: App {
                     #endif
                 }
                 .task {
-                    await PurchaseManager.shared.prepare()
+                    if PurchaseManager.isPurchaseEnabled { await PurchaseManager.shared.prepare() }
                     await AdConsentManager.shared.start()
                 }
                 .onOpenURL { url in

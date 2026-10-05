@@ -114,7 +114,7 @@ public struct LibraryView: View {
                         Button {
                             isShowingRemoveAds = true
                         } label: {
-                            Label("Remover anúncios", systemImage: "nosign")
+                            Label(PurchaseManager.isPurchaseEnabled ? "Remover anúncios" : "Anúncios e privacidade", systemImage: "nosign")
                         }
                     } label: {
                         Image(systemName: "plus.circle.fill")
