@@ -14,15 +14,46 @@
     <string>1.0.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
     <key>NSCameraUsageDescription</key>
-    <string>O OneWord precisa de acesso à câmera para fotografar páginas físicas de livros e extrair o texto de forma 100% offline para o leitor RSVP.</string>
+    <string>O OneWord utiliza a câmera para digitalizar páginas físicas de livros via OCR e a câmera frontal para pausar a leitura automaticamente ao detectar desvio de atenção ou fadiga visual (processamento 100% local no dispositivo, nenhum dado facial é gravado ou transmitido).</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>O OneWord precisa de acesso à biblioteca de fotos para selecionar imagens de documentos e convertê-los para o leitor RSVP.</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.oneword.rsvp</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>oneword</string>
+            </array>
+        </dict>
+    </array>
+    <key>NSSupportsLiveActivities</key>
+    <true/>
     <key>UILaunchScreen</key>
     <dict/>
+    <key>UIRequiresFullScreen</key>
+    <false/>
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 </dict>
 </plist>

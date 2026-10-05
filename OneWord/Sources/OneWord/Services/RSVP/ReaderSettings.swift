@@ -14,6 +14,7 @@ public enum ReaderTheme: String, CaseIterable, Identifiable, Sendable {
     case sepia = "Sépia"
     case dark = "Escuro"
     case oledBlack = "OLED Preto"
+    case circadianRed = "Vermelho Noturno (OLED)"
     
     public var id: String { rawValue }
     
@@ -28,7 +29,7 @@ public enum ReaderTheme: String, CaseIterable, Identifiable, Sendable {
             return Color(red: 0.98, green: 0.95, blue: 0.88)
         case .dark:
             return Color(red: 0.12, green: 0.12, blue: 0.13)
-        case .oledBlack:
+        case .oledBlack, .circadianRed:
             return Color.black
         }
     }
@@ -44,6 +45,8 @@ public enum ReaderTheme: String, CaseIterable, Identifiable, Sendable {
             return Color(red: 0.28, green: 0.20, blue: 0.12)
         case .dark, .oledBlack:
             return Color(white: 0.92)
+        case .circadianRed:
+            return Color(red: 0.95, green: 0.18, blue: 0.18) // Vermelho profundo anti-fadiga circadiana
         }
     }
 }

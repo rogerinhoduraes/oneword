@@ -180,11 +180,39 @@ public struct OneWordApp: App {
             }
     }()
 
+    @State private var deepLinkDocument: Document?
+    
     public init() {}
 
     public var body: some Scene {
         WindowGroup {
             MainTabView()
+                #if os(iOS)
+                .fullScreenCover(item: $deepLinkDocument) { document in
+                    RSVPReaderView(document: document, modelContext: sharedModelContainer.mainContext)
+                }
+                #else
+                .sheet(item: $deepLinkDocument) { document in
+                    RSVPReaderView(document: document, modelContext: sharedModelContainer.mainContext)
+                }
+                #endif
+                .onAppear {
+                    OneWordLocalServer.shared.onDocumentReceived = { document in
+                        self.deepLinkDocument = document
+                    }
+                    OneWordLocalServer.shared.start(context: sharedModelContainer.mainContext)
+                }
+                .onOpenURL { url in
+                    Task { @MainActor in
+                        do {
+                            if let document = try await DeepLinkManager.shared.handle(url: url, context: sharedModelContainer.mainContext) {
+                                self.deepLinkDocument = document
+                            }
+                        } catch {
+                            print("[OneWord DeepLink] Erro ao processar URL \(url): \(error.localizedDescription)")
+                        }
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
     }

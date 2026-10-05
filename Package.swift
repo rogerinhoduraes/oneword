@@ -14,6 +14,10 @@ let package = Package(
             name: "OneWord",
             targets: ["OneWord"]
         ),
+        .executable(
+            name: "OneWordApp",
+            targets: ["OneWordApp"]
+        )
     ],
     targets: [
         .target(
@@ -21,6 +25,11 @@ let package = Package(
             dependencies: [],
             path: "OneWord/Sources/OneWord",
             exclude: ["Resources", "OneWordApp.swift"]
+        ),
+        .executableTarget(
+            name: "OneWordApp",
+            dependencies: ["OneWord"],
+            path: "OneWord/Sources/OneWordApp"
         ),
         .testTarget(
             name: "OneWordTests",

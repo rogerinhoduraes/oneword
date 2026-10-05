@@ -108,11 +108,13 @@ public struct RSVPConfiguration: Sendable, Equatable {
     
     /// Calcula a duração total de exibição de uma palavra específica,
     /// somando o tempo base à pausa dinâmica cognitiva conforme a pontuação final.
-    /// - Parameter word: Palavra a ser avaliada.
+    /// - Parameters:
+    ///   - word: Palavra a ser avaliada.
+    ///   - isEndOfParagraph: Indica se encerra um parágrafo estrutural.
     /// - Returns: Duração em segundos (TimeInterval).
-    public func duration(for word: String) -> TimeInterval {
+    public func duration(for word: String, isEndOfParagraph: Bool = false) -> TimeInterval {
         if smartWPMEnabled {
-            return AdaptiveReadingPacer().duration(for: word, baseWPM: wpm, isSmartWPMEnabled: true)
+            return AdaptiveReadingPacer().duration(for: word, baseWPM: wpm, isSmartWPMEnabled: true, isEndOfParagraph: isEndOfParagraph)
         }
         
         var interval = baseInterval
@@ -124,12 +126,13 @@ public struct RSVPConfiguration: Sendable, Equatable {
         let trimmed = word.trimmingCharacters(in: .whitespaces)
         guard let lastChar = trimmed.last else { return interval }
         
-        // Pausa forte: ponto final, exclamação, interrogação ou reticências
-        if [".", "!", "?"].contains(lastChar) || trimmed.hasSuffix("...") {
+        if isEndOfParagraph || word.contains("\n") {
+            interval += (strongPunctuationExtraDelay * 1.5)
+        } else if [".", "!", "?"].contains(lastChar) || trimmed.hasSuffix("...") || trimmed.hasSuffix("…") {
+            // Pausa forte: ponto final, exclamação, interrogação ou reticências
             interval += strongPunctuationExtraDelay
-        }
-        // Pausa intermediária: vírgula, ponto e vírgula, dois pontos, travessão
-        else if [",", ";", ":", "—"].contains(lastChar) {
+        } else if [",", ";", ":", "—"].contains(lastChar) {
+            // Pausa intermediária: vírgula, ponto e vírgula, dois pontos, travessão
             interval += mediumPunctuationExtraDelay
         }
         
@@ -142,12 +145,15 @@ public struct RSVPConfiguration: Sendable, Equatable {
     }
     
     /// Calcula a duração para exibição de um chunk de múltiplas palavras.
-    public func duration(for words: [String]) -> TimeInterval {
+    public func duration(for words: [String], isEndOfParagraph: Bool = false) -> TimeInterval {
         guard !words.isEmpty else { return baseInterval }
         if smartWPMEnabled {
-            return AdaptiveReadingPacer().duration(for: words, baseWPM: wpm, isSmartWPMEnabled: true)
+            return AdaptiveReadingPacer().duration(for: words, baseWPM: wpm, isSmartWPMEnabled: true, isEndOfParagraph: isEndOfParagraph)
         }
-        let total = words.reduce(0.0) { $0 + duration(for: $1) }
+        let total = words.reduce(0.0) { sum, word in
+            let isLast = (word == words.last)
+            return sum + duration(for: word, isEndOfParagraph: isLast && isEndOfParagraph)
+        }
         return total * (words.count > 1 ? 0.85 : 1.0)
     }
 }

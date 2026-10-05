@@ -95,6 +95,11 @@ public final class Book {
         return sortedPages.flatMap { $0.words }
     }
     
+    /// Texto unificado contendo o conteúdo textual de todas as páginas em sequência.
+    public var fullText: String {
+        sortedPages.map { $0.rawText }.joined(separator: "\n\n")
+    }
+    
     /// Deslocamentos globais de índice onde cada página se inicia (considera tradução se ativa).
     public var pageOffsets: [Int] {
         var offsets: [Int] = []

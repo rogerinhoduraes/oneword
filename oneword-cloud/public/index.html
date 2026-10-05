@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OneWord Cloud - Leitor RSVP Foveal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <div class="cloud-layout">
+    <!-- Sidebar com Artigos Salvos -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-badge">1W</div>
+          <div class="brand-titles">
+            <span class="brand-name">OneWord Cloud</span>
+            <span class="brand-tag">Fila de Leitura</span>
+          </div>
+        </div>
+        <button id="btnRefreshList" class="icon-action-btn" title="Atualizar Lista">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="articles-list" id="articlesList">
+        <div class="loading-state">Carregando artigos salvos...</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="connection-cloud-badge">
+          <span class="dot-live"></span>
+          <span>VPS Hostinger: 2.25.234.168</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Leitura -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="btnToggleSidebar" class="icon-action-btn menu-toggle" title="Alternar Barra Lateral">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="active-article-meta">
+          <h1 id="currentArticleTitle" class="current-title">Carregando artigo...</h1>
+          <span id="currentArticleMeta" class="current-subtitle">0 palavras • 0 min restantes</span>
+        </div>
+
+        <div class="top-bar-actions">
+          <button id="btnThemeToggle" class="icon-action-btn" title="Alternar Tema">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Display Foveal RSVP Central -->
+      <section class="rsvp-stage">
+        <div class="rsvp-card">
+          <div class="orp-notch top-notch"></div>
+          <div class="rsvp-viewport">
+            <div class="word-container" id="wordDisplay">
+              <span class="word-prefix" id="wordPrefix"></span><span class="word-orp" id="wordOrp">OneWord</span><span class="word-suffix" id="wordSuffix"></span>
+            </div>
+          </div>
+          <div class="orp-notch bottom-notch"></div>
+          <div class="rsvp-instruction" id="rsvpInstruction">Espaço para Iniciar / Pausar • Setas para Navegar</div>
+        </div>
+      </section>
+
+      <!-- Controles Inferiores de Leitura -->
+      <section class="controls-panel">
+        <div class="scrubber-bar">
+          <span id="wordProgressText" class="progress-label">0 / 0</span>
+          <input type="range" id="progressScrubber" min="0" max="100" value="0" class="progress-slider">
+          <span id="readingTimeLeft" class="progress-label">~0 min</span>
+        </div>
+
+        <div class="playback-controls">
+          <button id="btnRewind" class="btn-control secondary" title="Voltar 10 palavras (Seta Esquerda)">
+            <span>-10</span>
+          </button>
+
+          <button id="btnPlayPause" class="btn-control play-btn" title="Iniciar / Pausar (Espaço)">
+            <svg id="playIcon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg id="pauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+
+          <button id="btnForward" class="btn-control secondary" title="Avançar 10 palavras (Seta Direita)">
+            <span>+10</span>
+          </button>
+        </div>
+
+        <div class="speed-control-strip">
+          <div class="wpm-display">
+            <span class="wpm-title">Velocidade:</span>
+            <span id="wpmValue" class="wpm-num">350</span>
+            <span class="wpm-unit">WPM</span>
+          </div>
+          <div class="wpm-slider-wrap">
+            <span>150</span>
+            <input type="range" id="wpmSlider" min="150" max="950" step="25" value="350" class="speed-slider">
+            <span>950</span>
+          </div>
+          <div class="quick-chips">
+            <button class="chip" data-wpm="250">250</button>
+            <button class="chip active" data-wpm="350">350</button>
+            <button class="chip" data-wpm="450">450</button>
+            <button class="chip" data-wpm="600">600</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

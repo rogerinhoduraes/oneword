@@ -614,6 +614,48 @@ final class OneWordTests: XCTestCase {
         XCTAssertEqual(vm.currentWord, "Focus")
     }
     
+    @MainActor
+    func testSeedArticleTranslationAndActiveWordsInReader() {
+        let seedText = """
+        If you want to do great work, the most important thing is to choose a problem you have a natural aptitude for and a deep interest in.
+        There is an immense amount of ambition in the world, but focused effort directed toward meaningful problems is exceptionally rare.
+        By cultivating consistent habits and eliminating peripheral noise, your ability to create lasting value expands exponentially.
+        """
+        let parser = TextParser()
+        let (_, words) = parser.parse(rawText: seedText)
+        let doc = Document(title: "How to Do Great Work", rawText: seedText, words: words, originalLanguage: "en")
+        
+        XCTAssertTrue(doc.isForeignLanguage)
+        XCTAssertEqual(doc.detectedLanguageInfo.code, "en")
+        XCTAssertEqual(doc.detectedLanguageInfo.flag, "🇺🇸")
+        XCTAssertFalse(doc.hasTranslation)
+        XCTAssertTrue(doc.previewSnippet().contains("If you want to do great work"))
+        
+        // Aplica tradução do fallback
+        let translated = BookTranslationFallback.translate(text: seedText, from: "en")
+        let (_, translatedWords) = parser.parse(rawText: translated)
+        doc.applyTranslation(text: translated, words: translatedWords)
+        
+        XCTAssertTrue(doc.hasTranslation)
+        XCTAssertTrue(doc.isTranslationActive)
+        // Snippet deve refletir o texto ativo em português
+        XCTAssertTrue(doc.previewSnippet().contains("Se você deseja realizar um grande trabalho"))
+        
+        // Abre o leitor com a tradução já ativada no documento
+        let vm = RSVPReaderViewModel(document: doc, initialWPM: 300)
+        XCTAssertTrue(vm.isTranslationActive)
+        XCTAssertEqual(vm.subtitle, "🇧🇷 Português (Traduzido)")
+        XCTAssertEqual(vm.currentWord, "Se")
+        XCTAssertEqual(vm.totalWords, translatedWords.count)
+        
+        // Desativa a tradução e confirma retorno para o original em inglês
+        vm.toggleTranslation()
+        XCTAssertFalse(vm.isTranslationActive)
+        XCTAssertEqual(vm.subtitle, "🇺🇸 Inglês (Original)")
+        XCTAssertEqual(vm.currentWord, "If")
+        XCTAssertEqual(vm.totalWords, words.count)
+    }
+    
     // MARK: - Testes da Fase 4: Ingestão de Novos Formatos (ePub & Web)
     
     func testEPUBParserHTMLCleaningAndEntityDecoding() {
@@ -802,6 +844,215 @@ final class OneWordTests: XCTestCase {
         XCTAssertEqual(vmPartial.accuracyPercentage, 0.5)
         XCTAssertEqual(vmPartial.effectiveWPM, 200)
     }
+    
+    // MARK: - Testes das Novas Frentes: Leitura Biônica, IA no Dispositivo & StoreKit 2
+    
+    func testBionicReadingHelperSplitting() {
+        // Palavra curta de 1 caractere: todo em negrito
+        let oneChar = BionicReadingHelper.splitWord("a")
+        XCTAssertEqual(oneChar.prefix, "a")
+        XCTAssertEqual(oneChar.suffix, "")
+        
+        // Palavra de 3 caracteres: 1 caractere em negrito
+        let threeChars = BionicReadingHelper.splitWord("que")
+        XCTAssertEqual(threeChars.prefix, "q")
+        XCTAssertEqual(threeChars.suffix, "ue")
+        
+        // Palavra de 6 caracteres: 2 caracteres em negrito (regra 4...6)
+        let sixChars = BionicReadingHelper.splitWord("rápida")
+        XCTAssertEqual(sixChars.prefix.count, 2)
+        XCTAssertEqual(sixChars.prefix + sixChars.suffix, "rápida")
+        
+        // Palavra com pontuação no final
+        let withPunct = BionicReadingHelper.splitWord("atenção.")
+        XCTAssertEqual(withPunct.prefix + withPunct.suffix, "atenção.")
+        XCTAssertFalse(withPunct.prefix.contains("."))
+    }
+    
+    func testBionicReadingAttributedFormatting() {
+        let text = "A leitura rápida transforma o foco."
+        let attributed = BionicReadingHelper.formatToAttributedString(text)
+        XCTAssertFalse(attributed.characters.isEmpty)
+    }
+    
+    func testTextSummarizerExecutiveSummary() {
+        let sample = """
+        A neuroplasticidade é a capacidade do sistema nervoso de mudar sua atividade em resposta a estímulos intrínsecos ou extrínsecos.
+        Isso é feito através da reorganização de sua estrutura, funções ou conexões neuronais.
+        Durante a leitura com o método RSVP, o cérebro elimina o esforço muscular dos movimentos sacádicos.
+        Com isso, a retenção de conceitos densos pode ser mantida com menor fadiga cognitiva.
+        A prática constante de leitura acelerada treina a fóvea ocular e amplia o processamento semântico.
+        """
+        
+        let summarizer = TextSummarizerService.shared
+        let summary = summarizer.summarize(text: sample, maxSentences: 3)
+        
+        XCTAssertLessThanOrEqual(summary.count, 3)
+        XCTAssertGreaterThanOrEqual(summary.count, 1)
+        // Deve selecionar frases significativas
+        XCTAssertTrue(summary.contains { $0.contains("RSVP") || $0.contains("neuroplasticidade") || $0.contains("leitura") })
+    }
+    
+    func testFlashcardSM2Progression() {
+        var card = Flashcard(
+            front: "O que é RSVP?",
+            back: "Rapid Serial Visual Presentation, método de leitura rápida serial.",
+            sourceTitle: "Guia de Leitura"
+        )
+        
+        XCTAssertEqual(card.repetitionCount, 0)
+        XCTAssertEqual(card.intervalDays, 1)
+        XCTAssertEqual(card.easeFactor, 2.5, accuracy: 0.001)
+        
+        // 1ª Avaliação: Good
+        card.review(rating: .good)
+        XCTAssertEqual(card.repetitionCount, 1)
+        XCTAssertEqual(card.intervalDays, 1)
+        XCTAssertEqual(card.easeFactor, 2.5, accuracy: 0.001)
+        
+        // 2ª Avaliação: Good
+        card.review(rating: .good)
+        XCTAssertEqual(card.repetitionCount, 2)
+        XCTAssertEqual(card.intervalDays, 4)
+        
+        // 3ª Avaliação: Again -> reinicia contagem
+        card.review(rating: .again)
+        XCTAssertEqual(card.repetitionCount, 0)
+        XCTAssertEqual(card.intervalDays, 1)
+    }
+    
+    func testDynamicQuizGeneration() {
+        let sampleText = """
+        A velocidade média de leitura convencional gira em torno de 200 a 250 palavras por minuto.
+        O método RSVP projeta uma palavra de cada vez no ponto óptico de reconhecimento.
+        Com essa técnica, a taxa de fixação visual é otimizada e o tempo gasto em saltos sacádicos é eliminado.
+        Estudos demonstram que a compreensão de textos técnicos pode atingir mais de 500 palavras por minuto.
+        """
+        
+        let quizService = DynamicQuizService()
+        let questions = quizService.generateQuiz(from: sampleText, title: "Teste RSVP", count: 2)
+        
+        XCTAssertEqual(questions.count, 2)
+        for question in questions {
+            XCTAssertEqual(question.options.count, 3)
+            XCTAssertGreaterThanOrEqual(question.correctIndex, 0)
+            XCTAssertLessThan(question.correctIndex, 3)
+            XCTAssertTrue(question.text.contains("Complete o sentido"))
+        }
+    }
+    
+    @MainActor
+    func testEyeTrackingFatigueDismissal() {
+        let manager = EyeTrackingManager.shared
+        manager.isFatigueRestSuggested = true
+        XCTAssertTrue(manager.isFatigueRestSuggested)
+        
+        manager.dismissFatigueSuggestion()
+        XCTAssertFalse(manager.isFatigueRestSuggested)
+    }
+    
+    // MARK: - Testes de Neurociência Cognitiva da Leitura
+    
+    func testAdaptiveReadingPacerSynapticPauses() {
+        let pacer = AdaptiveReadingPacer()
+        let baseWPM = 300 // base duration = 0.200s
+        
+        let normalDuration = pacer.duration(for: "leitura", baseWPM: baseWPM, isSmartWPMEnabled: true)
+        let sentenceEndDuration = pacer.duration(for: "aprendizado.", baseWPM: baseWPM, isSmartWPMEnabled: true)
+        let paragraphEndDuration = pacer.duration(for: "conclusão.", baseWPM: baseWPM, isSmartWPMEnabled: true, isEndOfParagraph: true)
+        let ellipsisDuration = pacer.duration(for: "continua...", baseWPM: baseWPM, isSmartWPMEnabled: true)
+        
+        // Pausa sináptica de fim de oração deve ser significativamente maior que palavra intermediária
+        XCTAssertGreaterThan(sentenceEndDuration, normalDuration * 1.5)
+        // Pausa sináptica de parágrafo deve ser ainda maior para consolidação do modelo de situação
+        XCTAssertGreaterThan(paragraphEndDuration, sentenceEndDuration)
+        // Reticências demandam suspensão reflexiva
+        XCTAssertGreaterThan(ellipsisDuration, normalDuration)
+    }
+    
+    @MainActor
+    func testStatsViewModelEffectiveWPM() {
+        let habit = ReadingHabitTracker.shared
+        habit.recordBenchmarkResult(wpm: 400, scorePercentage: 0.75)
+        
+        XCTAssertEqual(habit.lastBenchmarkWPM, 400)
+        XCTAssertEqual(habit.lastBenchmarkScore, 0.75)
+        XCTAssertEqual(habit.lastEffectiveWPM, 300) // 400 * 0.75 = 300 eWPM
+        
+        let statsVM = StatsViewModel()
+        XCTAssertEqual(statsVM.benchmarkEffectiveWPM, 300)
+        XCTAssertEqual(statsVM.calibratedRetentionRate, 0.75)
+        
+        // Sessões simuladas com média de 400 WPM
+        let sessions = [
+            ReadingSession(durationSeconds: 60, wordsRead: 400, averageWPM: 400)
+        ]
+        let avgEff = statsVM.averageEffectiveWPM(from: sessions)
+        XCTAssertEqual(avgEff, 300)
+    }
+    
+    func testCognitivePrimingGeneration() {
+        let text = """
+        A neuroplasticidade cerebral permite a adaptação constante dos circuitos visuais e fonológicos.
+        O córtex visual recicla neurônios para reconhecer grafemas e conectá-los ao léxico mental.
+        Estudos demonstram que a atenção prévia e o foco atencional amplificam a retenção da leitura.
+        """
+        
+        let priming = TextSummarizerService.shared.generatePrimingContext(from: text, title: "Neurociência")
+        
+        XCTAssertEqual(priming.title, "Neurociência")
+        XCTAssertFalse(priming.anchorConcepts.isEmpty)
+        XCTAssertFalse(priming.keyInsights.isEmpty)
+        XCTAssertFalse(priming.focusQuestion.isEmpty)
+        XCTAssertGreaterThan(priming.estimatedReadingSeconds, 0)
+    }
+    
+    // MARK: - Testes do Guia de Técnicas e Recursos
+    
+    func testReadingGuideViewInitialization() {
+        let defaultGuide = ReadingGuideView()
+        XCTAssertNotNil(defaultGuide)
+        
+        let techniquesGuide = ReadingGuideView(initialSection: .techniques)
+        XCTAssertNotNil(techniquesGuide)
+        
+        let featuresGuide = ReadingGuideView(initialSection: .features)
+        XCTAssertNotNil(featuresGuide)
+        
+        let simulatorGuide = ReadingGuideView(initialSection: .simulator)
+        XCTAssertNotNil(simulatorGuide)
+        
+        XCTAssertEqual(ReadingGuideView.GuideSection.techniques.iconName, "brain.head.profile")
+        XCTAssertEqual(ReadingGuideView.GuideSection.features.iconName, "sparkles.rectangle.stack")
+        XCTAssertEqual(ReadingGuideView.GuideSection.simulator.iconName, "play.circle.fill")
+    }
+    
+    // MARK: - Testes de Deep Link e Integração Chrome
+    
+    @MainActor
+    func testDeepLinkManagerReadAction() async throws {
+        let container = ModelContainer.preview
+        let context = container.mainContext
+        
+        let testText = "OneWord conecta o Chrome ao leitor veloz."
+        let escapedText = testText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let escapedTitle = "Artigo de Teste".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let url = URL(string: "oneword://read?text=\(escapedText)&title=\(escapedTitle)")!
+        
+        let doc = try await DeepLinkManager.shared.handle(url: url, context: context)
+        XCTAssertNotNil(doc)
+        XCTAssertEqual(doc?.title, "Artigo de Teste")
+        XCTAssertEqual(doc?.totalWords, 7)
+        XCTAssertEqual(doc?.activeWords.first, "OneWord")
+    }
+    
+    @MainActor
+    func testOneWordLocalServerConfiguration() {
+        let server = OneWordLocalServer.shared
+        XCTAssertEqual(server.defaultPort, 8765)
+        XCTAssertFalse(server.isRunning)
+    }
 }
+
 
 

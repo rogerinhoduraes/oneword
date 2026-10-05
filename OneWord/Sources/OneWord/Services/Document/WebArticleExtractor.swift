@@ -118,9 +118,11 @@ public final class WebArticleExtractor: Sendable {
     /// Converte um artigo extraído em uma entidade `Document` do SwiftData.
     @MainActor
     public func saveAsDocument(article: ExtractedArticle, context: ModelContext) throws -> Document {
+        let detectedLang = BookTranslationService.detectLanguage(for: article.textContent)
         let content = DocumentContent(
             rawText: article.textContent,
-            words: article.words
+            words: article.words,
+            originalLanguage: detectedLang
         )
         let doc = Document(
             title: article.title,

@@ -110,6 +110,12 @@ public final class ReadingHabitTracker {
         return nil
     }
     
+    /// WPM Efetivo (eWPM = WPM × Taxa de Retenção/Compreensão)
+    public var lastEffectiveWPM: Int? {
+        guard let wpm = lastBenchmarkWPM, let score = lastBenchmarkScore else { return nil }
+        return Int(Double(wpm) * score)
+    }
+    
     public func recordBenchmarkResult(wpm: Int, scorePercentage: Double) {
         UserDefaults.standard.set(wpm, forKey: kBenchmarkWPM)
         UserDefaults.standard.set(scorePercentage, forKey: kBenchmarkScore)

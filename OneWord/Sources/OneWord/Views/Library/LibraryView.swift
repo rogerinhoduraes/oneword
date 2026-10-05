@@ -22,6 +22,8 @@ public struct LibraryView: View {
     @State private var isShowingAddBookSheet: Bool = false
     @State private var isShowingEPUBPicker: Bool = false
     @State private var isShowingQuickImportSheet: Bool = false
+    @State private var isShowingFlashcardReview: Bool = false
+    @State private var isShowingReadingGuide: Bool = false
     @State private var selectedBookForNavigation: Book?
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
@@ -59,6 +61,16 @@ public struct LibraryView: View {
             .navigationTitle("OneWord")
             .searchable(text: $viewModel.searchText, prompt: "Buscar na biblioteca...")
             .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    toolbarLeadingItems
+                }
+                #else
+                ToolbarItem(placement: .navigation) {
+                    toolbarLeadingItems
+                }
+                #endif
+                
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
@@ -70,7 +82,7 @@ public struct LibraryView: View {
                         Button {
                             isShowingEPUBPicker = true
                         } label: {
-                            Label("Importar Livro Digital (.epub / .txt)", systemImage: "arrow.down.doc.fill")
+                            Label("Importar Livro ou PDF (.pdf / .epub / .txt)", systemImage: "arrow.down.doc.fill")
                         }
                         
                         Button {
@@ -86,12 +98,23 @@ public struct LibraryView: View {
                         } label: {
                             Label("Escanear Documento Avulso", systemImage: "camera.fill")
                         }
+                        
+                        Divider()
+                        
+                        Button {
+                            isShowingReadingGuide = true
+                        } label: {
+                            Label("Guia: Técnicas & Recursos", systemImage: "brain.head.profile")
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
                             .foregroundStyle(.blue)
                     }
                 }
+            }
+            .sheet(isPresented: $isShowingFlashcardReview) {
+                FlashcardReviewView()
             }
             .sheet(isPresented: $isShowingAddBookSheet) {
                 AddBookSheetView { newBook in
@@ -108,15 +131,30 @@ public struct LibraryView: View {
                     viewModel.selectedDocumentForReading = newDoc
                 }
             }
+            .sheet(isPresented: $isShowingReadingGuide) {
+                ReadingGuideView()
+            }
             .fileImporter(
                 isPresented: $isShowingEPUBPicker,
-                allowedContentTypes: [.epub, .plainText],
+                allowedContentTypes: [.epub, .plainText, .pdf],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
                 case .success(let urls):
                     guard let url = urls.first else { return }
-                    if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
+                    if url.pathExtension.lowercased() == "pdf" {
+                        let isSecured = url.startAccessingSecurityScopedResource()
+                        defer {
+                            if isSecured { url.stopAccessingSecurityScopedResource() }
+                        }
+                        if let extracted = try? PDFImportService().extractText(from: url) {
+                            let doc = Document(title: extracted.title, rawText: extracted.cleanedText, words: extracted.words)
+                            modelContext.insert(doc)
+                            try? modelContext.save()
+                            libraryTab = .articles
+                            viewModel.selectedDocumentForReading = doc
+                        }
+                    } else if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
                         self.selectedBookForNavigation = newBook
                     }
                 case .failure:
@@ -135,6 +173,44 @@ public struct LibraryView: View {
             .navigationDestination(item: $selectedBookForNavigation) { book in
                 BookDetailView(book: book)
             }
+        }
+    }
+    
+    // MARK: - Barra de Ferramentas Superior
+    
+    private var toolbarLeadingItems: some View {
+        HStack(spacing: 12) {
+            
+            let dueCount = FlashcardService.shared.dueFlashcards.count
+            Button {
+                isShowingFlashcardReview = true
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "rectangle.stack.badge.play")
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                    
+                    if dueCount > 0 {
+                        Text("\(dueCount)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(3)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                            .offset(x: 8, y: -6)
+                    }
+                }
+            }
+            .help("Revisão Espaçada de Flashcards")
+            
+            Button {
+                isShowingReadingGuide = true
+            } label: {
+                Image(systemName: "questionmark.circle")
+                    .font(.subheadline)
+                    .foregroundStyle(.blue)
+            }
+            .help("Guia: Técnicas de Leitura & Recursos")
         }
     }
     

@@ -32,8 +32,7 @@ Documentação técnica de desenvolvimento de software e integração:
 - **Hardware & Sensores:** AVFoundation (câmera/áudio), MapKit, CoreLocation, Haptics nativos.
 - **IA & Machine Learning:** Apple Intelligence, CoreML, Vision Framework (OCR).
 - **Integração com iOS:** Live Activities, Dynamic Island, WidgetKit, App Intents (Siri & Atalhos).
-- **Segurança & Privacidade:** Face ID / Touch ID, Sign in with Apple, Passkeys, `PrivacyInfo.xcprivacy`.
-- **Monetização:** StoreKit 2 (compras in-app e assinaturas), `SubscriptionStoreView`.
+- **Acesso & Gratuito:** 100% Gratuito e Ilimitado (todos os recursos de neuroleitura, IA e eye-tracking liberados sem assinaturas ou paywalls).
 - **Testes & Qualidade:** Novo framework `Swift Testing` (`@Test`, `#expect`), lista de chaves de permissão `Info.plist`.
 
 ---
@@ -51,9 +50,20 @@ Tratado técnico de eletroquímica e arquitetura de software adaptativa de energ
 
 ---
 
+### 4. [Extensão Google Chrome & Conector RSVP](file:///Users/rogerioduraes/Documents/dev/OneWord/chrome-extension/README.md)
+Extensão oficial Manifest V3 para leitura dinâmica web e conector nativo:
+- **Conector Nativo (`oneword://`):** Envia artigos e seleções da web diretamente para o app OneWord no macOS/iOS.
+- **Leitor RSVP Integrado:** Leitor foveal com guias ORP em vermelho, ritmo inteligente, controle de 150 a 900+ WPM e temas (Dark, Light, Sépia).
+- **Popup & Side Panel:** Suporte ao painel lateral do Chrome para leitura paralela à navegação.
+- **Menu de Contexto & Atalhos:** Leitura imediata com clique direito ou atalhos de teclado (`Alt+Shift+O`, `Alt+Shift+W`).
+
+---
+
 ## 🚀 Como Utilizar
 
 Consulte os arquivos de referência conforme a necessidade:
 - Para projetos e features que demandam modelagem física, periféricos, latência mecânica, calibração de sensores ou design tátil: acesse [`APPLE_HARDWARE_PHYSICAL_MECHANISMS.md`](file:///Users/rogerioduraes/Documents/dev/OneWord/docs/APPLE_HARDWARE_PHYSICAL_MECHANISMS.md).
 - Para implementação de código Swift, UI, persistência e arquitetura de software: consulte [`IOS_DEVELOPER_REFERENCE.md`](file:///Users/rogerioduraes/Documents/dev/OneWord/IOS_DEVELOPER_REFERENCE.md).
 - Para otimização de consumo de energia, gestão de bateria, perfil térmico e telemetria: consulte [`IPHONE_BATTERY_AND_POWER_OPTIMIZATION.md`](file:///Users/rogerioduraes/Documents/dev/OneWord/IPHONE_BATTERY_AND_POWER_OPTIMIZATION.md).
+- Para instalar e testar a extensão no navegador Chrome: consulte [`chrome-extension/README.md`](file:///Users/rogerioduraes/Documents/dev/OneWord/chrome-extension/README.md).
+

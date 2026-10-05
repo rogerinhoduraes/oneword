@@ -143,27 +143,62 @@ public struct WPMBenchmarkView: View {
             Spacer()
             
             // Display Central RSVP com ORP
-            VStack(spacing: 8) {
-                Rectangle()
-                    .fill(Color.blue.opacity(0.4))
-                    .frame(width: 2.5, height: 14)
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(height: 1)
+                    Rectangle()
+                        .fill(Color.red.opacity(0.85))
+                        .frame(width: 3, height: 12)
+                        .clipShape(Capsule())
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(height: 1)
+                }
+                .frame(maxWidth: .infinity)
                 
                 let split = viewModel.engine.currentSplitWord
                 HStack(spacing: 0) {
                     Text(split.prefix)
                         .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    
                     Text(String(split.focalCharacter))
                         .foregroundStyle(.red)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                    
                     Text(split.suffix)
                         .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .font(.system(size: 42, weight: .bold, design: .rounded))
-                .frame(height: 70)
+                .frame(height: 80)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
                 
-                Rectangle()
-                    .fill(Color.blue.opacity(0.4))
-                    .frame(width: 2.5, height: 14)
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(height: 1)
+                    Rectangle()
+                        .fill(Color.red.opacity(0.85))
+                        .frame(width: 3, height: 12)
+                        .clipShape(Capsule())
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(height: 1)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.secondary.opacity(0.04))
+            )
             
             Spacer()
             

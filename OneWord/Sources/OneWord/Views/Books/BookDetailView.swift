@@ -50,6 +50,11 @@ public struct BookDetailView: View {
     // Edição de Capa
     @State private var isShowingEditCoverSheet: Bool = false
     
+    // IA, Resumo, Flashcards e Retenção
+    @State private var isShowingSummary: Bool = false
+    @State private var isShowingFlashcards: Bool = false
+    @State private var isShowingQuiz: Bool = false
+    
     public init(book: Book) {
         self.book = book
     }
@@ -108,6 +113,22 @@ public struct BookDetailView: View {
                     )
                 }
                 
+                // Inteligência Artificial & Retenção Cognitiva
+                if book.totalPages > 0 && !book.fullText.isEmpty {
+                    BookAISection(
+                        book: book,
+                        onSummaryTapped: {
+                            isShowingSummary = true
+                        },
+                        onFlashcardsTapped: {
+                            openFlashcards()
+                        },
+                        onQuizTapped: {
+                            isShowingQuiz = true
+                        }
+                    )
+                }
+                
                 // Barra de Ações Rápidas (Escanear Páginas)
                 BookActionsBarSection(
                     onScanTapped: {
@@ -137,6 +158,15 @@ public struct BookDetailView: View {
                 )
             }
             .padding(.vertical)
+        }
+        .sheet(isPresented: $isShowingSummary) {
+            BookSummarySheetView(title: book.title, fullText: book.fullText)
+        }
+        .sheet(isPresented: $isShowingFlashcards) {
+            FlashcardReviewView(filterSourceTitle: book.title)
+        }
+        .sheet(isPresented: $isShowingQuiz) {
+            DynamicQuizSheetView(title: book.title, fullText: book.fullText)
         }
         #if os(iOS)
         .fullScreenCover(isPresented: $isShowingReader) {
@@ -203,6 +233,16 @@ public struct BookDetailView: View {
             }
         }
         #endif
+    }
+    
+    // MARK: - Ações de IA & Retenção
+    
+    private func openFlashcards() {
+        let existing = FlashcardService.shared.flashcards.filter { $0.sourceTitle == book.title }
+        if existing.isEmpty && !book.fullText.isEmpty {
+            _ = FlashcardService.shared.generateFlashcards(from: book.fullText, sourceTitle: book.title)
+        }
+        isShowingFlashcards = true
     }
     
     // MARK: - Ações de Tradução
@@ -842,6 +882,91 @@ private struct BookTranslationBannerSection: View {
         .background(Color.bookCardBg)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .padding(.horizontal, 20)
+    }
+}
+
+/// Seção de Inteligência Artificial e Retenção Cognitiva
+private struct BookAISection: View {
+    let book: Book
+    let onSummaryTapped: () -> Void
+    let onFlashcardsTapped: () -> Void
+    let onQuizTapped: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Inteligência Artificial & Retenção", systemImage: "sparkles")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.purple)
+                Spacer()
+                Text("No Dispositivo")
+                    .font(.caption2.bold())
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.purple.opacity(0.12))
+                    .foregroundStyle(.purple)
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, 20)
+            
+            HStack(spacing: 10) {
+                aiCardButton(
+                    title: "Resumo",
+                    subtitle: "5 Pontos",
+                    systemImage: "doc.text.below.ecg",
+                    color: .purple,
+                    action: onSummaryTapped
+                )
+                
+                aiCardButton(
+                    title: "Flashcards",
+                    subtitle: "Mnemônica",
+                    systemImage: "rectangle.stack.fill",
+                    color: .blue,
+                    action: onFlashcardsTapped
+                )
+                
+                aiCardButton(
+                    title: "Quiz",
+                    subtitle: "Retenção",
+                    systemImage: "checkmark.bubble.fill",
+                    color: .green,
+                    action: onQuizTapped
+                )
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private func aiCardButton(
+        title: String,
+        subtitle: String,
+        systemImage: String,
+        color: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 6) {
+                Image(systemName: systemImage)
+                    .font(.title3)
+                    .foregroundStyle(color)
+                
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.primary)
+                
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(Color.bookCardBg)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: .black.opacity(0.03), radius: 4, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 }
 
