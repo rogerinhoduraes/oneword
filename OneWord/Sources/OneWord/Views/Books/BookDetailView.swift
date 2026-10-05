@@ -50,6 +50,11 @@ public struct BookDetailView: View {
     // Edição de Capa
     @State private var isShowingEditCoverSheet: Bool = false
     
+    // IA, Resumo, Flashcards e Retenção
+    @State private var isShowingSummary: Bool = false
+    @State private var isShowingFlashcards: Bool = false
+    @State private var isShowingQuiz: Bool = false
+    
     public init(book: Book) {
         self.book = book
     }
@@ -108,6 +113,22 @@ public struct BookDetailView: View {
                     )
                 }
                 
+                // Inteligência Artificial & Retenção Cognitiva
+                if book.totalPages > 0 && !book.fullText.isEmpty {
+                    BookAISection(
+                        book: book,
+                        onSummaryTapped: {
+                            isShowingSummary = true
+                        },
+                        onFlashcardsTapped: {
+                            openFlashcards()
+                        },
+                        onQuizTapped: {
+                            isShowingQuiz = true
+                        }
+                    )
+                }
+                
                 // Barra de Ações Rápidas (Escanear Páginas)
                 BookActionsBarSection(
                     onScanTapped: {
@@ -137,6 +158,15 @@ public struct BookDetailView: View {
                 )
             }
             .padding(.vertical)
+        }
+        .sheet(isPresented: $isShowingSummary) {
+            BookSummarySheetView(title: book.title, fullText: book.fullText)
+        }
+        .sheet(isPresented: $isShowingFlashcards) {
+            FlashcardReviewView(filterSourceTitle: book.title)
+        }
+        .sheet(isPresented: $isShowingQuiz) {
+            DynamicQuizSheetView(title: book.title, fullText: book.fullText)
         }
         #if os(iOS)
         .fullScreenCover(isPresented: $isShowingReader) {
@@ -205,13 +235,23 @@ public struct BookDetailView: View {
         #endif
     }
     
+    // MARK: - Ações de IA & Retenção
+    
+    private func openFlashcards() {
+        let existing = FlashcardService.shared.flashcards.filter { $0.sourceTitle == book.title }
+        if existing.isEmpty && !book.fullText.isEmpty {
+            _ = FlashcardService.shared.generateFlashcards(from: book.fullText, sourceTitle: book.title)
+        }
+        isShowingFlashcards = true
+    }
+    
     // MARK: - Ações de Tradução
     
     private func triggerTranslation() {
         #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(iOS 17.4, macOS 15.0, *) {
             isProcessing = true
-            processingProgressText = "Preparando tradução para Português..."
+            processingProgressText = String(localized: "Preparando tradução para \(AppLanguage.name)...")
             isTranslationTriggered.toggle()
             return
         }
@@ -224,7 +264,7 @@ public struct BookDetailView: View {
     private func translateWithSession(_ session: TranslationSession) async {
         await MainActor.run {
             isProcessing = true
-            processingProgressText = "Iniciando tradução..."
+            processingProgressText = String(localized: "Iniciando tradução...")
         }
         
         let parser = TextParser()
@@ -232,7 +272,7 @@ public struct BookDetailView: View {
         
         for (index, page) in book.sortedPages.enumerated() {
             await MainActor.run {
-                processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+                processingProgressText = String(localized: "Traduzindo página \(index + 1) de \(book.totalPages)...")
             }
             
             do {
@@ -267,13 +307,13 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Processando tradução para Português..."
+                processingProgressText = String(localized: "Processando tradução para \(AppLanguage.name)...")
             }
             
             let parser = TextParser()
             for (index, page) in book.sortedPages.enumerated() {
                 await MainActor.run {
-                    processingProgressText = "Traduzindo página \(index + 1) de \(book.totalPages)..."
+                    processingProgressText = String(localized: "Traduzindo página \(index + 1) de \(book.totalPages)...")
                 }
                 
                 let lang = book.detectedLanguageCode ?? "en"
@@ -319,14 +359,14 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Iniciando reconhecimento de texto..."
+                processingProgressText = String(localized: "Iniciando reconhecimento de texto...")
             }
             
             let ocrService = VisionOCRService()
             
             for (index, image) in images.enumerated() {
                 await MainActor.run {
-                    processingProgressText = "Processando OCR: Página \(index + 1) de \(images.count)..."
+                    processingProgressText = String(localized: "Processando OCR: Página \(index + 1) de \(images.count)...")
                 }
                 
                 do {
@@ -359,7 +399,7 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Carregando fotos da galeria..."
+                processingProgressText = String(localized: "Carregando fotos da galeria...")
             }
             
             #if canImport(UIKit)
@@ -388,7 +428,7 @@ public struct BookDetailView: View {
         Task {
             await MainActor.run {
                 isProcessing = true
-                processingProgressText = "Extraindo páginas do PDF..."
+                processingProgressText = String(localized: "Extraindo páginas do PDF...")
             }
             
             let pdfService = PDFImportService()
@@ -485,7 +525,7 @@ private struct BookHeaderSection: View {
                 if book.hasTranslation {
                     Text("•")
                         .foregroundStyle(.secondary)
-                    Text(book.isTranslationActive ? "Traduzido (PT)" : "Texto Original")
+                    Text(book.isTranslationActive ? String(localized: "Traduzido (PT)") : String(localized: "Texto Original"))
                         .font(.caption.bold())
                         .foregroundStyle(book.isTranslationActive ? .green : .secondary)
                 }
@@ -538,15 +578,15 @@ private struct BookHeaderSection: View {
     
     private var buttonTitle: String {
         if book.totalWords == 0 {
-            return "Escaneie páginas para ler"
+            return String(localized: "Escaneie páginas para ler")
         }
         if book.currentGlobalWordIndex == 0 {
-            return "Iniciar Leitura RSVP"
+            return String(localized: "Iniciar Leitura RSVP")
         }
         if book.isCompleted {
-            return "Ler Livro Novamente"
+            return String(localized: "Ler Livro Novamente")
         }
-        return "Continuar da Pág. \(book.currentPageNumber)"
+        return String(localized: "Continuar da Pág. \(book.currentPageNumber)")
     }
 }
 
@@ -624,7 +664,7 @@ private struct BookPagesIndexSection: View {
                 
                 Spacer()
                 
-                Text("\(book.totalPages) \(book.totalPages == 1 ? "página" : "páginas")")
+                Text("\(book.totalPages) \(book.totalPages == 1 ? String(localized: "página") : String(localized: "páginas"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -691,7 +731,7 @@ private struct PageRowItem: View {
                         }
                         
                         if page.isShowingTranslation {
-                            Text("🇧🇷 PT")
+                            Text("\(AppLanguage.flag) \(AppLanguage.code.uppercased())")
                                 .font(.system(size: 9, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -788,8 +828,8 @@ private struct BookTranslationBannerSection: View {
                     }
                     
                     Text(book.hasTranslation 
-                         ? (book.isTranslationActive ? "Leitura RSVP em Português ativada." : "Leitura RSVP no idioma original.")
-                         : "Deseja traduzir todo o conteúdo para ler via RSVP em Português?")
+                         ? (book.isTranslationActive ? String(localized: "Leitura RSVP em \(AppLanguage.name) ativada.") : String(localized: "Leitura RSVP no idioma original."))
+                         : String(localized: "Deseja traduzir todo o conteúdo para ler via RSVP em \(AppLanguage.name)?"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -819,7 +859,7 @@ private struct BookTranslationBannerSection: View {
                         get: { book.isTranslationActive },
                         set: { onToggleTranslation($0) }
                     )) {
-                        Text("🇧🇷 Ler em Português").tag(true)
+                        Text("\(AppLanguage.flag) Ler em \(AppLanguage.name)").tag(true)
                         Text("\(book.detectedLanguageInfo.flag) Idioma Original").tag(false)
                     }
                     .pickerStyle(.segmented)
@@ -845,6 +885,91 @@ private struct BookTranslationBannerSection: View {
     }
 }
 
+/// Seção de Inteligência Artificial e Retenção Cognitiva
+private struct BookAISection: View {
+    let book: Book
+    let onSummaryTapped: () -> Void
+    let onFlashcardsTapped: () -> Void
+    let onQuizTapped: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Inteligência Artificial & Retenção", systemImage: "sparkles")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.purple)
+                Spacer()
+                Text("No Dispositivo")
+                    .font(.caption2.bold())
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.purple.opacity(0.12))
+                    .foregroundStyle(.purple)
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, 20)
+            
+            HStack(spacing: 10) {
+                aiCardButton(
+                    title: String(localized: "Resumo"),
+                    subtitle: String(localized: "5 Pontos"),
+                    systemImage: "doc.text.below.ecg",
+                    color: .purple,
+                    action: onSummaryTapped
+                )
+                
+                aiCardButton(
+                    title: String(localized: "Flashcards"),
+                    subtitle: String(localized: "Mnemônica"),
+                    systemImage: "rectangle.stack.fill",
+                    color: .blue,
+                    action: onFlashcardsTapped
+                )
+                
+                aiCardButton(
+                    title: String(localized: "Quiz"),
+                    subtitle: String(localized: "Retenção"),
+                    systemImage: "checkmark.bubble.fill",
+                    color: .green,
+                    action: onQuizTapped
+                )
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private func aiCardButton(
+        title: String,
+        subtitle: String,
+        systemImage: String,
+        color: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 6) {
+                Image(systemName: systemImage)
+                    .font(.title3)
+                    .foregroundStyle(color)
+                
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.primary)
+                
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(Color.bookCardBg)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: .black.opacity(0.03), radius: 4, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 #if canImport(Translation)
 @available(iOS 17.4, macOS 15.0, *)
 private struct SystemTranslationContainer: View {
@@ -862,7 +987,7 @@ private struct SystemTranslationContainer: View {
             .onChange(of: trigger) { _, newValue in
                 guard newValue else { return }
                 if config == nil {
-                    config = TranslationSession.Configuration(target: Locale.Language(identifier: "pt-BR"))
+                    config = TranslationSession.Configuration(target: AppLanguage.translationTarget)
                 } else {
                     config?.invalidate()
                 }

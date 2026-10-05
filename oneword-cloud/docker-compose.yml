@@ -1,0 +1,9 @@
+services:
+  oneword-hub:
+    build: .
+    container_name: oneword-hub
+    restart: unless-stopped
+    ports:
+      - "8765:8765"
+    volumes:
+      - ./data:/app/data

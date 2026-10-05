@@ -36,7 +36,7 @@ public struct GetDailyStatsIntent: AppIntent {
         let effectiveWords = words > 0 ? words : 650
         let minutesSaved = Double(effectiveWords) / 250.0 - Double(effectiveWords) / 450.0
         
-        let response = "Hoje você leu \(effectiveWords) palavras e economizou cerca de \(max(1, Int(minutesSaved))) minutos com leitura RSVP no OneWord!"
+        let response = String(localized: "Hoje você leu \(effectiveWords) palavras e economizou cerca de \(max(1, Int(minutesSaved))) minutos com leitura RSVP no OneWord!")
         return .result(value: response, dialog: IntentDialog(stringLiteral: response))
     }
 }
@@ -55,7 +55,7 @@ public struct SetReadingWPMIntent: AppIntent {
     public func perform() async throws -> some IntentResult & ProvidesDialog {
         let clamped = min(max(targetWPM, 100), 1000)
         UserDefaults.standard.set(clamped, forKey: "default_wpm")
-        let message = "Velocidade de leitura ajustada para \(clamped) WPM no OneWord."
+        let message = String(localized: "Velocidade de leitura ajustada para \(clamped) WPM no OneWord.")
         return .result(dialog: IntentDialog(stringLiteral: message))
     }
 }

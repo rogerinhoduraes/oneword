@@ -86,6 +86,12 @@ public final class Document {
         newProgress.document = self
     }
     
+    /// Inicializador de conveniência a partir de texto bruto simples (utiliza TextParser).
+    public convenience init(title: String, rawText: String) {
+        let (_, words) = TextParser().parse(rawText: rawText)
+        self.init(title: title, rawText: rawText, words: words)
+    }
+    
     // MARK: - Propriedades Computadas
     
     /// Total de palavras ativas no documento (considera tradução se ativada).
@@ -100,7 +106,15 @@ public final class Document {
     
     /// Código do idioma original detectado no documento.
     public var detectedLanguageCode: String? {
-        content?.originalLanguage
+        if let lang = content?.originalLanguage, !lang.isEmpty {
+            return lang
+        }
+        if let raw = content?.rawText, !raw.isEmpty {
+            let detected = BookTranslationService.detectLanguage(for: raw)
+            content?.originalLanguage = detected
+            return detected
+        }
+        return nil
     }
     
     /// Informações formatadas do idioma detectado (Nome e Bandeira).
@@ -110,7 +124,8 @@ public final class Document {
     
     /// Indica se o documento está em idioma estrangeiro (não é português).
     public var isForeignLanguage: Bool {
-        !detectedLanguageInfo.isPortuguese
+        guard let code = detectedLanguageCode, !code.isEmpty else { return false }
+        return BookTranslationService.languageInfo(for: code).code != AppLanguage.code
     }
     
     /// Indica se o documento já possui versão traduzida para Português.
@@ -126,11 +141,13 @@ public final class Document {
     /// Alterna a exibição entre o idioma original e o português traduzido.
     public func toggleTranslation(active: Bool) {
         content?.isShowingTranslation = active
+        markAsAccessed()
     }
     
     /// Aplica a tradução para Português no documento.
     public func applyTranslation(text: String, words: [String]) {
         content?.setTranslation(text: text, words: words)
+        markAsAccessed()
     }
     
     /// Limpa a tradução existente.
@@ -186,7 +203,7 @@ public final class Document {
     /// - Parameter maxLength: Quantidade máxima de caracteres (default: 120).
     /// - Returns: Texto com reticências se exceder o limite.
     public func previewSnippet(maxLength: Int = 120) -> String {
-        guard let raw = content?.rawText, !raw.isEmpty else { return "Documento sem texto disponível." }
+        guard let raw = content?.activeRawText, !raw.isEmpty else { return String(localized: "Documento sem texto disponível.") }
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.count <= maxLength {
             return trimmed

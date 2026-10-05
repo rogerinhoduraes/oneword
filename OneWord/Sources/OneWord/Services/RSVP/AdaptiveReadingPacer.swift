@@ -19,11 +19,13 @@ public final class AdaptiveReadingPacer: Sendable {
     ///   - word: Palavra a ser exibida.
     ///   - baseWPM: Velocidade nominal selecionada pelo usuário (ex: 300 WPM).
     ///   - isSmartWPMEnabled: Se falso, aplica apenas a cadência uniforme do WPM base.
+    ///   - isEndOfParagraph: Indica se a palavra finaliza um parágrafo estrutural.
     /// - Returns: Duração calibrada em segundos.
     public func duration(
         for word: String,
         baseWPM: Int,
-        isSmartWPMEnabled: Bool = true
+        isSmartWPMEnabled: Bool = true,
+        isEndOfParagraph: Bool = false
     ) -> TimeInterval {
         guard baseWPM > 0 else { return 0.2 }
         let baseDuration = 60.0 / Double(baseWPM)
@@ -32,24 +34,26 @@ public final class AdaptiveReadingPacer: Sendable {
             return baseDuration
         }
         
-        let multiplier = cognitiveLoadMultiplier(for: word)
-        // Garante que o multiplicador se mantenha em uma janela confortável (0.75x a 2.2x)
-        let clampedMultiplier = min(max(multiplier, 0.75), 2.2)
+        let multiplier = cognitiveLoadMultiplier(for: word, isEndOfParagraph: isEndOfParagraph)
+        // Garante que o multiplicador se mantenha em uma janela confortável (0.75x a 2.85x / 3.2x em parágrafos)
+        let maxClamp = (isEndOfParagraph || word.contains("\n")) ? 3.2 : 2.85
+        let clampedMultiplier = min(max(multiplier, 0.75), maxClamp)
         return baseDuration * clampedMultiplier
     }
     
-    /// Multiplicador de carga cognitiva derivado de análise morfológica e pontuação.
-    public func cognitiveLoadMultiplier(for rawWord: String) -> Double {
+    /// Multiplicador de carga cognitiva derivado de análise morfológica, pontuação e micro-pausas sinápticas oracionais.
+    /// Baseado no Sentence Wrap-Up Effect (Rayner et al., 2012; Just & Carpenter, 1980) e alívio da memória de trabalho.
+    public func cognitiveLoadMultiplier(for rawWord: String, isEndOfParagraph: Bool = false) -> Double {
         let clean = rawWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clean.isEmpty else { return 1.0 }
         
         var multiplier: Double = 1.0
         
-        // 1. Comprimento e Complexidade Silábica
+        // 1. Comprimento e Complexidade Silábica (reconhecimento morfológico foveal)
         let charCount = clean.count
         switch charCount {
         case 1...3:
-            // Artigos, conjunções curtas ("o", "de", "em", "que") requerem menos tempo de fixação
+            // Artigos, conjunções curtas ("o", "de", "em", "que") requerem menor tempo de fixação
             multiplier *= 0.85
         case 4...7:
             multiplier *= 1.0
@@ -60,15 +64,31 @@ public final class AdaptiveReadingPacer: Sendable {
             multiplier *= 1.30
         }
         
-        // 2. Pontuação Terminal (Fim de sentença: assimilação do córtex pré-frontal)
-        if let lastChar = clean.last {
-            if [".", "!", "?"].contains(lastChar) {
-                multiplier *= 1.70
-            } else if [",", ";", ":"].contains(lastChar) {
-                multiplier *= 1.30
-            } else if ["—", "-", "\"", "'", "”", ")"].contains(lastChar) {
-                multiplier *= 1.15
-            }
+        // 2. Detecção de Micro-Pausa Sináptica Oracional (Sentence Wrap-Up Effect)
+        // Lida com pontuação terminal direta ou entre aspas/parênteses (ex: "fim.", "mundo!", "verdade?", "ele.)")
+        let isTerminalSentence = clean.hasSuffix(".") || clean.hasSuffix("!") || clean.hasSuffix("?") ||
+                                 clean.hasSuffix(".\"") || clean.hasSuffix("!\"") || clean.hasSuffix("?\"") ||
+                                 clean.hasSuffix(".”") || clean.hasSuffix("!”") || clean.hasSuffix("?”") ||
+                                 clean.hasSuffix(".)") || clean.hasSuffix("!)") || clean.hasSuffix("?)")
+        let isEllipsis = clean.hasSuffix("...") || clean.hasSuffix("…")
+        let isClauseSeparator = clean.hasSuffix(",") || clean.hasSuffix(";") || clean.hasSuffix(":") ||
+                                clean.hasSuffix(",\"") || clean.hasSuffix(";\"") || clean.hasSuffix(",”")
+        let isDashOrParen = clean.hasSuffix("—") || clean.hasSuffix("-") || clean.hasSuffix(")") || clean.hasSuffix("]")
+        
+        if isEndOfParagraph || rawWord.contains("\n") {
+            // Pausa sináptica de parágrafo: consolidação profunda do modelo situacional
+            multiplier *= 2.80
+        } else if isTerminalSentence {
+            // Fechamento oracional: alívio da memória de trabalho fonológica e empacotamento semântico
+            multiplier *= 2.40
+        } else if isEllipsis {
+            // Reticências: suspensão oracional reflexiva
+            multiplier *= 2.10
+        } else if isClauseSeparator {
+            // Pausa oracional intermediária para orações coordenadas/subordinadas
+            multiplier *= 1.45
+        } else if isDashOrParen {
+            multiplier *= 1.20
         }
         
         // 3. Numerais e Dados Numéricos (Conversão simbólica fonética)
@@ -89,7 +109,8 @@ public final class AdaptiveReadingPacer: Sendable {
     public func duration(
         for words: [String],
         baseWPM: Int,
-        isSmartWPMEnabled: Bool = true
+        isSmartWPMEnabled: Bool = true,
+        isEndOfParagraph: Bool = false
     ) -> TimeInterval {
         guard !words.isEmpty else { return 0.2 }
         guard baseWPM > 0 else { return 0.2 }
@@ -102,7 +123,13 @@ public final class AdaptiveReadingPacer: Sendable {
         }
         
         // Média ponderada dos fatores das palavras individuais
-        let averageFactor = words.reduce(0.0) { $0 + cognitiveLoadMultiplier(for: $1) } / Double(words.count)
-        return totalBaseDuration * averageFactor
+        let averageFactor = words.reduce(0.0) { sum, word in
+            let isLastInChunk = (word == words.last)
+            return sum + cognitiveLoadMultiplier(for: word, isEndOfParagraph: isLastInChunk && isEndOfParagraph)
+        } / Double(words.count)
+        
+        let maxClamp = (isEndOfParagraph || words.contains(where: { $0.contains("\n") })) ? 3.2 : 2.85
+        let clampedFactor = min(max(averageFactor, 0.75), maxClamp)
+        return totalBaseDuration * clampedFactor
     }
 }

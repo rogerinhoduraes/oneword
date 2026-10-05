@@ -19,8 +19,9 @@ public enum BookTranslationFallback {
         "the power of now": "o poder do agora"
     ]
     
-    /// Dicionário de termos comuns de livros para tradução fluida de páginas.
+    /// Dicionário de termos comuns de livros e artigos para tradução fluida de páginas e textos.
     private static let dictionaryENtoPT: [String: String] = [
+        // Artigos e pronomes
         "the": "o", "a": "um", "an": "um", "and": "e", "or": "ou", "but": "mas", "in": "em",
         "on": "no", "at": "em", "to": "para", "for": "para", "with": "com", "without": "sem",
         "by": "por", "from": "de", "of": "de", "as": "como", "is": "é", "are": "são",
@@ -28,18 +29,44 @@ public enum BookTranslationFallback {
         "have": "ter", "has": "tem", "had": "tinha", "do": "fazer", "does": "faz",
         "did": "fez", "will": "irá", "would": "iria", "can": "pode", "could": "poderia",
         "this": "este", "that": "aquele", "these": "estes", "those": "aqueles",
+        "i": "eu", "you": "você", "he": "ele", "she": "ela", "it": "isto", "we": "nós",
+        "they": "eles", "them": "eles", "us": "nós", "me": "mim", "him": "ele",
+        "our": "nosso", "your": "seu", "their": "deles", "my": "meu", "his": "dele", "her": "dela",
+        "its": "seu", "mine": "meu", "yours": "seu", "ours": "nosso",
+        
+        // Contrações frequentes
+        "it's": "é", "don't": "não", "doesn't": "não", "didn't": "não", "won't": "não irá",
+        "can't": "não pode", "that's": "isso é", "i'm": "eu sou", "you're": "você é",
+        "we're": "nós somos", "they're": "eles são", "there's": "há", "there're": "há",
+        "isn't": "não é", "aren't": "não são", "wasn't": "não era", "weren't": "não eram",
+        "haven't": "não tem", "hasn't": "não tem", "hadn't": "não tinha",
+        
+        // Conectivos e advérbios
+        "about": "sobre", "after": "depois", "before": "antes", "between": "entre",
+        "through": "através", "during": "durante", "under": "sob", "over": "sobre",
+        "into": "em", "than": "do que", "because": "porque", "so": "então", "if": "se",
+        "then": "então", "also": "também", "just": "apenas", "even": "mesmo", "still": "ainda",
+        "not": "não", "only": "apenas", "now": "agora", "always": "sempre", "never": "nunca",
+        "when": "quando", "where": "onde", "why": "por que", "how": "como",
+        "who": "quem", "what": "o que", "which": "qual", "all": "todos", "any": "qualquer",
+        "every": "cada", "some": "algum", "each": "cada", "more": "mais", "most": "mais",
+        "very": "muito", "much": "muito", "many": "muitos", "too": "demais",
+        
+        // Substantivos e temas cognitivos / artigos
         "book": "livro", "page": "página", "read": "ler", "reading": "leitura",
-        "words": "palavras", "mind": "mente", "brain": "cérebro", "focus": "foco",
+        "words": "palavras", "word": "palavra", "mind": "mente", "brain": "cérebro", "focus": "foco",
         "attention": "atenção", "human": "humana", "speed": "velocidade",
-        "knowledge": "conhecimento", "learning": "aprendizado", "habits": "hábitos",
+        "knowledge": "conhecimento", "learning": "aprendizado", "habits": "hábitos", "habit": "hábito",
         "time": "tempo", "life": "vida", "world": "mundo", "power": "poder",
         "great": "grande", "new": "novo", "day": "dia", "first": "primeiro",
-        "second": "segundo", "last": "último", "more": "mais", "most": "mais",
-        "all": "todos", "any": "qualquer", "one": "um", "two": "dois", "three": "três",
-        "every": "cada", "when": "quando", "where": "onde", "why": "por que",
-        "how": "como", "who": "quem", "what": "o que", "which": "qual",
-        "not": "não", "only": "apenas", "also": "também", "now": "agora",
-        "our": "nosso", "your": "seu", "their": "deles", "my": "meu", "his": "dele", "her": "dela"
+        "second": "segundo", "last": "último", "one": "um", "two": "dois", "three": "três",
+        "problem": "problema", "problems": "problemas", "interest": "interesse",
+        "effort": "esforço", "ambition": "ambição", "noise": "ruído", "value": "valor",
+        "article": "artigo", "text": "texto", "idea": "ideia", "ideas": "ideias",
+        "people": "pessoas", "person": "pessoa", "work": "trabalho", "system": "sistema",
+        "ability": "capacidade", "task": "tarefa", "results": "resultados", "level": "nível",
+        "important": "importante", "meaningful": "significativo", "natural": "natural",
+        "lasting": "duradouro", "rare": "raro", "exponentially": "exponencialmente"
     ]
     
     /// Converte um texto de idioma estrangeiro para o Português.
@@ -50,6 +77,19 @@ public enum BookTranslationFallback {
     public static func translate(text: String, from languageCode: String) -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return "" }
+        
+        // O dicionário só cobre inglês → português. Nos demais pares, mantém o texto original.
+        guard AppLanguage.code == "pt", languageCode.lowercased().hasPrefix("en") else { return trimmed }
+        
+        // Seed do Artigo "How to Do Great Work"
+        if trimmed.localizedCaseInsensitiveContains("If you want to do great work") ||
+           trimmed.localizedCaseInsensitiveContains("choose a problem you have a natural aptitude") {
+            return """
+            Se você deseja realizar um grande trabalho, o ponto mais importante é escolher um problema para o qual você tenha aptidão natural e profundo interesse.
+            Existe uma imensa quantidade de ambição no mundo, mas o esforço focado e direcionado a problemas significativos é excepcionalmente raro.
+            Ao cultivar hábitos consistentes e eliminar o ruído periférico, sua capacidade de gerar valor duradouro se expande exponencialmente.
+            """
+        }
         
         // Verifica traduções de parágrafos conhecidos do livro demonstrativo
         if trimmed.localizedCaseInsensitiveContains("Deep work is the ability to focus") {
@@ -74,7 +114,7 @@ public enum BookTranslationFallback {
             """
         }
         
-        // Tradução linha a linha preservando quebras de parágrafo
+        // Tradução linha a linha preservando quebras de parágrafo e pontuação complexa
         let lines = trimmed.components(separatedBy: "\n")
         var translatedLines: [String] = []
         
@@ -88,20 +128,32 @@ public enum BookTranslationFallback {
             let words = lineTrimmed.components(separatedBy: " ")
             let translatedWords = words.map { rawWord -> String in
                 var clean = rawWord.lowercased()
+                var leadingPunctuation = ""
                 var trailingPunctuation = ""
                 
-                if let last = clean.last, [".", ",", "!", "?", ";", ":"].contains(last) {
-                    trailingPunctuation = String(last)
+                // Extrai pontuação de abertura
+                while let first = clean.first, ["(", "[", "{", "\"", "“", "‘", "«", "-", "—"].contains(first) {
+                    leadingPunctuation.append(first)
+                    clean.removeFirst()
+                }
+                
+                // Extrai pontuação de fechamento
+                while let last = clean.last, [".", ",", "!", "?", ";", ":", ")", "]", "}", "\"", "”", "’", "»", "-", "—"].contains(last) {
+                    trailingPunctuation = String(last) + trailingPunctuation
                     clean.removeLast()
                 }
                 
                 let ptWord = dictionaryENtoPT[clean] ?? clean
                 
                 // Preserva maiúscula se a original começava com maiúscula
+                let formatted: String
                 if let first = rawWord.first, first.isUppercase {
-                    return ptWord.capitalized + trailingPunctuation
+                    formatted = ptWord.capitalized
+                } else {
+                    formatted = ptWord
                 }
-                return ptWord + trailingPunctuation
+                
+                return leadingPunctuation + formatted + trailingPunctuation
             }
             translatedLines.append(translatedWords.joined(separator: " "))
         }

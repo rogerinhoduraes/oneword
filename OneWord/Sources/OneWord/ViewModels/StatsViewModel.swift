@@ -83,6 +83,24 @@ public final class StatsViewModel {
         return Int((Double(totalWords) / totalSeconds) * 60.0)
     }
     
+    /// WPM Efetivo do teste de calibração (eWPM = WPM × Retenção).
+    public var benchmarkEffectiveWPM: Int? {
+        ReadingHabitTracker.shared.lastEffectiveWPM
+    }
+    
+    /// Taxa de retenção cognitiva calibrada (ou 80% estimada por padrão se não testado).
+    public var calibratedRetentionRate: Double {
+        ReadingHabitTracker.shared.lastBenchmarkScore ?? 0.80
+    }
+    
+    /// eWPM médio do período selecionado: pondera a velocidade bruta pela retenção real do leitor.
+    /// Conceito neurocientífico que equilibra velocidade foveal e compreensão semântica profunda.
+    public func averageEffectiveWPM(from sessions: [ReadingSession]) -> Int {
+        let avgRaw = averageWPM(from: sessions)
+        guard avgRaw > 0 else { return 0 }
+        return Int(Double(avgRaw) * calibratedRetentionRate)
+    }
+    
     /// Sequência atual de dias consecutivos de leitura (Streak).
     public func readingStreak(from sessions: [ReadingSession]) -> Int {
         let calendar = Calendar.current
@@ -110,7 +128,7 @@ public final class StatsViewModel {
         let daysCount = (selectedTimeframe == .week) ? 7 : (selectedTimeframe == .month ? 30 : 14)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "pt_BR")
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = (daysCount <= 7) ? "EEE" : "dd/MM"
         
         var metrics: [DailyReadingMetric] = []

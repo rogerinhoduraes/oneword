@@ -42,9 +42,34 @@ public final class RSVPReaderViewModel {
         }
     }
     
+    /// Modos de visualização de leitura disponíveis.
+    public enum ReaderMode: String, CaseIterable, Identifiable {
+        case rsvp = "RSVP Foveal"
+        case bionic = "Biônico Pacer"
+        
+        public var id: String { rawValue }
+    }
+    
+    /// Modo de exibição atual (RSVP de palavra central vs Leitor Biônico contínuo).
+    public var readerMode: ReaderMode = .rsvp
+    
+    /// Habilita rastreamento de atenção e pausa automática por câmera frontal.
+    public var isEyeTrackingEnabled: Bool = false {
+        didSet {
+            setupEyeTracking()
+        }
+    }
+    
+    /// Exibição do modal de compartilhamento em redes sociais.
+    public var isShowingShareCard: Bool = false
+    
     /// Controle de exibição do dicionário de termos da Apple.
     public var isShowingWordDefinition: Bool = false
     public var wordToDefine: String = ""
+    
+    /// Controle de exibição do modal de Priming Neurocognitivo (Pré-leitura).
+    public var isShowingPrimingSheet: Bool = false
+    public var primingContext: CognitivePrimingContext?
     
     /// Aplica as preferências de ergonomia cognitiva diretamente ao motor RSVP.
     public func applySettings() {
@@ -54,6 +79,25 @@ public final class RSVPReaderViewModel {
         if settings.bimodalAudioEnabled && engine.bimodalSynthesizer == nil {
             engine.bimodalSynthesizer = BimodalSpeechSynthesizer()
         }
+    }
+    
+    private func setupEyeTracking() {
+        if isEyeTrackingEnabled {
+            EyeTrackingManager.shared.onUserLookedAway = { [weak self] in
+                Task { @MainActor in
+                    self?.handleUserLookedAway()
+                }
+            }
+            EyeTrackingManager.shared.startTracking()
+        } else {
+            EyeTrackingManager.shared.stopTracking()
+        }
+    }
+    
+    private func handleUserLookedAway() {
+        guard engine.isPlaying else { return }
+        engine.pause()
+        engine.stepBackward(count: 4) // Retrocede 4 palavras para não perder a linha de raciocínio
     }
     
     // MARK: - Inicializadores
@@ -71,7 +115,7 @@ public final class RSVPReaderViewModel {
         let config = RSVPConfiguration(wpm: initialWPM)
         self.engine = RSVPEngine(config: config)
         
-        let words = document.content?.words ?? []
+        let words = document.activeWords
         let initialIndex = document.currentWordIndex
         
         self.sessionInitialIndex = initialIndex
@@ -118,14 +162,20 @@ public final class RSVPReaderViewModel {
     
     /// Título do item em leitura.
     public var title: String {
-        book?.title ?? document?.title ?? "Leitura"
+        book?.title ?? document?.title ?? String(localized: "Leitura")
     }
     
     /// Subtítulo descritivo de posição (ex: página do livro).
     public var subtitle: String {
         if let book {
             let livePage = book.pageInfo(forGlobalWordIndex: engine.currentIndex)?.page.pageNumber ?? book.currentPageNumber
-            return "Página \(livePage) de \(max(1, book.totalPages))"
+            return String(localized: "Página \(livePage) de \(max(1, book.totalPages))")
+        } else if let document {
+            if document.isTranslationActive {
+                return String(localized: "\(AppLanguage.flag) \(AppLanguage.name) (Traduzido)")
+            } else if document.isForeignLanguage {
+                return String(localized: "\(document.detectedLanguageInfo.flag) \(document.detectedLanguageInfo.name) (Original)")
+            }
         }
         return ""
     }
@@ -180,7 +230,7 @@ public final class RSVPReaderViewModel {
     public var originalLanguageName: String {
         if let book { return book.detectedLanguageInfo.name }
         if let document { return document.detectedLanguageInfo.name }
-        return "Original"
+        return String(localized: "Original")
     }
     
     /// Traduz instantaneamente o item atual para Português e ativa o modo traduzido mantendo a posição.
@@ -294,9 +344,9 @@ public final class RSVPReaderViewModel {
         let minutes = engine.remainingMinutes
         if minutes < 1.0 {
             let seconds = Int(minutes * 60)
-            return "\(max(1, seconds)) seg rest."
+            return String(localized: "\(max(1, seconds)) seg rest.")
         } else {
-            return String(format: "%.1f min rest.", minutes)
+            return String(format: String(localized: "%.1f min rest."), minutes)
         }
     }
     
@@ -308,6 +358,36 @@ public final class RSVPReaderViewModel {
         guard !word.isEmpty else { return }
         wordToDefine = word
         isShowingWordDefinition = true
+    }
+    
+    /// Carrega e gera o contexto de pré-ativação cognitiva sob demanda a partir do texto ativo.
+    public func loadPrimingContext() {
+        let text: String
+        if let book {
+            text = book.sortedPages.prefix(3).map(\.rawText).joined(separator: "\n\n")
+        } else if let document, let content = document.content {
+            text = content.rawText
+        } else {
+            text = engine.words.joined(separator: " ")
+        }
+        self.primingContext = TextSummarizerService.shared.generatePrimingContext(from: text, title: title)
+    }
+    
+    /// Abre a tela de pré-ativação mental (Priming).
+    public func presentPriming() {
+        if engine.isPlaying {
+            engine.pause()
+        }
+        loadPrimingContext()
+        isShowingPrimingSheet = true
+    }
+    
+    /// Inicia a reprodução com esquemas pré-frontais já ativados pelo Priming.
+    public func startReadingFromPriming() {
+        isShowingPrimingSheet = false
+        if !engine.isPlaying {
+            togglePlayPause()
+        }
     }
     
     /// Alterna reprodução entre Play e Pause.
@@ -375,6 +455,7 @@ public final class RSVPReaderViewModel {
     /// Pausa a reprodução, força o salvamento do progresso e registra a sessão de leitura.
     public func onDisappear() {
         engine.pause()
+        EyeTrackingManager.shared.stopTracking()
         LiveActivityManager.shared.endSession()
         persistProgress(to: engine.currentIndex, forceDiskSave: true)
         recordSessionIfNeeded()

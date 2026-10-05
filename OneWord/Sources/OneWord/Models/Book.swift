@@ -95,6 +95,11 @@ public final class Book {
         return sortedPages.flatMap { $0.words }
     }
     
+    /// Texto unificado contendo o conteúdo textual de todas as páginas em sequência.
+    public var fullText: String {
+        sortedPages.map { $0.rawText }.joined(separator: "\n\n")
+    }
+    
     /// Deslocamentos globais de índice onde cada página se inicia (considera tradução se ativa).
     public var pageOffsets: [Int] {
         var offsets: [Int] = []
@@ -118,7 +123,8 @@ public final class Book {
     
     /// Indica se o livro foi escaneado em língua estrangeira (diferente de português).
     public var isForeignLanguage: Bool {
-        !detectedLanguageInfo.isPortuguese
+        guard let code = detectedLanguageCode, !code.isEmpty else { return false }
+        return BookTranslationService.languageInfo(for: code).code != AppLanguage.code
     }
     
     /// Porcentagem de leitura concluída do livro (0.0 a 1.0).

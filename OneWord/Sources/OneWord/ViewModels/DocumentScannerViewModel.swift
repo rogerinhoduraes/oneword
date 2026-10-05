@@ -67,7 +67,7 @@ public final class DocumentScannerViewModel {
     /// - Parameter image: Instância de UIImage.
     public func processImage(_ image: UIImage) async {
         isProcessing = true
-        statusMessage = "Escaneando página com Vision OCR..."
+        statusMessage = String(localized: "Escaneando página com Vision OCR...")
         errorMessage = nil
         showErrorAlert = false
         
@@ -83,7 +83,7 @@ public final class DocumentScannerViewModel {
         } catch let error as OCRError {
             handleError(error.localizedDescription)
         } catch {
-            handleError("Falha inesperada no processamento da imagem: \(error.localizedDescription)")
+            handleError(String(localized: "Falha inesperada no processamento da imagem: \(error.localizedDescription)"))
         }
     }
     #endif
@@ -92,7 +92,7 @@ public final class DocumentScannerViewModel {
     /// - Parameter data: Bytes codificados da imagem.
     public func processImageData(_ data: Data) async {
         isProcessing = true
-        statusMessage = "Extraindo caracteres ópticos..."
+        statusMessage = String(localized: "Extraindo caracteres ópticos...")
         errorMessage = nil
         showErrorAlert = false
         
@@ -107,7 +107,7 @@ public final class DocumentScannerViewModel {
         } catch let error as OCRError {
             handleError(error.localizedDescription)
         } catch {
-            handleError("Falha inesperada ao processar dados de imagem: \(error.localizedDescription)")
+            handleError(String(localized: "Falha inesperada ao processar dados de imagem: \(error.localizedDescription)"))
         }
     }
     
@@ -118,11 +118,11 @@ public final class DocumentScannerViewModel {
     /// - Returns: Instância de `Document` persistida ou `nil` se texto estiver vazio.
     @discardableResult
     public func saveDocument(in context: ModelContext, translateToPortuguese: Bool = false) -> Document? {
-        let finalTitle = editableTitle.trimmingCharacters(in: .whitespaces).isEmpty ? "Documento Escaneado" : editableTitle
+        let finalTitle = editableTitle.trimmingCharacters(in: .whitespaces).isEmpty ? String(localized: "Documento Escaneado") : editableTitle
         let (_, words) = parser.parse(rawText: editableText)
         
         guard !words.isEmpty else {
-            handleError("O documento não contém palavras suficientes para leitura.")
+            handleError(String(localized: "O documento não contém palavras suficientes para leitura."))
             return nil
         }
         
@@ -150,7 +150,7 @@ public final class DocumentScannerViewModel {
             reset()
             return newDocument
         } catch {
-            handleError("Erro ao salvar documento na biblioteca: \(error.localizedDescription)")
+            handleError(String(localized: "Erro ao salvar documento na biblioteca: \(error.localizedDescription)"))
             return nil
         }
     }

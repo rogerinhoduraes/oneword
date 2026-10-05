@@ -52,33 +52,33 @@ public final class BookTranslationService: Sendable {
     /// - Parameter code: Código ISO do idioma (ex: "en", "es", "fr", "de", "it", "pt").
     public static func languageInfo(for code: String?) -> DetectedLanguageInfo {
         guard let code = code?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), !code.isEmpty else {
-            return DetectedLanguageInfo(code: "pt", name: "Português", flag: "🇧🇷", isPortuguese: true)
+            return DetectedLanguageInfo(code: "pt", name: String(localized: "Português"), flag: "🇧🇷", isPortuguese: true)
         }
         
         // Verifica se é variante de português
         if code.hasPrefix("pt") {
-            return DetectedLanguageInfo(code: "pt", name: "Português", flag: "🇧🇷", isPortuguese: true)
+            return DetectedLanguageInfo(code: "pt", name: String(localized: "Português"), flag: "🇧🇷", isPortuguese: true)
         }
         
         switch code {
         case "en":
-            return DetectedLanguageInfo(code: "en", name: "Inglês", flag: "🇺🇸", isPortuguese: false)
+            return DetectedLanguageInfo(code: "en", name: String(localized: "Inglês"), flag: "🇺🇸", isPortuguese: false)
         case "es":
-            return DetectedLanguageInfo(code: "es", name: "Espanhol", flag: "🇪🇸", isPortuguese: false)
+            return DetectedLanguageInfo(code: "es", name: String(localized: "Espanhol"), flag: "🇪🇸", isPortuguese: false)
         case "fr":
-            return DetectedLanguageInfo(code: "fr", name: "Francês", flag: "🇫🇷", isPortuguese: false)
+            return DetectedLanguageInfo(code: "fr", name: String(localized: "Francês"), flag: "🇫🇷", isPortuguese: false)
         case "de":
-            return DetectedLanguageInfo(code: "de", name: "Alemão", flag: "🇩🇪", isPortuguese: false)
+            return DetectedLanguageInfo(code: "de", name: String(localized: "Alemão"), flag: "🇩🇪", isPortuguese: false)
         case "it":
-            return DetectedLanguageInfo(code: "it", name: "Italiano", flag: "🇮🇹", isPortuguese: false)
+            return DetectedLanguageInfo(code: "it", name: String(localized: "Italiano"), flag: "🇮🇹", isPortuguese: false)
         case "ja":
-            return DetectedLanguageInfo(code: "ja", name: "Japonês", flag: "🇯🇵", isPortuguese: false)
+            return DetectedLanguageInfo(code: "ja", name: String(localized: "Japonês"), flag: "🇯🇵", isPortuguese: false)
         case "zh", "zh-hans", "zh-hant":
-            return DetectedLanguageInfo(code: "zh", name: "Chinês", flag: "🇨🇳", isPortuguese: false)
+            return DetectedLanguageInfo(code: "zh", name: String(localized: "Chinês"), flag: "🇨🇳", isPortuguese: false)
         case "ru":
-            return DetectedLanguageInfo(code: "ru", name: "Russo", flag: "🇷🇺", isPortuguese: false)
+            return DetectedLanguageInfo(code: "ru", name: String(localized: "Russo"), flag: "🇷🇺", isPortuguese: false)
         default:
-            let localizedName = Locale(identifier: "pt_BR").localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
+            let localizedName = Locale(identifier: AppLanguage.code).localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
             return DetectedLanguageInfo(code: code, name: localizedName, flag: "🌐", isPortuguese: false)
         }
     }

@@ -33,8 +33,8 @@ public struct OneWordApp: App {
                 let bookCount = (try? context.fetchCount(FetchDescriptor<Book>())) ?? 0
                 if bookCount == 0 {
                     let book1 = Book(
-                        title: "A Revolução do Foco",
-                        author: "Cal Newport & OneWord Labs",
+                        title: "Guia de Leitura Rápida",
+                        author: "OneWord",
                         coverThemeColor: "#1E40AF"
                     )
                     
@@ -65,10 +65,10 @@ public struct OneWordApp: App {
                 
                 // Seed de Livro Internacional em Inglês para testar a tradução para Português
                 let currentBooks = (try? context.fetch(FetchDescriptor<Book>())) ?? []
-                if !currentBooks.contains(where: { $0.title == "Deep Work" }) {
+                if !currentBooks.contains(where: { $0.title == "Deep Focus" }) {
                     let bookEN = Book(
-                        title: "Deep Work",
-                        author: "Cal Newport",
+                        title: "Deep Focus",
+                        author: "OneWord",
                         coverThemeColor: "#7C3AED",
                         detectedLanguageCode: "en"
                     )
@@ -152,21 +152,21 @@ public struct OneWordApp: App {
                         durationSeconds: 120.0,
                         wordsRead: 850,
                         averageWPM: 425,
-                        documentTitle: "A Revolução do Foco"
+                        documentTitle: "Guia de Leitura Rápida"
                     )
                     let s2 = ReadingSession(
                         date: calendar.date(byAdding: .day, value: -1, to: now) ?? now,
                         durationSeconds: 190.0,
                         wordsRead: 1420,
                         averageWPM: 450,
-                        documentTitle: "A Revolução do Foco"
+                        documentTitle: "Guia de Leitura Rápida"
                     )
                     let s3 = ReadingSession(
                         date: now,
                         durationSeconds: 95.0,
                         wordsRead: 720,
                         averageWPM: 480,
-                        documentTitle: "A Revolução do Foco"
+                        documentTitle: "Guia de Leitura Rápida"
                     )
                     context.insert(s1)
                     context.insert(s2)
@@ -180,11 +180,45 @@ public struct OneWordApp: App {
             }
     }()
 
+    @State private var deepLinkDocument: Document?
+    
     public init() {}
 
     public var body: some Scene {
         WindowGroup {
             MainTabView()
+                #if os(iOS)
+                .fullScreenCover(item: $deepLinkDocument) { document in
+                    RSVPReaderView(document: document, modelContext: sharedModelContainer.mainContext)
+                }
+                #else
+                .sheet(item: $deepLinkDocument) { document in
+                    RSVPReaderView(document: document, modelContext: sharedModelContainer.mainContext)
+                }
+                #endif
+                .onAppear {
+                    #if os(macOS)
+                    OneWordLocalServer.shared.onDocumentReceived = { document in
+                        self.deepLinkDocument = document
+                    }
+                    OneWordLocalServer.shared.start(context: sharedModelContainer.mainContext)
+                    #endif
+                }
+                .task {
+                    if PurchaseManager.isPurchaseEnabled { await PurchaseManager.shared.prepare() }
+                    await AdConsentManager.shared.start()
+                }
+                .onOpenURL { url in
+                    Task { @MainActor in
+                        do {
+                            if let document = try await DeepLinkManager.shared.handle(url: url, context: sharedModelContainer.mainContext) {
+                                self.deepLinkDocument = document
+                            }
+                        } catch {
+                            print("[OneWord DeepLink] Erro ao processar URL \(url): \(error.localizedDescription)")
+                        }
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
     }

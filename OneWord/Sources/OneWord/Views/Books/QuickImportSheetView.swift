@@ -43,7 +43,7 @@ public struct QuickImportSheetView: View {
                 Section {
                     Picker("Origem do Conteúdo", selection: $mode) {
                         ForEach(ImportMode.allCases) { m in
-                            Text(m.rawValue).tag(m)
+                            Text(LocalizedStringKey(m.rawValue)).tag(m)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -151,7 +151,7 @@ public struct QuickImportSheetView: View {
                     if let string = UIPasteboard.general.string {
                         pastedText = string
                         if title.isEmpty {
-                            title = string.components(separatedBy: .newlines).first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) ?? "Texto Copiado"
+                            title = string.components(separatedBy: .newlines).first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) ?? String(localized: "Texto Copiado")
                         }
                     }
                 } label: {
@@ -179,7 +179,7 @@ public struct QuickImportSheetView: View {
                 
                 HStack(spacing: 16) {
                     Label("\(article.wordCount) palavras", systemImage: "text.word.spacing")
-                    Label(String(format: "%.1f min (300 WPM)", article.estimatedMinutes(at: 300)), systemImage: "clock")
+                    Label(String(format: String(localized: "%.1f min (300 WPM)"), article.estimatedMinutes(at: 300)), systemImage: "clock")
                 }
                 .font(.footnote)
                 .foregroundStyle(.blue)
@@ -199,7 +199,7 @@ public struct QuickImportSheetView: View {
         errorMessage = nil
         let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let url = URL(string: trimmed), url.scheme != nil else {
-            errorMessage = "Insira uma URL válida iniciando com http:// ou https://"
+            errorMessage = String(localized: "Insira uma URL válida iniciando com http:// ou https://")
             return
         }
         
@@ -226,12 +226,12 @@ public struct QuickImportSheetView: View {
         if let current = extractedArticle {
             finalArticle = current
         } else {
-            let effectiveTitle = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Texto Colado" : title
+            let effectiveTitle = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? String(localized: "Texto Colado") : title
             finalArticle = WebArticleExtractor().extract(fromHTML: pastedText, fallbackTitle: effectiveTitle)
         }
         
         guard !finalArticle.words.isEmpty else {
-            errorMessage = "Nenhum texto para leitura encontrado."
+            errorMessage = String(localized: "Nenhum texto para leitura encontrado.")
             return
         }
         
@@ -240,7 +240,7 @@ public struct QuickImportSheetView: View {
             onDocumentCreated?(doc)
             dismiss()
         } catch {
-            errorMessage = "Erro ao salvar: \(error.localizedDescription)"
+            errorMessage = String(localized: "Erro ao salvar: \(error.localizedDescription)")
         }
     }
 }

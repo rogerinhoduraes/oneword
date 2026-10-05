@@ -38,6 +38,8 @@ public struct StatsView: View {
     @State private var habitTracker = ReadingHabitTracker.shared
     @State private var chartMetric: ChartMetric = .words
     @State private var isShowingBenchmark: Bool = false
+    @State private var isShowingReadingGuide: Bool = false
+    @State private var isShowingRemoveAds: Bool = false
     
     public enum ChartMetric: String, CaseIterable, Identifiable {
         case words = "Palavras"
@@ -55,7 +57,7 @@ public struct StatsView: View {
                     // Timeframe Picker
                     Picker("Período", selection: $viewModel.selectedTimeframe) {
                         ForEach(StatsViewModel.Timeframe.allCases) { timeframe in
-                            Text(timeframe.rawValue).tag(timeframe)
+                            Text(LocalizedStringKey(timeframe.rawValue)).tag(timeframe)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -66,6 +68,9 @@ public struct StatsView: View {
                     
                     // 2. Card de Aferição de WPM e Compreensão Cognitiva
                     wpmBenchmarkCard
+                    
+                    // Card Educativo: Guia de Técnicas & Recursos
+                    readingGuidePromoCard
                     
                     // 3. Hero Card: Tempo Economizado
                     heroTimeSavedCard
@@ -81,13 +86,36 @@ public struct StatsView: View {
                     
                     // 7. Histórico Recente de Sessões
                     recentSessionsSection
+                    
+                    Button(PurchaseManager.isPurchaseEnabled ? "Remover anúncios" : "Anúncios e privacidade") {
+                        isShowingRemoveAds = true
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 }
                 .padding(.vertical)
             }
+            .adBannerInset(unitID: AdConfig.statsBannerUnitID)
             .background(Color.statsBackground)
             .navigationTitle("Estatísticas")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isShowingReadingGuide = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                    .help("Guia: Técnicas de Leitura & Recursos")
+                }
+            }
+            .sheet(isPresented: $isShowingRemoveAds) {
+                RemoveAdsView()
+            }
             .sheet(isPresented: $isShowingBenchmark) {
                 WPMBenchmarkView()
+            }
+            .sheet(isPresented: $isShowingReadingGuide) {
+                ReadingGuideView()
             }
         }
     }
@@ -105,7 +133,7 @@ public struct StatsView: View {
                     Image(systemName: "flame.fill")
                         .foregroundStyle(.orange)
                         .font(.title2)
-                    Text("\(currentStreak) \(currentStreak == 1 ? "Dia" : "Dias")")
+                    Text("\(currentStreak) \(currentStreak == 1 ? String(localized: "Dia") : String(localized: "Dias"))")
                         .font(.title2.bold())
                 }
                 
@@ -160,7 +188,7 @@ public struct StatsView: View {
                 Button {
                     isShowingBenchmark = true
                 } label: {
-                    Text(lastWPM != nil ? "Refazer Teste" : "Iniciar Teste")
+                    Text(lastWPM != nil ? String(localized: "Refazer Teste") : String(localized: "Iniciar Teste"))
                         .font(.caption.bold())
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
@@ -171,28 +199,49 @@ public struct StatsView: View {
             }
             
             if let wpm = lastWPM, let score = lastScore {
-                HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(wpm) WPM")
-                            .font(.title3.bold().monospacedDigit())
-                        Text("Velocidade Calibrada")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                let effWPM = habitTracker.lastEffectiveWPM ?? Int(Double(wpm) * score)
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(wpm)")
+                                .font(.title3.bold().monospacedDigit())
+                            Text("WPM Bruto")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(Int(score * 100))%")
+                                .font(.title3.bold().monospacedDigit())
+                                .foregroundStyle(.purple)
+                            Text("Retenção")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 3) {
+                                Text("\(effWPM)")
+                                    .font(.title3.bold().monospacedDigit())
+                                    .foregroundStyle(.green)
+                                Image(systemName: "bolt.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.green)
+                            }
+                            Text("eWPM Efetivo")
+                                .font(.caption2.bold())
+                                .foregroundStyle(.green)
+                        }
+                        
+                        Spacer()
                     }
                     
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(Int(score * 100))%")
-                            .font(.title3.bold().monospacedDigit())
-                            .foregroundStyle(.green)
-                        Text("Retenção Foveal")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    Spacer()
+                    Text("eWPM = Velocidade × Retenção. Métro neurocognitivo que elimina a ilusão de fluência.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
                 }
             } else {
-                Text("Calibre sua velocidade ideal com um texto padronizado e teste de compreensão foveal.")
+                Text("Calibre sua velocidade ideal com um texto padronizado e teste de compreensão foveal para desbloquear seu eWPM.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -201,6 +250,58 @@ public struct StatsView: View {
         .background(Color.statsCardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .padding(.horizontal)
+    }
+    
+    // MARK: - Card Educativo do Guia
+    
+    private var readingGuidePromoCard: some View {
+        Button {
+            isShowingReadingGuide = true
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.blue, Color.indigo],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 44, height: 44)
+                    
+                    Image(systemName: "brain.head.profile")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                }
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Guia de Técnicas & Recursos")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(Color.primary)
+                    
+                    Text("Aprenda a neurociência do RSVP, ORP, Leitura Biônica e conheça todos os recursos do app.")
+                        .font(.caption2)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer(minLength: 0)
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundStyle(Color.secondary)
+            }
+            .padding(14)
+            .background(Color.statsCardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.blue.opacity(0.15), lineWidth: 1)
+            )
+            .padding(.horizontal)
+        }
+        .buttonStyle(.plain)
     }
     
     // MARK: - Hero Card
@@ -280,26 +381,34 @@ public struct StatsView: View {
     private var metricsGrid: some View {
         let totalWords = viewModel.totalWords(from: sessions)
         let avgWPM = viewModel.averageWPM(from: sessions)
+        let avgEffWPM = viewModel.averageEffectiveWPM(from: sessions)
         let streak = viewModel.readingStreak(from: sessions)
         
-        return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             MetricCard(
-                title: "Palavras",
+                title: String(localized: "Palavras"),
                 value: "\(totalWords)",
                 icon: "character.book.closed.fill",
                 accentColor: .blue
             )
             
             MetricCard(
-                title: "WPM Médio",
+                title: String(localized: "WPM Médio"),
                 value: "\(avgWPM)",
                 icon: "speedometer",
                 accentColor: .orange
             )
             
             MetricCard(
-                title: "Ofensiva",
-                value: "\(streak) \(streak == 1 ? "dia" : "dias")",
+                title: String(localized: "eWPM Efetivo"),
+                value: "\(avgEffWPM)",
+                icon: "brain.head.profile",
+                accentColor: .purple
+            )
+            
+            MetricCard(
+                title: String(localized: "Ofensiva"),
+                value: "\(streak) \(streak == 1 ? String(localized: "dia") : String(localized: "dias"))",
                 icon: "flame.fill",
                 accentColor: .red
             )
@@ -322,7 +431,7 @@ public struct StatsView: View {
                 
                 Picker("Métrica", selection: $chartMetric) {
                     ForEach(ChartMetric.allCases) { metric in
-                        Text(metric.rawValue).tag(metric)
+                        Text(LocalizedStringKey(metric.rawValue)).tag(metric)
                     }
                 }
                 .pickerStyle(.menu)
@@ -465,7 +574,7 @@ public struct StatsView: View {
                                 .clipShape(Circle())
                             
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(session.documentTitle.isEmpty ? "Sem Título" : session.documentTitle)
+                                Text(session.documentTitle.isEmpty ? String(localized: "Sem Título") : session.documentTitle)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .lineLimit(1)

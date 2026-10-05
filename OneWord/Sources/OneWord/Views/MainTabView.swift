@@ -32,28 +32,36 @@ public struct MainTabView: View {
     @Query private var books: [Book]
     
     public var body: some View {
+        #if DEBUG
         Group {
             if UserDefaults.standard.bool(forKey: "previewBookDetail"), let firstBook = books.first {
                 NavigationStack {
                     BookDetailView(book: firstBook)
                 }
             } else {
-                TabView(selection: $selectedTab) {
-                    LibraryView()
-                        .tabItem {
-                            Label("Biblioteca", systemImage: "books.vertical.fill")
-                        }
-                        .tag(Tab.library)
-                    
-                    StatsView()
-                        .tabItem {
-                            Label("Estatísticas", systemImage: "chart.bar.xaxis")
-                        }
-                        .tag(Tab.stats)
-                }
-                .tint(.blue)
+                tabViewContent
             }
         }
+        #else
+        tabViewContent
+        #endif
+    }
+    
+    private var tabViewContent: some View {
+        TabView(selection: $selectedTab) {
+            LibraryView()
+                .tabItem {
+                    Label("Biblioteca", systemImage: "books.vertical.fill")
+                }
+                .tag(Tab.library)
+            
+            StatsView()
+                .tabItem {
+                    Label("Estatísticas", systemImage: "chart.bar.xaxis")
+                }
+                .tag(Tab.stats)
+        }
+        .tint(.blue)
     }
 }
 

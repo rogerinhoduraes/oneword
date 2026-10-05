@@ -1,0 +1,72 @@
+{
+  "sourceLanguage": "pt-BR",
+  "strings": {
+    "NSCameraUsageDescription": {
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O OneWord utiliza a câmera para digitalizar páginas físicas de livros via OCR e a câmera frontal para pausar a leitura automaticamente ao detectar desvio de atenção ou fadiga visual (processamento 100% local no dispositivo, nenhum dado facial é gravado ou transmitido)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord uses the camera to scan pages of physical books with OCR, and the front camera to automatically pause reading when it detects distraction or eye fatigue (100% on-device processing; no facial data is recorded or transmitted)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord usa la cámara para digitalizar páginas de libros físicos mediante OCR y la cámara frontal para pausar la lectura automáticamente al detectar distracción o fatiga visual (procesamiento 100 % en el dispositivo; no se graba ni se transmite ningún dato facial)."
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryUsageDescription": {
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O OneWord precisa de acesso à biblioteca de fotos para selecionar imagens de documentos e convertê-los para o leitor RSVP."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord needs access to your photo library so you can select document images and convert them for the RSVP reader."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OneWord necesita acceso a tu biblioteca de fotos para seleccionar imágenes de documentos y convertirlas para el lector RSVP."
+          }
+        }
+      }
+    },
+    "NSUserTrackingUsageDescription": {
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usamos esse identificador para exibir anúncios mais relevantes para você e manter o OneWord gratuito."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We use this identifier to show you more relevant ads and keep OneWord free."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usamos este identificador para mostrarte anuncios más relevantes y mantener OneWord gratis."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

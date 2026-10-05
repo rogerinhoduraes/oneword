@@ -16,6 +16,7 @@ public struct RSVPReaderView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State private var viewModel: RSVPReaderViewModel
+    @State private var isShowingReadingGuide: Bool = false
     
     /// Inicializa a tela de leitura diretamente com um RSVPReaderViewModel configurado.
     public init(viewModel: RSVPReaderViewModel) {
@@ -48,11 +49,17 @@ public struct RSVPReaderView: View {
             VStack(spacing: 0) {
                 topNavigationBar
                 
-                Spacer()
+                if EyeTrackingManager.shared.isFatigueRestSuggested {
+                    fatigueRestBanner
+                }
                 
-                rsvpCenterDisplay
-                
-                Spacer()
+                if viewModel.readerMode == .bionic {
+                    BionicPacerView(viewModel: viewModel)
+                } else {
+                    Spacer()
+                    rsvpCenterDisplay
+                    Spacer()
+                }
                 
                 bottomControlsPanel
             }
@@ -67,6 +74,25 @@ public struct RSVPReaderView: View {
             WordDefinitionSheetView(word: viewModel.wordToDefine)
                 .presentationDetents([.medium, .large])
         }
+        .sheet(isPresented: $viewModel.isShowingShareCard) {
+            SocialShareCardView(
+                documentTitle: viewModel.title,
+                wordsRead: max(1, viewModel.currentIndex),
+                averageWPM: viewModel.engine.config.wpm,
+                timeSavedMinutes: viewModel.engine.remainingMinutes
+            )
+        }
+        .sheet(isPresented: $viewModel.isShowingPrimingSheet) {
+            if let primingContext = viewModel.primingContext {
+                CognitivePrimingSheetView(context: primingContext) {
+                    viewModel.startReadingFromPriming()
+                }
+                .presentationDetents([.medium, .large])
+            }
+        }
+        .sheet(isPresented: $isShowingReadingGuide) {
+            ReadingGuideView()
+        }
         #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
         .statusBarHidden(true)
@@ -79,7 +105,7 @@ public struct RSVPReaderView: View {
     // MARK: - Barra Superior
     
     private var topNavigationBar: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button {
                 viewModel.onDisappear()
                 dismiss()
@@ -87,13 +113,15 @@ public struct RSVPReaderView: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
                     .foregroundStyle(.secondary)
+                    .frame(width: 44, height: 44)
             }
-            
-            Spacer()
+            .buttonStyle(.plain)
+            .accessibilityLabel("Fechar leitor")
             
             VStack(spacing: 2) {
                 Text(viewModel.title)
-                    .font(.headline)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(viewModel.settings.theme.textColor)
                     .lineLimit(1)
                 
                 HStack(spacing: 4) {
@@ -103,161 +131,295 @@ public struct RSVPReaderView: View {
                     }
                     Text(viewModel.remainingTimeFormatted)
                 }
-                .font(.caption2)
+                .font(.caption2.monospacedDigit())
                 .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity)
             
-            Spacer()
-            
-            HStack(spacing: 8) {
-                // Toggle de Tradução Rápida (Português vs Original)
-                if viewModel.hasTranslation || viewModel.isForeignLanguage {
-                    Button {
-                        triggerHapticFeedback()
-                        viewModel.toggleTranslation()
-                    } label: {
-                        HStack(spacing: 3) {
+            HStack(spacing: 2) {
+                // Alternância Rápida de Modo (RSVP vs Biônico)
+                Button {
+                    triggerHapticFeedback()
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.readerMode = (viewModel.readerMode == .rsvp) ? .bionic : .rsvp
+                    }
+                } label: {
+                    Image(systemName: viewModel.readerMode == .rsvp ? "bolt.fill" : "text.alignleft")
+                        .font(.caption.bold())
+                        .foregroundStyle(viewModel.settings.theme.textColor)
+                        .frame(width: 32, height: 32)
+                        .background(Color.secondary.opacity(0.15))
+                        .clipShape(Circle())
+                }
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .accessibilityLabel(viewModel.readerMode == .rsvp ? String(localized: "Mudar para modo Biônico") : String(localized: "Mudar para modo RSVP foveal"))
+                
+                // Menu de Ações Secundárias (Decluttering da barra superior)
+                Menu {
+                    // Tradução Rápida
+                    if viewModel.hasTranslation || viewModel.isForeignLanguage {
+                        Button {
+                            triggerHapticFeedback()
+                            viewModel.toggleTranslation()
+                        } label: {
                             if viewModel.isTranslationActive {
-                                Text("🇧🇷 PT")
+                                Label("Ver Texto Original (\(viewModel.originalLanguageName))", systemImage: "globe")
                             } else if viewModel.hasTranslation {
-                                Text("\(viewModel.originalLanguageFlag) Orig.")
+                                Label("Ver tradução em \(AppLanguage.name)", systemImage: "character.book.closed")
                             } else {
-                                Text("🇧🇷 Traduzir")
+                                Label("Traduzir para \(AppLanguage.name)", systemImage: "translate")
                             }
                         }
-                        .font(.caption2.bold())
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(viewModel.isTranslationActive ? Color.green.opacity(0.18) : Color.secondary.opacity(0.15))
-                        .foregroundStyle(viewModel.isTranslationActive ? Color.green : viewModel.settings.theme.textColor)
-                        .clipShape(Capsule())
                     }
+                    
+                    // Priming Neurocognitivo
+                    Button {
+                        triggerHapticFeedback()
+                        viewModel.presentPriming()
+                    } label: {
+                        Label("Priming Cognitivo (Resumo Prévio)", systemImage: "brain.head.profile")
+                    }
+                    
+                    // Compartilhamento Social
+                    Button {
+                        viewModel.isShowingShareCard = true
+                    } label: {
+                        Label("Compartilhar Progresso", systemImage: "square.and.arrow.up")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.caption.bold())
+                        .foregroundStyle(viewModel.settings.theme.textColor)
+                        .frame(width: 32, height: 32)
+                        .background(Color.secondary.opacity(0.15))
+                        .clipShape(Circle())
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .accessibilityLabel("Mais opções de leitura")
                 
-                // Badge com WPM atual
-                Text("\(Int(viewModel.wpmBinding)) WPM")
-                    .font(.caption.bold().monospacedDigit())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.accentColor.opacity(0.12))
-                    .foregroundStyle(Color.accentColor)
-                    .clipShape(Capsule())
-                
-                // Botão de personalização visual (tema e tipografia)
+                // Botão de Ajustes Visuais e Tipografia
                 Button {
                     viewModel.isShowingSettings = true
                 } label: {
                     Image(systemName: "textformat.size")
-                        .font(.subheadline.bold())
+                        .font(.caption.bold())
                         .foregroundStyle(viewModel.settings.theme.textColor)
-                        .padding(6)
+                        .frame(width: 32, height: 32)
                         .background(Color.secondary.opacity(0.15))
                         .clipShape(Circle())
                 }
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .accessibilityLabel("Ajustes visuais e tipografia")
             }
         }
-        .padding(.top, 8)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+    }
+    
+    // MARK: - Banner de Descanso 20-20-20
+    
+    private var fatigueRestBanner: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "eye.trianglebadge.exclamationmark")
+                .font(.title3)
+                .foregroundStyle(.orange)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Regra 20-20-20: Descanse seus Olhos")
+                    .font(.caption.bold())
+                    .foregroundStyle(.primary)
+                Text("Olhe para 6 metros por 20 segundos.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+            
+            Button("Dispensar") {
+                EyeTrackingManager.shared.dismissFatigueSuggestion()
+            }
+            .font(.caption2.bold())
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color.orange.opacity(0.2))
+            .foregroundStyle(.orange)
+            .clipShape(Capsule())
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.orange.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(.top, 4)
     }
     
     // MARK: - Display Central RSVP (Palavra e Ponto Óptico de Reconhecimento)
     
     private var rsvpCenterDisplay: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 20) {
             if viewModel.isCompleted {
                 completedStateView
             } else {
-                VStack(spacing: 8) {
-                    // Marcador visual superior do ORP (Notch focal)
+                // Caixa Óptica de Fixação Focal (Estilo Spritz / Outread)
+                VStack(spacing: 0) {
+                    // Marcador e Guia Superior do ORP
                     if viewModel.settings.showORPNotch {
-                        HStack {
-                            Spacer()
+                        HStack(spacing: 0) {
                             Rectangle()
-                                .fill(Color.accentColor.opacity(0.4))
-                                .frame(width: 2.5, height: 12)
-                            Spacer()
+                                .fill(viewModel.settings.theme.textColor.opacity(0.12))
+                                .frame(height: 1)
+                            
+                            Rectangle()
+                                .fill(Color.red.opacity(0.9))
+                                .frame(width: 3, height: 12)
+                                .clipShape(Capsule())
+                            
+                            Rectangle()
+                                .fill(viewModel.settings.theme.textColor.opacity(0.12))
+                                .frame(height: 1)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                     
-                    // Exibição da palavra com destaque focal no ORP ou múltiplos chunks
-                    if viewModel.settings.chunkSize > 1 {
-                        let chunk = viewModel.engine.currentChunkWords
-                        HStack(spacing: 8) {
-                            ForEach(Array(chunk.enumerated()), id: \.offset) { index, word in
-                                if index == 0 {
-                                    let split = ORPHelper.splitWord(word)
-                                    HStack(spacing: 0) {
-                                        Text(split.prefix)
-                                            .foregroundColor(viewModel.settings.theme.textColor)
-                                        Text(String(split.focalCharacter))
-                                            .foregroundColor(.red)
-                                        Text(split.suffix)
-                                            .foregroundColor(viewModel.settings.theme.textColor)
+                    // Exibição da palavra com ponto focal ancorado no centro horizontal exato
+                    ZStack {
+                        if viewModel.settings.chunkSize > 1 {
+                            let chunk = viewModel.engine.currentChunkWords
+                            HStack(spacing: 8) {
+                                ForEach(Array(chunk.enumerated()), id: \.offset) { index, word in
+                                    if index == 0 {
+                                        let split = ORPHelper.splitWord(word)
+                                        HStack(spacing: 0) {
+                                            Text(split.prefix)
+                                                .foregroundColor(viewModel.settings.theme.textColor)
+                                            Text(String(split.focalCharacter))
+                                                .foregroundColor(.red)
+                                                .fontWeight(.bold)
+                                            Text(split.suffix)
+                                                .foregroundColor(viewModel.settings.theme.textColor)
+                                        }
+                                    } else {
+                                        Text(word)
+                                            .foregroundColor(viewModel.settings.theme.textColor.opacity(0.85))
                                     }
-                                } else {
-                                    Text(word)
-                                        .foregroundColor(viewModel.settings.theme.textColor.opacity(0.85))
                                 }
                             }
-                        }
-                        .font(viewModel.settings.font.font(size: max(22, viewModel.settings.fontSize - CGFloat(viewModel.settings.chunkSize * 4))))
-                        .multilineTextAlignment(.center)
-                        .frame(height: 75)
-                        .contentTransition(.identity)
-                    } else {
-                        HStack(spacing: 0) {
+                            .font(viewModel.settings.font.font(size: max(22, viewModel.settings.fontSize - CGFloat(viewModel.settings.chunkSize * 4))))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.55)
+                            .multilineTextAlignment(.center)
+                        } else {
+                            // Alinhamento geométrico perfeito do Ponto Óptico de Reconhecimento (ORP):
+                            // O semiplano esquerdo (prefixo) termina exatamente onde o caractere focal começa,
+                            // e o semiplano direito (sufixo) começa onde o caractere focal termina.
+                            // Como ambos têm maxWidth: .infinity, o caractere vermelho fica sempre a 50% da tela!
                             let split = viewModel.currentSplitWord
                             
-                            Text(split.prefix)
-                                .foregroundColor(viewModel.settings.theme.textColor)
-                            
-                            Text(String(split.focalCharacter))
-                                .foregroundColor(.red) // Ponto focal ORP em vermelho (estilo Spritz)
-                            
-                            Text(split.suffix)
-                                .foregroundColor(viewModel.settings.theme.textColor)
+                            HStack(spacing: 0) {
+                                Text(split.prefix)
+                                    .foregroundColor(viewModel.settings.theme.textColor)
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                                
+                                Text(String(split.focalCharacter))
+                                    .foregroundColor(.red)
+                                    .fontWeight(.bold)
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                                
+                                Text(split.suffix)
+                                    .foregroundColor(viewModel.settings.theme.textColor)
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .font(viewModel.settings.font.font(size: viewModel.settings.fontSize))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.65)
                         }
-                        .font(viewModel.settings.font.font(size: viewModel.settings.fontSize))
-                        .multilineTextAlignment(.center)
-                        .frame(height: 75)
-                        .contentTransition(.identity)
                     }
+                    .frame(height: max(88, viewModel.settings.fontSize * 1.55))
+                    .contentTransition(.identity)
                     
-                    // Marcador visual inferior do ORP
+                    // Marcador e Guia Inferior do ORP
                     if viewModel.settings.showORPNotch {
-                        HStack {
-                            Spacer()
+                        HStack(spacing: 0) {
                             Rectangle()
-                                .fill(Color.accentColor.opacity(0.4))
-                                .frame(width: 2.5, height: 12)
-                            Spacer()
+                                .fill(viewModel.settings.theme.textColor.opacity(0.12))
+                                .frame(height: 1)
+                            
+                            Rectangle()
+                                .fill(Color.red.opacity(0.9))
+                                .frame(width: 3, height: 12)
+                                .clipShape(Capsule())
+                            
+                            Rectangle()
+                                .fill(viewModel.settings.theme.textColor.opacity(0.12))
+                                .frame(height: 1)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                 }
-                .padding(.vertical, 16)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(viewModel.settings.theme.textColor.opacity(0.03))
+                )
                 .contentShape(Rectangle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(viewModel.isPlaying ? viewModel.currentWord : String(localized: "Palavra atual: \(viewModel.currentWord)"))
+                .accessibilityValue("Palavra \(min(viewModel.currentIndex + 1, viewModel.totalWords)) de \(viewModel.totalWords), \(viewModel.progressPercentageFormatted)")
+                .accessibilityHint(viewModel.isPlaying ? String(localized: "Toque duas vezes para pausar a leitura") : String(localized: "Toque duas vezes para iniciar a leitura"))
+                .accessibilityAddTraits(.isButton)
                 .onTapGesture {
                     triggerHapticFeedback()
                     viewModel.togglePlayPause()
                 }
                 
-                // Botão de Definição rápida no dicionário quando pausado
+                // Ações contextuais rápidas exibidas quando pausado
                 if !viewModel.isPlaying && !viewModel.currentWord.isEmpty {
-                    Button {
-                        viewModel.showDefinitionForCurrentWord()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "character.book.closed.fill")
-                            Text("Dicionário: \(viewModel.currentWord)")
-                                .lineLimit(1)
+                    HStack(spacing: 10) {
+                        Button {
+                            viewModel.showDefinitionForCurrentWord()
+                        } label: {
+                            HStack(spacing: 5) {
+                                Image(systemName: "character.book.closed.fill")
+                                Text("Dicionário: \(viewModel.currentWord)")
+                                    .lineLimit(1)
+                            }
+                            .font(.caption2.bold())
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(Color.secondary.opacity(0.12))
+                            .foregroundStyle(viewModel.settings.theme.textColor.opacity(0.85))
+                            .clipShape(Capsule())
                         }
-                        .font(.caption2.bold())
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(Color.secondary.opacity(0.12))
-                        .foregroundStyle(viewModel.settings.theme.textColor.opacity(0.8))
-                        .clipShape(Capsule())
+                        .buttonStyle(.plain)
+                        
+                        if viewModel.currentIndex == 0 {
+                            Button {
+                                triggerHapticFeedback()
+                                viewModel.presentPriming()
+                            } label: {
+                                HStack(spacing: 5) {
+                                    Image(systemName: "brain.head.profile")
+                                    Text("Priming Cognitivo")
+                                }
+                                .font(.caption2.bold())
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 6)
+                                .background(Color.purple.opacity(0.18))
+                                .foregroundStyle(.purple)
+                                .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .padding(.top, -6)
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 }
             }
         }
@@ -265,34 +427,36 @@ public struct RSVPReaderView: View {
     
     /// Visualização ao concluir a leitura do texto.
     private var completedStateView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 56))
+                .font(.system(size: 58))
                 .foregroundStyle(.green)
             
             Text("Leitura Concluída!")
                 .font(.title2.bold())
+                .foregroundStyle(viewModel.settings.theme.textColor)
             
             Button {
                 viewModel.reset()
             } label: {
                 Label("Ler Novamente", systemImage: "arrow.counterclockwise")
                     .font(.headline)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
                     .background(Color.accentColor)
                     .foregroundColor(.white)
                     .clipShape(Capsule())
             }
-            .padding(.top, 8)
+            .buttonStyle(.plain)
+            .padding(.top, 6)
         }
     }
     
     // MARK: - Painel Inferior de Controles
     
     private var bottomControlsPanel: some View {
-        VStack(spacing: 18) {
-            // 1. Barra de progresso e estatísticas
+        VStack(spacing: 14) {
+            // 1. Barra de progresso interativa e contadores
             VStack(spacing: 6) {
                 HStack {
                     Text("Palavra \(min(viewModel.currentIndex + 1, viewModel.totalWords)) de \(viewModel.totalWords)")
@@ -301,40 +465,75 @@ public struct RSVPReaderView: View {
                     
                     Spacer()
                     
-                    Text(viewModel.progressPercentageFormatted)
+                    Text("\(viewModel.progressPercentageFormatted) • \(viewModel.remainingTimeFormatted)")
                         .font(.caption.bold().monospacedDigit())
                         .foregroundStyle(.secondary)
                 }
                 
-                Slider(
-                    value: Binding(
-                        get: { viewModel.scrubberBinding },
-                        set: { viewModel.scrubberBinding = $0 }
-                    ),
-                    in: 0...Double(max(1, viewModel.totalWords))
-                )
-                .tint(.accentColor)
+                // Barra de progresso interativa sem o overhead de sliders com thumb saltitante
+                GeometryReader { geometry in
+                    let total = max(1, viewModel.totalWords)
+                    let currentRatio = min(1.0, max(0.0, Double(viewModel.currentIndex) / Double(total)))
+                    
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.secondary.opacity(0.2))
+                            .frame(height: 6)
+                        
+                        Capsule()
+                            .fill(Color.accentColor)
+                            .frame(width: geometry.size.width * currentRatio, height: 6)
+                    }
+                    .frame(height: 24)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let fraction = max(0.0, min(1.0, value.location.x / geometry.size.width))
+                                viewModel.scrubberBinding = fraction * Double(total)
+                            }
+                    )
+                }
+                .frame(height: 14)
             }
             
-            // 2. Controle de Velocidade (WPM)
-            HStack(spacing: 12) {
+            // 2. Controle Compacto de Velocidade (WPM)
+            HStack(spacing: 14) {
                 Button {
                     adjustWPM(by: -25)
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .font(.title3)
                         .foregroundStyle(.secondary)
+                        .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Reduzir velocidade em 25 palavras por minuto")
                 
-                Slider(
-                    value: Binding(
-                        get: { viewModel.wpmBinding },
-                        set: { viewModel.wpmBinding = $0 }
-                    ),
-                    in: 150...800,
-                    step: 25
-                )
-                .tint(.accentColor)
+                Menu {
+                    Text("Velocidade de Leitura")
+                    Divider()
+                    ForEach([200, 250, 300, 350, 400, 450, 500, 600], id: \.self) { speed in
+                        Button("\(speed) WPM") {
+                            viewModel.wpmBinding = Double(speed)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "speedometer")
+                            .font(.caption)
+                        Text("\(Int(viewModel.wpmBinding)) WPM")
+                            .font(.subheadline.bold().monospacedDigit())
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.accentColor.opacity(0.12))
+                    .foregroundStyle(Color.accentColor)
+                    .clipShape(Capsule())
+                }
+                .accessibilityLabel("Velocidade atual: \(Int(viewModel.wpmBinding)) palavras por minuto")
+                .accessibilityHint("Toque para escolher uma velocidade predefinida")
                 
                 Button {
                     adjustWPM(by: 25)
@@ -342,38 +541,62 @@ public struct RSVPReaderView: View {
                     Image(systemName: "plus.circle.fill")
                         .font(.title3)
                         .foregroundStyle(.secondary)
+                        .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Aumentar velocidade em 25 palavras por minuto")
             }
             
-            // 3. Barra de Transporte Principal
-            HStack(spacing: 28) {
+            // 3. Barra de Transporte Principal com Distribuição Fluida
+            HStack {
+                // Reiniciar
+                Button {
+                    triggerHapticFeedback()
+                    viewModel.reset()
+                } label: {
+                    Image(systemName: "arrow.counterclockwise")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 44, height: 44)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Reiniciar leitura do início")
+                
+                Spacer()
+                
                 // Retroceder Frase
                 Button {
                     triggerHapticFeedback()
                     viewModel.rewindSentence()
                 } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "backward.end.alt.fill")
-                            .font(.title3)
-                        Text("Frase")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(.primary)
+                    Image(systemName: "backward.end.alt.fill")
+                        .font(.title3)
+                        .foregroundStyle(viewModel.settings.theme.textColor)
+                        .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Voltar para frase anterior")
                 
-                // Retroceder 10 Palavras (Requisito de UX)
+                Spacer()
+                
+                // Retroceder 10 Palavras
                 Button {
                     triggerHapticFeedback()
                     viewModel.rewind10Words()
                 } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "gobackward.10")
-                            .font(.title2)
-                        Text("-10 pal.")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(.primary)
+                    Image(systemName: "gobackward.10")
+                        .font(.title2)
+                        .foregroundStyle(viewModel.settings.theme.textColor)
+                        .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Voltar 10 palavras")
+                
+                Spacer()
                 
                 // Botão Play / Pause de Alta Proeminência
                 Button {
@@ -381,41 +604,31 @@ public struct RSVPReaderView: View {
                     viewModel.togglePlayPause()
                 } label: {
                     Image(systemName: viewModel.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 64))
+                        .font(.system(size: 62))
                         .foregroundStyle(Color.accentColor)
-                        .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .shadow(color: Color.accentColor.opacity(0.25), radius: 8, x: 0, y: 3)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel(viewModel.isPlaying ? String(localized: "Pausar leitura") : String(localized: "Iniciar leitura"))
+                
+                Spacer()
                 
                 // Avançar Frase
                 Button {
                     triggerHapticFeedback()
                     viewModel.advanceSentence()
                 } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "forward.end.alt.fill")
-                            .font(.title3)
-                        Text("Frase")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(.primary)
+                    Image(systemName: "forward.end.alt.fill")
+                        .font(.title3)
+                        .foregroundStyle(viewModel.settings.theme.textColor)
+                        .frame(width: 44, height: 44)
                 }
-                
-                // Reiniciar
-                Button {
-                    triggerHapticFeedback()
-                    viewModel.reset()
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.title3)
-                        Text("Início")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(.secondary)
-                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Avançar para próxima frase")
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
     }
     
     // MARK: - Painel Modal de Configurações Visuais
@@ -424,18 +637,52 @@ public struct RSVPReaderView: View {
         NavigationStack {
             Form {
                 Section("Tema Visual") {
-                    Picker("Tema", selection: $viewModel.settings.theme) {
-                        ForEach(ReaderTheme.allCases) { theme in
-                            Text(theme.rawValue).tag(theme)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(ReaderTheme.allCases) { theme in
+                                Button {
+                                    viewModel.settings.theme = theme
+                                } label: {
+                                    VStack(spacing: 6) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(theme.backgroundColor)
+                                                .frame(width: 44, height: 44)
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                                                )
+                                            
+                                            Text("Aa")
+                                                .font(.headline.bold())
+                                                .foregroundColor(theme.textColor)
+                                            
+                                            if viewModel.settings.theme == theme {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .font(.caption)
+                                                    .foregroundColor(Color.accentColor)
+                                                    .offset(x: 16, y: -16)
+                                            }
+                                        }
+                                        
+                                        Text(LocalizedStringKey(theme.rawValue))
+                                            .font(.caption2)
+                                            .foregroundStyle(viewModel.settings.theme == theme ? Color.primary : Color.secondary)
+                                            .lineLimit(1)
+                                    }
+                                    .padding(.vertical, 4)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
+                        .padding(.horizontal, 4)
                     }
-                    .pickerStyle(.segmented)
                 }
                 
                 Section("Tipografia") {
                     Picker("Estilo de Fonte", selection: $viewModel.settings.font) {
                         ForEach(ReaderFont.allCases) { font in
-                            Text(font.rawValue).tag(font)
+                            Text(LocalizedStringKey(font.rawValue)).tag(font)
                         }
                     }
                     
@@ -452,17 +699,27 @@ public struct RSVPReaderView: View {
                     }
                 }
                 
-                Section("Ergonomia Cognitiva & Modos RSVP") {
+                Section("Modos de Leitura & Ergonomia") {
+                    Picker("Modo de Leitura", selection: $viewModel.readerMode) {
+                        ForEach(RSVPReaderViewModel.ReaderMode.allCases) { mode in
+                            Text(LocalizedStringKey(mode.rawValue)).tag(mode)
+                        }
+                    }
+                    
                     Toggle("Smart WPM (Ritmo Adaptativo)", isOn: $viewModel.settings.smartWPMEnabled)
                     
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Palavras por Quadro (Chunking)")
-                        Picker("Palavras por Quadro", selection: $viewModel.settings.chunkSize) {
-                            Text("1 Palavra").tag(1)
-                            Text("2 Palavras").tag(2)
-                            Text("3 Palavras").tag(3)
+                    Toggle("Eye-Tracking (Pausa por Desvio de Olhar)", isOn: $viewModel.isEyeTrackingEnabled)
+                    
+                    if viewModel.readerMode == .rsvp {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Palavras por Quadro (Chunking)")
+                            Picker("Palavras por Quadro", selection: $viewModel.settings.chunkSize) {
+                                Text("1 Palavra").tag(1)
+                                Text("2 Palavras").tag(2)
+                                Text("3 Palavras").tag(3)
+                            }
+                            .pickerStyle(.segmented)
                         }
-                        .pickerStyle(.segmented)
                     }
                     
                     Toggle("Modo Bimodal (Áudio Sincronizado)", isOn: $viewModel.settings.bimodalAudioEnabled)
@@ -470,6 +727,14 @@ public struct RSVPReaderView: View {
                 
                 Section("Auxílio de Fixação Óptica") {
                     Toggle("Exibir Marcadores de Fixação (ORP)", isOn: $viewModel.settings.showORPNotch)
+                }
+                
+                Section("Aprendizado & Neurociência") {
+                    Button {
+                        isShowingReadingGuide = true
+                    } label: {
+                        Label("Entenda as Técnicas & Recursos", systemImage: "brain.head.profile")
+                    }
                 }
             }
             .navigationTitle("Ajustes de Leitura")

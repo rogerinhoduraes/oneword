@@ -261,7 +261,8 @@ public final class RSVPEngine: RSVPEngineProtocol {
                 let chunk = self.currentChunkWords
                 guard !chunk.isEmpty else { break }
                 
-                let duration = stepSize > 1 ? self.config.duration(for: chunk) : self.config.duration(for: self.currentWord)
+                let isParagraphEnd = chunk.contains(where: { $0.contains("\n") })
+                let duration = stepSize > 1 ? self.config.duration(for: chunk, isEndOfParagraph: isParagraphEnd) : self.config.duration(for: self.currentWord, isEndOfParagraph: isParagraphEnd)
                 
                 if self.config.bimodalAudioEnabled {
                     let spokenText = chunk.joined(separator: " ")

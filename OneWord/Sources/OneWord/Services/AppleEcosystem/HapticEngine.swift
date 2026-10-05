@@ -61,6 +61,20 @@ public final class HapticEngine: Sendable {
         #endif
     }
     
+    /// Haptic para resposta correta ou marco de sucesso.
+    public func successMilestone() {
+        #if canImport(UIKit)
+        notificationFeedback.notificationOccurred(.success)
+        #endif
+    }
+    
+    /// Haptic para alternância de pausa ou erro.
+    public func pauseToggle() {
+        #if canImport(UIKit)
+        mediumImpact.impactOccurred()
+        #endif
+    }
+    
     /// Padrão duplo de impacto para desbloqueio de novas conquistas e metas de ofensiva diária.
     public func celebrationStreakUnlocked() {
         #if canImport(UIKit)

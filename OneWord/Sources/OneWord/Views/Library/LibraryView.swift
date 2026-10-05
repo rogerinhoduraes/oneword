@@ -22,6 +22,9 @@ public struct LibraryView: View {
     @State private var isShowingAddBookSheet: Bool = false
     @State private var isShowingEPUBPicker: Bool = false
     @State private var isShowingQuickImportSheet: Bool = false
+    @State private var isShowingFlashcardReview: Bool = false
+    @State private var isShowingReadingGuide: Bool = false
+    @State private var isShowingRemoveAds: Bool = false
     @State private var selectedBookForNavigation: Book?
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
@@ -39,7 +42,7 @@ public struct LibraryView: View {
                 // Seletor de Categoria (Livros vs Artigos)
                 Picker("Biblioteca", selection: $libraryTab) {
                     ForEach(LibraryTab.allCases) { tab in
-                        Text(tab.rawValue).tag(tab)
+                        Text(LocalizedStringKey(tab.rawValue)).tag(tab)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -56,9 +59,20 @@ public struct LibraryView: View {
                     }
                 }
             }
+            .adBannerInset(unitID: AdConfig.libraryBannerUnitID)
             .navigationTitle("OneWord")
             .searchable(text: $viewModel.searchText, prompt: "Buscar na biblioteca...")
             .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    toolbarLeadingItems
+                }
+                #else
+                ToolbarItem(placement: .navigation) {
+                    toolbarLeadingItems
+                }
+                #endif
+                
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
@@ -70,7 +84,7 @@ public struct LibraryView: View {
                         Button {
                             isShowingEPUBPicker = true
                         } label: {
-                            Label("Importar Livro Digital (.epub / .txt)", systemImage: "arrow.down.doc.fill")
+                            Label("Importar Livro ou PDF (.pdf / .epub / .txt)", systemImage: "arrow.down.doc.fill")
                         }
                         
                         Button {
@@ -86,12 +100,34 @@ public struct LibraryView: View {
                         } label: {
                             Label("Escanear Documento Avulso", systemImage: "camera.fill")
                         }
+                        
+                        Divider()
+                        
+                        Button {
+                            isShowingReadingGuide = true
+                        } label: {
+                            Label("Guia: Técnicas & Recursos", systemImage: "brain.head.profile")
+                        }
+                        
+                        Divider()
+                        
+                        Button {
+                            isShowingRemoveAds = true
+                        } label: {
+                            Label(PurchaseManager.isPurchaseEnabled ? "Remover anúncios" : "Anúncios e privacidade", systemImage: "nosign")
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
                             .foregroundStyle(.blue)
                     }
                 }
+            }
+            .sheet(isPresented: $isShowingRemoveAds) {
+                RemoveAdsView()
+            }
+            .sheet(isPresented: $isShowingFlashcardReview) {
+                FlashcardReviewView()
             }
             .sheet(isPresented: $isShowingAddBookSheet) {
                 AddBookSheetView { newBook in
@@ -108,15 +144,30 @@ public struct LibraryView: View {
                     viewModel.selectedDocumentForReading = newDoc
                 }
             }
+            .sheet(isPresented: $isShowingReadingGuide) {
+                ReadingGuideView()
+            }
             .fileImporter(
                 isPresented: $isShowingEPUBPicker,
-                allowedContentTypes: [.epub, .plainText],
+                allowedContentTypes: [.epub, .plainText, .pdf],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
                 case .success(let urls):
                     guard let url = urls.first else { return }
-                    if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
+                    if url.pathExtension.lowercased() == "pdf" {
+                        let isSecured = url.startAccessingSecurityScopedResource()
+                        defer {
+                            if isSecured { url.stopAccessingSecurityScopedResource() }
+                        }
+                        if let extracted = try? PDFImportService().extractText(from: url) {
+                            let doc = Document(title: extracted.title, rawText: extracted.cleanedText, words: extracted.words)
+                            modelContext.insert(doc)
+                            try? modelContext.save()
+                            libraryTab = .articles
+                            viewModel.selectedDocumentForReading = doc
+                        }
+                    } else if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
                         self.selectedBookForNavigation = newBook
                     }
                 case .failure:
@@ -135,6 +186,44 @@ public struct LibraryView: View {
             .navigationDestination(item: $selectedBookForNavigation) { book in
                 BookDetailView(book: book)
             }
+        }
+    }
+    
+    // MARK: - Barra de Ferramentas Superior
+    
+    private var toolbarLeadingItems: some View {
+        HStack(spacing: 12) {
+            
+            let dueCount = FlashcardService.shared.dueFlashcards.count
+            Button {
+                isShowingFlashcardReview = true
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "rectangle.stack.badge.play")
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                    
+                    if dueCount > 0 {
+                        Text("\(dueCount)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(3)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                            .offset(x: 8, y: -6)
+                    }
+                }
+            }
+            .help("Revisão Espaçada de Flashcards")
+            
+            Button {
+                isShowingReadingGuide = true
+            } label: {
+                Image(systemName: "questionmark.circle")
+                    .font(.subheadline)
+                    .foregroundStyle(.blue)
+            }
+            .help("Guia: Técnicas de Leitura & Recursos")
         }
     }
     
@@ -232,12 +321,12 @@ public struct LibraryView: View {
                 }
                 
                 HStack {
-                    Text("\(book.totalPages) \(book.totalPages == 1 ? "pág." : "págs.")")
+                    Text("\(book.totalPages) \(book.totalPages == 1 ? String(localized: "pág.") : String(localized: "págs."))")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     
                     if book.isForeignLanguage {
-                        Text(book.hasTranslation ? "\(book.detectedLanguageInfo.flag) ➔ 🇧🇷" : book.detectedLanguageInfo.flag)
+                        Text(book.hasTranslation ? "\(book.detectedLanguageInfo.flag) ➔ \(AppLanguage.flag)" : book.detectedLanguageInfo.flag)
                             .font(.caption2)
                     }
                     
@@ -318,7 +407,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))" : "Exibir em Português 🇧🇷") : "Traduzir para Português 🇧🇷",
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Exibir no Idioma Original (\(document.detectedLanguageInfo.flag))") : String(localized: "Exibir em \(AppLanguage.name) \(AppLanguage.flag)")) : String(localized: "Traduzir para \(AppLanguage.name) \(AppLanguage.flag)"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -351,7 +440,7 @@ public struct LibraryView: View {
                                         translateOrToggleDocument(document)
                                     } label: {
                                         Label(
-                                            document.hasTranslation ? (document.isTranslationActive ? "Ver Original" : "Ver em Português") : "Traduzir",
+                                            document.hasTranslation ? (document.isTranslationActive ? String(localized: "Ver Original") : String(localized: "Ver em \(AppLanguage.name)")) : String(localized: "Traduzir"),
                                             systemImage: "character.bubble"
                                         )
                                     }
@@ -416,11 +505,11 @@ public struct LibraryView: View {
                     } label: {
                         HStack(spacing: 3) {
                             if document.isTranslationActive {
-                                Text("🇧🇷 Traduzido")
+                                Text("\(AppLanguage.flag) Traduzido")
                             } else if document.hasTranslation {
                                 Text("\(document.detectedLanguageInfo.flag) Original")
                             } else {
-                                Text("\(document.detectedLanguageInfo.flag) Traduzir 🇧🇷")
+                                Text("\(document.detectedLanguageInfo.flag) Traduzir \(AppLanguage.flag)")
                             }
                         }
                         .font(.caption2.bold())
@@ -436,7 +525,7 @@ public struct LibraryView: View {
                 Spacer()
                 
                 let remaining = document.remainingReadingTimeMinutes(wpm: 300)
-                Label(remaining < 1.0 ? "Menos de 1 min" : String(format: "%.0f min rest.", remaining), systemImage: "clock")
+                Label(remaining < 1.0 ? String(localized: "Menos de 1 min") : String(format: String(localized: "%.0f min rest."), remaining), systemImage: "clock")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
