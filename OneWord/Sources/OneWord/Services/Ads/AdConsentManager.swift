@@ -34,6 +34,18 @@ public final class AdConsentManager {
         guard !didStart, !PurchaseManager.shared.hasRemovedAds else { return }
         didStart = true
         
+        #if DEBUG
+        // Apenas builds de debug: -adsMode off (sem anúncios) ou force (pula UMP/ATT).
+        switch UserDefaults.standard.string(forKey: "adsMode") {
+        case "off": return
+        case "force":
+            await MobileAds.shared.start()
+            isReadyToShowAds = true
+            return
+        default: break
+        }
+        #endif
+        
         let parameters = RequestParameters()
         parameters.isTaggedForUnderAgeOfConsent = false
         #if DEBUG
