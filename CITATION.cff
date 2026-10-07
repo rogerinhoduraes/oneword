@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "Se usar este software, cite-o como abaixo."
+title: "OneWord: leitura dinâmica RSVP para iOS e macOS"
+type: software
+authors:
+  - family-names: Duraes
+    given-names: Rogerio
+license: MIT
+repository-code: "https://github.com/rogerinhoduraes/oneword"
+url: "https://rogerinhoduraes.github.io/oneword/"
+keywords: [rsvp, speed-reading, swift, swiftui, ios, macos]
+version: 1.0.0
+date-released: 2026-10-07
