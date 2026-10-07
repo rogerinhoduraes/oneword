@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OneWord: leitura dinâmica RSVP para iPhone, iPad e Mac</title>
+<meta name="description" content="OneWord é um app gratuito de leitura dinâmica RSVP para iOS e macOS. Leia EPUB, PDF e artigos uma palavra por vez, com ponto ótimo de reconhecimento (ORP), leitura bionic e estatísticas de WPM.">
+<meta name="keywords" content="leitura dinâmica, RSVP, leitura rápida, speed reading, app de leitura, EPUB, PDF, ORP, bionic reading, iOS, iPhone, iPad, macOS, aumentar velocidade de leitura, WPM">
+<meta name="author" content="Rogerio Duraes">
+<link rel="canonical" href="https://rogerinhoduraes.github.io/oneword/">
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="theme-color" content="#0f0f14">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OneWord">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="OneWord: leitura dinâmica RSVP para iPhone, iPad e Mac">
+<meta property="og:description" content="Leia mais rápido, uma palavra por vez. Gratuito, com EPUB, PDF, OCR e estatísticas.">
+<meta property="og:url" content="https://rogerinhoduraes.github.io/oneword/">
+<meta property="og:image" content="https://rogerinhoduraes.github.io/oneword/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OneWord: leitura dinâmica RSVP">
+<meta name="twitter:description" content="Leia mais rápido, uma palavra por vez. Gratuito para iOS e macOS.">
+<meta name="twitter:image" content="https://rogerinhoduraes.github.io/oneword/assets/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "OneWord",
+  "alternateName": "OneWord RSVP",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "iOS 17, macOS 14",
+  "description": "App gratuito de leitura dinâmica RSVP para iOS e macOS, com ORP, leitura bionic, importação de EPUB/PDF/OCR e estatísticas de velocidade.",
+  "inLanguage": ["pt-BR", "en", "es"],
+  "image": "https://rogerinhoduraes.github.io/oneword/assets/icon-512.png",
+  "url": "https://rogerinhoduraes.github.io/oneword/",
+  "license": "https://opensource.org/licenses/MIT",
+  "codeRepository": "https://github.com/rogerinhoduraes/oneword",
+  "author": { "@type": "Person", "name": "Rogerio Duraes", "url": "https://github.com/rogerinhoduraes" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "O que é leitura RSVP?",
+      "acceptedAnswer": { "@type": "Answer", "text": "RSVP (Rapid Serial Visual Presentation) mostra o texto uma palavra por vez, no mesmo ponto da tela. Isso elimina os movimentos dos olhos entre palavras e permite ler mais rápido." } },
+    { "@type": "Question", "name": "O que é o ORP?",
+      "acceptedAnswer": { "@type": "Answer", "text": "ORP (Optimal Recognition Point) é a letra de cada palavra onde o olhar reconhece a palavra mais depressa. O OneWord alinha essa letra ao centro e a destaca em vermelho." } },
+    { "@type": "Question", "name": "O OneWord é gratuito?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Sim. Todos os recursos são gratuitos, e o app é mantido por anúncios." } },
+    { "@type": "Question", "name": "Quais formatos posso importar?",
+      "acceptedAnswer": { "@type": "Answer", "text": "EPUB, PDF, artigos da web e texto escaneado pela câmera com OCR." } },
+    { "@type": "Question", "name": "O código é aberto?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Sim, sob licença MIT, no GitHub: rogerinhoduraes/oneword." } }
+  ]
+}
+</script>
+<style>
+:root{--bg:#0f0f14;--fg:#f4f4f7;--mut:#a5a5b4;--card:#18181f;--acc:#ff3b30}
+@media (prefers-color-scheme:light){:root{--bg:#fafafc;--fg:#15151b;--mut:#585868;--card:#fff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:880px;margin:0 auto;padding:0 16px 64px}
+header{text-align:center;padding:64px 0 32px}
+header img{width:112px;height:112px;border-radius:25px}
+h1{font-size:2.4rem;line-height:1.15;margin:20px 0 8px}h2{margin-top:48px}
+.lead{color:var(--mut);max-width:620px;margin:0 auto 24px}
+.btn{display:inline-block;padding:12px 22px;border-radius:12px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600;margin:4px}
+.btn.alt{background:var(--card);color:var(--fg);border:1px solid #8884}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--card);border-radius:14px;padding:16px 18px;border:1px solid #8882}
+.card h3{margin:0 0 4px;font-size:1.05rem}.card p{margin:0;color:var(--mut);font-size:.95rem}
+details{background:var(--card);border-radius:12px;padding:12px 16px;margin:8px 0;border:1px solid #8882}summary{cursor:pointer;font-weight:600}
+footer{text-align:center;color:var(--mut);font-size:.9rem;padding:32px 16px}a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <img src="assets/icon-512.png" alt="Ícone do app OneWord" width="112" height="112">
+  <h1>OneWord</h1>
+  <p class="lead">Leitura dinâmica RSVP para iPhone, iPad e Mac. Leia uma palavra por vez, no ritmo do seu olhar. Gratuito e de código aberto.</p>
+  <a class="btn" href="https://github.com/rogerinhoduraes/oneword">Ver no GitHub</a>
+  <a class="btn alt" href="https://github.com/rogerinhoduraes/oneword/releases">Versões</a>
+</header>
+
+<h2>Funcionalidades</h2>
+<div class="grid">
+  <div class="card"><h3>Leitor RSVP com ORP</h3><p>A letra ideal de cada palavra fica fixa no centro, destacada em vermelho, com ritmo adaptativo.</p></div>
+  <div class="card"><h3>EPUB, PDF e web</h3><p>Importe livros, documentos e artigos, ou escaneie páginas com OCR pela câmera.</p></div>
+  <div class="card"><h3>Leitura bionic e narração</h3><p>Destaque o início das palavras e acompanhe com voz sincronizada.</p></div>
+  <div class="card"><h3>Resumos, flashcards e quizzes</h3><p>Processamento local com NaturalLanguage, sem enviar seu texto para servidores.</p></div>
+  <div class="card"><h3>Estatísticas de leitura</h3><p>WPM, sequência diária, conquistas e benchmark de velocidade.</p></div>
+  <div class="card"><h3>Ecossistema Apple</h3><p>Live Activities, Dynamic Island, Siri e Atalhos, Apple Pencil e háptica.</p></div>
+  <div class="card"><h3>Extensão para Chrome</h3><p>Envie artigos da web direto para o app com <code>oneword://</code>.</p></div>
+  <div class="card"><h3>Português, inglês e espanhol</h3><p>Interface e conteúdo traduzidos nos três idiomas.</p></div>
+</div>
+
+<h2>Perguntas frequentes</h2>
+<details><summary>O que é leitura RSVP?</summary><p>RSVP (Rapid Serial Visual Presentation) mostra o texto uma palavra por vez, no mesmo ponto da tela. Isso elimina os movimentos dos olhos entre palavras e permite ler mais rápido.</p></details>
+<details><summary>O que é o ORP?</summary><p>ORP (Optimal Recognition Point) é a letra de cada palavra onde o olhar a reconhece mais depressa. O OneWord alinha essa letra ao centro e a destaca em vermelho.</p></details>
+<details><summary>O OneWord é gratuito?</summary><p>Sim. Todos os recursos são gratuitos, e o app é mantido por anúncios.</p></details>
+<details><summary>Quais formatos posso importar?</summary><p>EPUB, PDF, artigos da web e texto escaneado pela câmera com OCR.</p></details>
+<details><summary>O código é aberto?</summary><p>Sim, sob licença MIT. Veja o <a href="https://github.com/rogerinhoduraes/oneword">repositório no GitHub</a>.</p></details>
+</main>
+<footer>© 2026 <a href="https://github.com/rogerinhoduraes">Rogerio Duraes</a> · Licença MIT</footer>
+</body>
+</html>
