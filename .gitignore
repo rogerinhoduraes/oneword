@@ -3,3 +3,19 @@
 DerivedData/
 *.xcuserstate
 xcuserdata/
+
+# Build
+build/
+
+# Segredos e certificados
+.env*
+*.p12
+*.pem
+*.mobileprovision
+
+# Node
+node_modules/
+
+# Duplicatas do Finder ("nome 2.ext")
+* 2
+* 2.*
