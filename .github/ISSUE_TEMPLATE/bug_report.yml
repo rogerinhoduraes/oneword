@@ -1,0 +1,21 @@
+name: Bug
+description: Algo não funciona como esperado
+labels: [bug]
+body:
+  - type: textarea
+    id: descricao
+    attributes: { label: O que aconteceu, description: Descreva o problema }
+    validations: { required: true }
+  - type: textarea
+    id: passos
+    attributes: { label: Passos para reproduzir, placeholder: "1. Abra...\n2. Toque em..." }
+    validations: { required: true }
+  - type: textarea
+    id: esperado
+    attributes: { label: Comportamento esperado }
+  - type: input
+    id: dispositivo
+    attributes: { label: Dispositivo e versão do iOS/macOS, placeholder: iPhone 15, iOS 18.2 }
+  - type: input
+    id: versao
+    attributes: { label: Versão do app }
