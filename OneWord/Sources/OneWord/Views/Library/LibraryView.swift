@@ -247,7 +247,7 @@ public struct LibraryView: View {
             } else {
                 ScrollView {
                     LazyVGrid(
-                        columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)],
+                        columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 16)],
                         spacing: 24
                     ) {
                         ForEach(filteredBooks) { book in

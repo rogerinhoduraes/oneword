@@ -94,6 +94,8 @@ public struct StatsView: View {
                     .foregroundStyle(.secondary)
                 }
                 .padding(.vertical)
+                .frame(maxWidth: 700)
+                .frame(maxWidth: .infinity)
             }
             .adBannerInset(unitID: AdConfig.statsBannerUnitID)
             .background(Color.statsBackground)

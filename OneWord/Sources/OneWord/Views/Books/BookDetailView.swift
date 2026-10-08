@@ -158,6 +158,8 @@ public struct BookDetailView: View {
                 )
             }
             .padding(.vertical)
+            .frame(maxWidth: 700)
+            .frame(maxWidth: .infinity)
         }
         .sheet(isPresented: $isShowingSummary) {
             BookSummarySheetView(title: book.title, fullText: book.fullText)
