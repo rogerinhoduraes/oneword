@@ -9,11 +9,12 @@ import SwiftUI
 import SwiftData
 
 /// TabView principal do aplicativo OneWord.
-/// Alterna entre a Biblioteca de leitura e o Dashboard de Estatísticas/Produtividade.
+/// Alterna entre a Biblioteca de leitura, o Dashboard de Estatísticas/Produtividade e os Ajustes.
 public struct MainTabView: View {
     public enum Tab: String, Hashable {
         case library
         case stats
+        case settings
     }
     
     @State private var selectedTab: Tab
@@ -60,6 +61,12 @@ public struct MainTabView: View {
                     Label("Estatísticas", systemImage: "chart.bar.xaxis")
                 }
                 .tag(Tab.stats)
+            
+            SettingsView()
+                .tabItem {
+                    Label("Ajustes", systemImage: "gearshape.fill")
+                }
+                .tag(Tab.settings)
         }
         .tint(.blue)
     }

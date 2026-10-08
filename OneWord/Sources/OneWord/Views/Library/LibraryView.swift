@@ -24,7 +24,6 @@ public struct LibraryView: View {
     @State private var isShowingQuickImportSheet: Bool = false
     @State private var isShowingFlashcardReview: Bool = false
     @State private var isShowingReadingGuide: Bool = false
-    @State private var isShowingRemoveAds: Bool = false
     @State private var selectedBookForNavigation: Book?
     @State private var importErrorMessage: String?
     @State private var pendingImportURL: URL?
@@ -111,23 +110,12 @@ public struct LibraryView: View {
                         } label: {
                             Label("Guia: Técnicas & Recursos", systemImage: "brain.head.profile")
                         }
-                        
-                        Divider()
-                        
-                        Button {
-                            isShowingRemoveAds = true
-                        } label: {
-                            Label(PurchaseManager.isPurchaseEnabled ? "Remover anúncios" : "Anúncios e privacidade", systemImage: "nosign")
-                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
                             .foregroundStyle(.blue)
                     }
                 }
-            }
-            .sheet(isPresented: $isShowingRemoveAds) {
-                RemoveAdsView()
             }
             .sheet(isPresented: $isShowingFlashcardReview) {
                 FlashcardReviewView()
