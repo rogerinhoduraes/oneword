@@ -32,6 +32,10 @@ public final class WebArticleExtractor: Sendable {
     
     /// Baixa e extrai o artigo a partir de uma URL web.
     public func extract(from url: URL) async throws -> ExtractedArticle {
+        guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
+            throw WebExtractorError.invalidURL
+        }
+        
         var request = URLRequest(url: url)
         request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1", forHTTPHeaderField: "User-Agent")
         request.setValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
@@ -43,16 +47,33 @@ public final class WebArticleExtractor: Sendable {
             throw WebExtractorError.httpError((response as? HTTPURLResponse)?.statusCode ?? 500)
         }
         
-        let htmlString = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
-        return extract(fromHTML: htmlString, sourceURL: url)
+        let htmlString = decodeHTML(data, response: response)
+        let article = extract(fromHTML: htmlString, sourceURL: url)
+        guard !article.words.isEmpty else {
+            throw WebExtractorError.emptyContent
+        }
+        return article
+    }
+    
+    /// Decodifica o corpo respeitando o charset do servidor; sem charset, tenta UTF-8 e cai para Windows-1252.
+    private func decodeHTML(_ data: Data, response: URLResponse) -> String {
+        if let name = response.textEncodingName {
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(name as CFString)
+            if cfEncoding != kCFStringEncodingInvalidId {
+                let encoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
+                if let decoded = String(data: data, encoding: encoding) { return decoded }
+            }
+        }
+        return String(data: data, encoding: .utf8)
+            ?? String(data: data, encoding: .windowsCP1252)
+            ?? String(decoding: data, as: UTF8.self)
     }
     
     /// Analisa uma string HTML ou texto bruto diretamente (ex: colado pelo usuário).
     public func extract(fromHTML html: String, sourceURL: URL? = nil, fallbackTitle: String = String(localized: "Artigo da Web")) -> ExtractedArticle {
         // Se a string não contiver tags HTML evidentes, trata como texto puro
         if !html.contains("<") || !html.contains(">") {
-            let clean = html.trimmingCharacters(in: .whitespacesAndNewlines)
-            let words = clean.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+            let (clean, words) = TextParser().parse(rawText: html)
             return ExtractedArticle(
                 title: fallbackTitle,
                 author: nil,
@@ -73,10 +94,6 @@ public final class WebArticleExtractor: Sendable {
         let tagsToRemove = [
             "<script[\\s\\S]*?</script>",
             "<style[\\s\\S]*?</style>",
-            "<header[\\s\\S]*?</header>",
-            "<footer[\\s\\S]*?</footer>",
-            "<nav[\\s\\S]*?</nav>",
-            "<aside[\\s\\S]*?</aside>",
             "<noscript[\\s\\S]*?</noscript>",
             "<svg[\\s\\S]*?</svg>",
             "<form[\\s\\S]*?</form>",
@@ -86,8 +103,19 @@ public final class WebArticleExtractor: Sendable {
             cleanedHTML = cleanedHTML.replacingOccurrences(of: pattern, with: " ", options: .regularExpression)
         }
         
-        // Foca no conteúdo principal do artigo se houver tag <article> ou <main>
-        let articleBody = extractMainArticleBody(fromHTML: cleanedHTML) ?? cleanedHTML
+        // Foca no conteúdo principal (<article> ou <main>); o <header> interno é mantido (título/lide).
+        // Sem container principal, <header> da página também é descartado.
+        let mainBody = extractMainArticleBody(fromHTML: cleanedHTML)
+        var articleBody = mainBody ?? cleanedHTML
+        var chromePatterns = [
+            "<footer[\\s\\S]*?</footer>",
+            "<nav[\\s\\S]*?</nav>",
+            "<aside[\\s\\S]*?</aside>"
+        ]
+        if mainBody == nil { chromePatterns.append("<header[\\s\\S]*?</header>") }
+        for pattern in chromePatterns {
+            articleBody = articleBody.replacingOccurrences(of: pattern, with: " ", options: .regularExpression)
+        }
         
         // Converte quebras de bloco em quebras de parágrafo
         var processed = articleBody.replacingOccurrences(of: "</?(p|div|h[1-6]|li|tr|br)[^>]*>", with: "\n", options: .regularExpression)
@@ -101,10 +129,9 @@ public final class WebArticleExtractor: Sendable {
         // Limpa e normaliza linhas
         let lines = decoded.components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty && $0.count > 2 }
+            .filter { $0.count >= 2 }
         
-        let textContent = lines.joined(separator: "\n\n")
-        let words = textContent.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        let (textContent, words) = TextParser().parse(rawText: lines.joined(separator: "\n\n"))
         
         return ExtractedArticle(
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -118,15 +145,10 @@ public final class WebArticleExtractor: Sendable {
     /// Converte um artigo extraído em uma entidade `Document` do SwiftData.
     @MainActor
     public func saveAsDocument(article: ExtractedArticle, context: ModelContext) throws -> Document {
-        let detectedLang = BookTranslationService.detectLanguage(for: article.textContent)
-        let content = DocumentContent(
-            rawText: article.textContent,
-            words: article.words,
-            originalLanguage: detectedLang
-        )
         let doc = Document(
             title: article.title,
-            content: content
+            rawText: article.textContent,
+            words: article.words
         )
         context.insert(doc)
         try context.save()

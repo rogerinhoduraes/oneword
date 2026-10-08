@@ -26,6 +26,7 @@ public struct LibraryView: View {
     @State private var isShowingReadingGuide: Bool = false
     @State private var isShowingRemoveAds: Bool = false
     @State private var selectedBookForNavigation: Book?
+    @State private var importErrorMessage: String?
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
         case books = "Livros"
@@ -155,24 +156,32 @@ public struct LibraryView: View {
                 switch result {
                 case .success(let urls):
                     guard let url = urls.first else { return }
-                    if url.pathExtension.lowercased() == "pdf" {
-                        let isSecured = url.startAccessingSecurityScopedResource()
-                        defer {
-                            if isSecured { url.stopAccessingSecurityScopedResource() }
-                        }
-                        if let extracted = try? PDFImportService().extractText(from: url) {
-                            let doc = Document(title: extracted.title, rawText: extracted.cleanedText, words: extracted.words)
-                            modelContext.insert(doc)
-                            try? modelContext.save()
+                    do {
+                        switch try EPUBImportService().importAuto(from: url, context: modelContext) {
+                        case .book(let newBook):
+                            libraryTab = .books
+                            self.selectedBookForNavigation = newBook
+                        case .document(let doc):
                             libraryTab = .articles
                             viewModel.selectedDocumentForReading = doc
                         }
-                    } else if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
-                        self.selectedBookForNavigation = newBook
+                    } catch {
+                        importErrorMessage = error.localizedDescription
                     }
-                case .failure:
-                    break
+                case .failure(let error):
+                    importErrorMessage = error.localizedDescription
                 }
+            }
+            .alert(
+                "Não foi possível importar",
+                isPresented: Binding(
+                    get: { importErrorMessage != nil },
+                    set: { if !$0 { importErrorMessage = nil } }
+                )
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(importErrorMessage ?? "")
             }
             #if os(iOS)
             .fullScreenCover(item: $viewModel.selectedDocumentForReading) { document in

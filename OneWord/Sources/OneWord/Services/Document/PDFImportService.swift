@@ -42,13 +42,17 @@ public struct PDFImportService: Sendable {
         
         let (cleaned, words) = parser.parse(rawText: fullText)
         
-        // Tenta obter o título dos metadados do PDF ou do nome do arquivo
-        var title = pdf.documentAttributes?[PDFDocumentAttribute.titleAttribute] as? String
-        if title == nil || title?.trimmingCharacters(in: .whitespaces).isEmpty == true {
-            title = url.deletingPathExtension().lastPathComponent
+        return (title(for: url), cleaned, words)
+    }
+    
+    /// Título dos metadados do PDF, com fallback para o nome do arquivo.
+    public func title(for url: URL) -> String {
+        let metadata = PDFDocument(url: url)?.documentAttributes?[PDFDocumentAttribute.titleAttribute] as? String
+        if let metadata, !metadata.trimmingCharacters(in: .whitespaces).isEmpty {
+            return metadata
         }
-        
-        return (title ?? "Documento PDF", cleaned, words)
+        let fileName = url.deletingPathExtension().lastPathComponent
+        return fileName.isEmpty ? String(localized: "Documento PDF") : fileName
     }
     
     /// Extrai o texto de cada página individualmente para alimentar livros multi-páginas.

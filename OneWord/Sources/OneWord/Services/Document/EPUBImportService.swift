@@ -8,8 +8,17 @@
 import Foundation
 import SwiftData
 
+/// Resultado da importação automática: livro (paginado) ou artigo avulso.
+public enum ImportedItem {
+    case book(Book)
+    case document(Document)
+}
+
 /// Serviço de alto nível para importação de livros digitais (ePub, TXT, Markdown) para o SwiftData.
 public final class EPUBImportService: Sendable {
+    /// A partir deste total de palavras, PDF e TXT são tratados como livro (paginado); abaixo, como artigo.
+    public static let bookWordThreshold = 5000
+    
     private let parser: EPUBParser
     
     public init(parser: EPUBParser = EPUBParser()) {
@@ -43,9 +52,75 @@ public final class EPUBImportService: Sendable {
         }
     }
     
+    /// Importa EPUB, PDF ou TXT decidindo entre livro e artigo:
+    /// EPUB é sempre livro; PDF e TXT viram livro apenas se atingirem `bookWordThreshold` palavras.
+    @MainActor
+    public func importAuto(from url: URL, context: ModelContext) throws -> ImportedItem {
+        let isAccessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if isAccessing {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        switch url.pathExtension.lowercased() {
+        case "epub":
+            return .book(try importFile(from: url, context: context))
+            
+        case "pdf":
+            let pdfService = PDFImportService()
+            let pages = try pdfService.extractPages(from: url)
+            let title = pdfService.title(for: url)
+            let totalWords = pages.reduce(0) { $0 + $1.words.count }
+            
+            if totalWords >= Self.bookWordThreshold {
+                let book = Book(
+                    title: title,
+                    author: String(localized: "Autor Desconhecido"),
+                    coverImageData: nil,
+                    coverThemeColor: randomThemeColor()
+                )
+                context.insert(book)
+                for page in pages {
+                    _ = book.addPage(rawText: page.text, words: page.words)
+                }
+                try context.save()
+                return .book(book)
+            }
+            
+            let doc = Document(
+                title: title,
+                rawText: pages.map(\.text).joined(separator: "\n\n"),
+                words: pages.flatMap(\.words)
+            )
+            context.insert(doc)
+            try context.save()
+            return .document(doc)
+            
+        default:
+            let data = try Data(contentsOf: url)
+            let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
+            let title = url.deletingPathExtension().lastPathComponent
+            let (cleaned, words) = TextParser().parse(rawText: text)
+            guard !words.isEmpty else { throw EPUBError.noReadableChapters }
+            
+            if words.count >= Self.bookWordThreshold {
+                return .book(try importPlainText(text: text, title: title, context: context))
+            }
+            let doc = Document(
+                title: title.isEmpty ? String(localized: "Texto Importado") : title,
+                rawText: cleaned,
+                words: words
+            )
+            context.insert(doc)
+            try context.save()
+            return .document(doc)
+        }
+    }
+    
     /// Converte dados de ePub em uma entidade `Book` no SwiftData.
     @MainActor
-    public func importEPUB(data: Data, defaultTitle: String = "Livro Digital", context: ModelContext) throws -> Book {
+    public func importEPUB(data: Data, defaultTitle: String = String(localized: "Livro Digital"), context: ModelContext) throws -> Book {
         let epubBook = try parser.parse(data: data)
         let effectiveTitle = epubBook.title.isEmpty ? defaultTitle : epubBook.title
         
@@ -76,19 +151,19 @@ public final class EPUBImportService: Sendable {
     
     /// Converte texto plano em um `Book` estruturado.
     @MainActor
-    public func importPlainText(text: String, title: String, author: String = "Importado", context: ModelContext) throws -> Book {
+    public func importPlainText(text: String, title: String, author: String = String(localized: "Importado"), context: ModelContext) throws -> Book {
         let cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanText.isEmpty else {
             throw EPUBError.noReadableChapters
         }
         
-        let allWords = cleanText.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        let allWords = TextParser().parse(rawText: cleanText).words
         guard !allWords.isEmpty else {
             throw EPUBError.noReadableChapters
         }
         
         let book = Book(
-            title: title.isEmpty ? "Texto Importado" : title,
+            title: title.isEmpty ? String(localized: "Texto Importado") : title,
             author: author,
             coverImageData: nil,
             coverThemeColor: randomThemeColor()
