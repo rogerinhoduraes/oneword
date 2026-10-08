@@ -19,7 +19,7 @@ struct SettingsView: View {
     @State private var isShowingReadingGuide = false
     
     private static let privacyURL = URL(string: "https://rogerinhoduraes.github.io/oneword/privacy.html")!
-    private static let supportURL = URL(string: "https://github.com/rogerinhoduraes/oneword/issues")!
+    private static let contactURL = URL(string: "mailto:rogerinho.duraes@gmail.com?subject=OneWord")!
     private static let reviewURL = URL(string: "https://apps.apple.com/app/oneword/id6819051378?action=write-review")!
     
     var body: some View {
@@ -163,7 +163,7 @@ struct SettingsView: View {
             LabeledContent("Versão", value: appVersion)
             Button("Guia: Técnicas & Recursos") { isShowingReadingGuide = true }
             Link("Avaliar na App Store", destination: Self.reviewURL)
-            Link("Suporte e sugestões", destination: Self.supportURL)
+            Link("Contato: clique aqui", destination: Self.contactURL)
         }
     }
     

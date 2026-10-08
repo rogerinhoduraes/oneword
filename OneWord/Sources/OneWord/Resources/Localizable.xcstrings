@@ -10609,19 +10609,19 @@
         }
       }
     },
-    "Suporte e sugestões": {
+    "Contato: clique aqui": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Support & feedback"
+            "value": "Contact: click here"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Soporte y sugerencias"
+            "value": "Contacto: haz clic aquí"
           }
         }
       }
