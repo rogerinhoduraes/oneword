@@ -14,8 +14,8 @@ import Observation
 public final class PurchaseManager {
     public static let shared = PurchaseManager()
     
-    /// Mantenha `false` até o produto existir no App Store Connect e o Acordo de apps pagos estar ativo.
-    nonisolated public static let isPurchaseEnabled = false
+    /// Compra "Remover anúncios" ativa. Em Debug usa `Products.storekit` quando rodado pelo Xcode.
+    nonisolated public static let isPurchaseEnabled = true
     
     nonisolated public static let removeAdsID = "com.oneword.removeads"
     private static let cacheKey = "oneword.hasRemovedAds"
