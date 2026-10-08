@@ -1,0 +1,32 @@
+{
+  "identifier" : "A1C0FFEE-0000-4000-8000-0000000057C1",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "9.90",
+      "familyShareable" : true,
+      "internalID" : "A1C0FFEE-0000-4000-8000-0000000057C2",
+      "localizations" : [
+        {
+          "description" : "Remove o banner de anúncios para sempre.",
+          "displayName" : "Remover anúncios",
+          "locale" : "pt_BR"
+        },
+        {
+          "description" : "Removes the ad banner for good.",
+          "displayName" : "Remove Ads",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.oneword.removeads",
+      "referenceName" : "Remove Ads",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {},
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
