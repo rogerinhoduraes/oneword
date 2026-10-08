@@ -47,7 +47,7 @@ public final class DeepLinkManager: Sendable {
             }
             
             let title = param("title")?.trimmingCharacters(in: .whitespacesAndNewlines)
-            let finalTitle = (title?.isEmpty == false) ? title! : "Artigo do Chrome"
+            let finalTitle = (title?.isEmpty == false) ? title! : String(localized: "Artigo do Chrome")
             
             let parser = TextParser()
             let (cleanedText, words) = parser.parse(rawText: rawText)
@@ -77,7 +77,7 @@ public final class DeepLinkManager: Sendable {
                 try? context.save()
                 return document
             } else if let rawText = param("text"), !rawText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                let title = param("title") ?? "Artigo Web"
+                let title = param("title") ?? String(localized: "Artigo Web")
                 let parser = TextParser()
                 let (cleanedText, words) = parser.parse(rawText: rawText)
                 

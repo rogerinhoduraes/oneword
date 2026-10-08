@@ -25,6 +25,9 @@ public struct LibraryView: View {
     @State private var isShowingFlashcardReview: Bool = false
     @State private var isShowingReadingGuide: Bool = false
     @State private var selectedBookForNavigation: Book?
+    @State private var importErrorMessage: String?
+    @State private var pendingImportURL: URL?
+    @State private var suggestedImportKind: ImportKind = .document
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
         case books = "Livros"
@@ -143,24 +146,44 @@ public struct LibraryView: View {
                 switch result {
                 case .success(let urls):
                     guard let url = urls.first else { return }
-                    if url.pathExtension.lowercased() == "pdf" {
-                        let isSecured = url.startAccessingSecurityScopedResource()
-                        defer {
-                            if isSecured { url.stopAccessingSecurityScopedResource() }
-                        }
-                        if let extracted = try? PDFImportService().extractText(from: url) {
-                            let doc = Document(title: extracted.title, rawText: extracted.cleanedText, words: extracted.words)
-                            modelContext.insert(doc)
-                            try? modelContext.save()
-                            libraryTab = .articles
-                            viewModel.selectedDocumentForReading = doc
-                        }
-                    } else if let newBook = try? EPUBImportService().importFile(from: url, context: modelContext) {
-                        self.selectedBookForNavigation = newBook
+                    if let suggestion = EPUBImportService().suggestedKind(for: url) {
+                        suggestedImportKind = suggestion
+                        pendingImportURL = url
+                    } else {
+                        performImport(url, kind: nil)
                     }
-                case .failure:
-                    break
+                case .failure(let error):
+                    importErrorMessage = error.localizedDescription
                 }
+            }
+            .confirmationDialog(
+                "Importar como",
+                isPresented: Binding(
+                    get: { pendingImportURL != nil },
+                    set: { if !$0 { pendingImportURL = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button(suggestedImportKind == .book ? "Livro (sugerido)" : "Livro") {
+                    if let url = pendingImportURL { performImport(url, kind: .book) }
+                }
+                Button(suggestedImportKind == .document ? "Artigo (sugerido)" : "Artigo") {
+                    if let url = pendingImportURL { performImport(url, kind: .document) }
+                }
+                Button("Cancelar", role: .cancel) {}
+            } message: {
+                Text("Livros são divididos em páginas com progresso por página; artigos abrem como um texto único.")
+            }
+            .alert(
+                "Não foi possível importar",
+                isPresented: Binding(
+                    get: { importErrorMessage != nil },
+                    set: { if !$0 { importErrorMessage = nil } }
+                )
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(importErrorMessage ?? "")
             }
             #if os(iOS)
             .fullScreenCover(item: $viewModel.selectedDocumentForReading) { document in
@@ -174,6 +197,22 @@ public struct LibraryView: View {
             .navigationDestination(item: $selectedBookForNavigation) { book in
                 BookDetailView(book: book)
             }
+        }
+    }
+    
+    private func performImport(_ url: URL, kind: ImportKind?) {
+        pendingImportURL = nil
+        do {
+            switch try EPUBImportService().importAuto(from: url, kind: kind, context: modelContext) {
+            case .book(let newBook):
+                libraryTab = .books
+                selectedBookForNavigation = newBook
+            case .document(let doc):
+                libraryTab = .articles
+                viewModel.selectedDocumentForReading = doc
+            }
+        } catch {
+            importErrorMessage = error.localizedDescription
         }
     }
     

@@ -7,9 +7,27 @@
 
 import Foundation
 import SwiftData
+import PDFKit
+
+/// Resultado da importação automática: livro (paginado) ou artigo avulso.
+public enum ImportedItem {
+    case book(Book)
+    case document(Document)
+}
+
+/// Tipo de destino escolhido para PDF/TXT.
+public enum ImportKind: String, Identifiable, Sendable {
+    case book
+    case document
+    
+    public var id: String { rawValue }
+}
 
 /// Serviço de alto nível para importação de livros digitais (ePub, TXT, Markdown) para o SwiftData.
 public final class EPUBImportService: Sendable {
+    /// A partir deste total de palavras, PDF e TXT são tratados como livro (paginado); abaixo, como artigo.
+    public static let bookWordThreshold = 5000
+    
     private let parser: EPUBParser
     
     public init(parser: EPUBParser = EPUBParser()) {
@@ -43,9 +61,92 @@ public final class EPUBImportService: Sendable {
         }
     }
     
+    /// Sugestão barata (sem extrair o texto) de destino para PDF/TXT: PDFs com muitas páginas
+    /// e TXTs grandes sugerem livro. Retorna `nil` para EPUB (sempre livro).
+    public func suggestedKind(for url: URL) -> ImportKind? {
+        let isAccessing = url.startAccessingSecurityScopedResource()
+        defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
+        
+        switch url.pathExtension.lowercased() {
+        case "epub":
+            return nil
+        case "pdf":
+            return (PDFDocument(url: url)?.pageCount ?? 0) >= 15 ? .book : .document
+        default:
+            let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            return size >= 30_000 ? .book : .document
+        }
+    }
+    
+    /// Importa EPUB, PDF ou TXT. EPUB é sempre livro. Para PDF e TXT, `kind` define o destino;
+    /// sem `kind`, vira livro apenas se atingir `bookWordThreshold` palavras.
+    @MainActor
+    public func importAuto(from url: URL, kind: ImportKind? = nil, context: ModelContext) throws -> ImportedItem {
+        let isAccessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if isAccessing {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        switch url.pathExtension.lowercased() {
+        case "epub":
+            return .book(try importFile(from: url, context: context))
+            
+        case "pdf":
+            let pdfService = PDFImportService()
+            let pages = try pdfService.extractPages(from: url)
+            let title = pdfService.title(for: url)
+            let totalWords = pages.reduce(0) { $0 + $1.words.count }
+            
+            if (kind ?? (totalWords >= Self.bookWordThreshold ? .book : .document)) == .book {
+                let book = Book(
+                    title: title,
+                    author: String(localized: "Autor Desconhecido"),
+                    coverImageData: nil,
+                    coverThemeColor: randomThemeColor()
+                )
+                context.insert(book)
+                for page in pages {
+                    _ = book.addPage(rawText: page.text, words: page.words)
+                }
+                try context.save()
+                return .book(book)
+            }
+            
+            let doc = Document(
+                title: title,
+                rawText: pages.map(\.text).joined(separator: "\n\n"),
+                words: pages.flatMap(\.words)
+            )
+            context.insert(doc)
+            try context.save()
+            return .document(doc)
+            
+        default:
+            let data = try Data(contentsOf: url)
+            let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
+            let title = url.deletingPathExtension().lastPathComponent
+            let (cleaned, words) = TextParser().parse(rawText: text)
+            guard !words.isEmpty else { throw EPUBError.noReadableChapters }
+            
+            if (kind ?? (words.count >= Self.bookWordThreshold ? .book : .document)) == .book {
+                return .book(try importPlainText(text: text, title: title, context: context))
+            }
+            let doc = Document(
+                title: title.isEmpty ? String(localized: "Texto Importado") : title,
+                rawText: cleaned,
+                words: words
+            )
+            context.insert(doc)
+            try context.save()
+            return .document(doc)
+        }
+    }
+    
     /// Converte dados de ePub em uma entidade `Book` no SwiftData.
     @MainActor
-    public func importEPUB(data: Data, defaultTitle: String = "Livro Digital", context: ModelContext) throws -> Book {
+    public func importEPUB(data: Data, defaultTitle: String = String(localized: "Livro Digital"), context: ModelContext) throws -> Book {
         let epubBook = try parser.parse(data: data)
         let effectiveTitle = epubBook.title.isEmpty ? defaultTitle : epubBook.title
         
@@ -76,19 +177,19 @@ public final class EPUBImportService: Sendable {
     
     /// Converte texto plano em um `Book` estruturado.
     @MainActor
-    public func importPlainText(text: String, title: String, author: String = "Importado", context: ModelContext) throws -> Book {
+    public func importPlainText(text: String, title: String, author: String = String(localized: "Importado"), context: ModelContext) throws -> Book {
         let cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanText.isEmpty else {
             throw EPUBError.noReadableChapters
         }
         
-        let allWords = cleanText.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        let allWords = TextParser().parse(rawText: cleanText).words
         guard !allWords.isEmpty else {
             throw EPUBError.noReadableChapters
         }
         
         let book = Book(
-            title: title.isEmpty ? "Texto Importado" : title,
+            title: title.isEmpty ? String(localized: "Texto Importado") : title,
             author: author,
             coverImageData: nil,
             coverThemeColor: randomThemeColor()
