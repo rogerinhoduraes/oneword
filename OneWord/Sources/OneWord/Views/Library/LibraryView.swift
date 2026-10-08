@@ -27,6 +27,8 @@ public struct LibraryView: View {
     @State private var isShowingRemoveAds: Bool = false
     @State private var selectedBookForNavigation: Book?
     @State private var importErrorMessage: String?
+    @State private var pendingImportURL: URL?
+    @State private var suggestedImportKind: ImportKind = .document
     
     public enum LibraryTab: String, CaseIterable, Identifiable {
         case books = "Livros"
@@ -156,21 +158,33 @@ public struct LibraryView: View {
                 switch result {
                 case .success(let urls):
                     guard let url = urls.first else { return }
-                    do {
-                        switch try EPUBImportService().importAuto(from: url, context: modelContext) {
-                        case .book(let newBook):
-                            libraryTab = .books
-                            self.selectedBookForNavigation = newBook
-                        case .document(let doc):
-                            libraryTab = .articles
-                            viewModel.selectedDocumentForReading = doc
-                        }
-                    } catch {
-                        importErrorMessage = error.localizedDescription
+                    if let suggestion = EPUBImportService().suggestedKind(for: url) {
+                        suggestedImportKind = suggestion
+                        pendingImportURL = url
+                    } else {
+                        performImport(url, kind: nil)
                     }
                 case .failure(let error):
                     importErrorMessage = error.localizedDescription
                 }
+            }
+            .confirmationDialog(
+                "Importar como",
+                isPresented: Binding(
+                    get: { pendingImportURL != nil },
+                    set: { if !$0 { pendingImportURL = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button(suggestedImportKind == .book ? "Livro (sugerido)" : "Livro") {
+                    if let url = pendingImportURL { performImport(url, kind: .book) }
+                }
+                Button(suggestedImportKind == .document ? "Artigo (sugerido)" : "Artigo") {
+                    if let url = pendingImportURL { performImport(url, kind: .document) }
+                }
+                Button("Cancelar", role: .cancel) {}
+            } message: {
+                Text("Livros são divididos em páginas com progresso por página; artigos abrem como um texto único.")
             }
             .alert(
                 "Não foi possível importar",
@@ -195,6 +209,22 @@ public struct LibraryView: View {
             .navigationDestination(item: $selectedBookForNavigation) { book in
                 BookDetailView(book: book)
             }
+        }
+    }
+    
+    private func performImport(_ url: URL, kind: ImportKind?) {
+        pendingImportURL = nil
+        do {
+            switch try EPUBImportService().importAuto(from: url, kind: kind, context: modelContext) {
+            case .book(let newBook):
+                libraryTab = .books
+                selectedBookForNavigation = newBook
+            case .document(let doc):
+                libraryTab = .articles
+                viewModel.selectedDocumentForReading = doc
+            }
+        } catch {
+            importErrorMessage = error.localizedDescription
         }
     }
     

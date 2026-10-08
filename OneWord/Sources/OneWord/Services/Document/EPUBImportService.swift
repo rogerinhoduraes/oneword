@@ -7,11 +7,20 @@
 
 import Foundation
 import SwiftData
+import PDFKit
 
 /// Resultado da importação automática: livro (paginado) ou artigo avulso.
 public enum ImportedItem {
     case book(Book)
     case document(Document)
+}
+
+/// Tipo de destino escolhido para PDF/TXT.
+public enum ImportKind: String, Identifiable, Sendable {
+    case book
+    case document
+    
+    public var id: String { rawValue }
 }
 
 /// Serviço de alto nível para importação de livros digitais (ePub, TXT, Markdown) para o SwiftData.
@@ -52,10 +61,27 @@ public final class EPUBImportService: Sendable {
         }
     }
     
-    /// Importa EPUB, PDF ou TXT decidindo entre livro e artigo:
-    /// EPUB é sempre livro; PDF e TXT viram livro apenas se atingirem `bookWordThreshold` palavras.
+    /// Sugestão barata (sem extrair o texto) de destino para PDF/TXT: PDFs com muitas páginas
+    /// e TXTs grandes sugerem livro. Retorna `nil` para EPUB (sempre livro).
+    public func suggestedKind(for url: URL) -> ImportKind? {
+        let isAccessing = url.startAccessingSecurityScopedResource()
+        defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
+        
+        switch url.pathExtension.lowercased() {
+        case "epub":
+            return nil
+        case "pdf":
+            return (PDFDocument(url: url)?.pageCount ?? 0) >= 15 ? .book : .document
+        default:
+            let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            return size >= 30_000 ? .book : .document
+        }
+    }
+    
+    /// Importa EPUB, PDF ou TXT. EPUB é sempre livro. Para PDF e TXT, `kind` define o destino;
+    /// sem `kind`, vira livro apenas se atingir `bookWordThreshold` palavras.
     @MainActor
-    public func importAuto(from url: URL, context: ModelContext) throws -> ImportedItem {
+    public func importAuto(from url: URL, kind: ImportKind? = nil, context: ModelContext) throws -> ImportedItem {
         let isAccessing = url.startAccessingSecurityScopedResource()
         defer {
             if isAccessing {
@@ -73,7 +99,7 @@ public final class EPUBImportService: Sendable {
             let title = pdfService.title(for: url)
             let totalWords = pages.reduce(0) { $0 + $1.words.count }
             
-            if totalWords >= Self.bookWordThreshold {
+            if (kind ?? (totalWords >= Self.bookWordThreshold ? .book : .document)) == .book {
                 let book = Book(
                     title: title,
                     author: String(localized: "Autor Desconhecido"),
@@ -104,7 +130,7 @@ public final class EPUBImportService: Sendable {
             let (cleaned, words) = TextParser().parse(rawText: text)
             guard !words.isEmpty else { throw EPUBError.noReadableChapters }
             
-            if words.count >= Self.bookWordThreshold {
+            if (kind ?? (words.count >= Self.bookWordThreshold ? .book : .document)) == .book {
                 return .book(try importPlainText(text: text, title: title, context: context))
             }
             let doc = Document(
