@@ -36,8 +36,9 @@ public final class RSVPReaderViewModel {
     public var isShowingSettings: Bool = false
     
     /// Preferências visuais (tema, fonte, tamanho e guias ORP).
-    public var settings: ReaderSettings = ReaderSettings() {
+    public var settings: ReaderSettings = ReaderSettings.load() {
         didSet {
+            settings.save()
             applySettings()
         }
     }
@@ -106,7 +107,7 @@ public final class RSVPReaderViewModel {
     public init(
         document: Document,
         modelContext: ModelContext? = nil,
-        initialWPM: Int = 300
+        initialWPM: Int = AppSettings.defaultWPM
     ) {
         self.document = document
         self.book = nil
@@ -124,6 +125,8 @@ public final class RSVPReaderViewModel {
         self.engine.onIndexChanged = { [weak self] newIndex in
             self?.persistProgress(to: newIndex)
         }
+        
+        applySettings()
     }
     
     /// Inicializa o ViewModel do Leitor com um Livro multi-páginas.
@@ -132,7 +135,7 @@ public final class RSVPReaderViewModel {
         book: Book,
         startPageNumber: Int? = nil,
         modelContext: ModelContext? = nil,
-        initialWPM: Int = 300
+        initialWPM: Int = AppSettings.defaultWPM
     ) {
         self.book = book
         self.document = nil
@@ -156,6 +159,8 @@ public final class RSVPReaderViewModel {
         self.engine.onIndexChanged = { [weak self] newIndex in
             self?.persistProgress(to: newIndex)
         }
+        
+        applySettings()
     }
     
     // MARK: - Propriedades Expostas para SwiftUI

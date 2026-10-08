@@ -104,6 +104,55 @@ public struct ReaderSettings: Sendable, Equatable {
     }
 }
 
+// MARK: - Persistência
+
+extension ReaderSettings {
+    private enum Key {
+        static let theme = "reader.theme"
+        static let font = "reader.font"
+        static let fontSize = "reader.fontSize"
+        static let showORPNotch = "reader.showORPNotch"
+        static let smartWPM = "reader.smartWPM"
+        static let chunkSize = "reader.chunkSize"
+        static let bimodalAudio = "reader.bimodalAudio"
+    }
+    
+    /// Carrega as preferências salvas; chaves ausentes mantêm o valor padrão.
+    public static func load(from defaults: UserDefaults = .standard) -> ReaderSettings {
+        var settings = ReaderSettings()
+        if let raw = defaults.string(forKey: Key.theme), let theme = ReaderTheme(rawValue: raw) { settings.theme = theme }
+        if let raw = defaults.string(forKey: Key.font), let font = ReaderFont(rawValue: raw) { settings.font = font }
+        if defaults.object(forKey: Key.fontSize) != nil { settings.fontSize = CGFloat(defaults.double(forKey: Key.fontSize)) }
+        if defaults.object(forKey: Key.showORPNotch) != nil { settings.showORPNotch = defaults.bool(forKey: Key.showORPNotch) }
+        if defaults.object(forKey: Key.smartWPM) != nil { settings.smartWPMEnabled = defaults.bool(forKey: Key.smartWPM) }
+        if defaults.object(forKey: Key.chunkSize) != nil { settings.chunkSize = min(max(defaults.integer(forKey: Key.chunkSize), 1), 3) }
+        if defaults.object(forKey: Key.bimodalAudio) != nil { settings.bimodalAudioEnabled = defaults.bool(forKey: Key.bimodalAudio) }
+        return settings
+    }
+    
+    public func save(to defaults: UserDefaults = .standard) {
+        defaults.set(theme.rawValue, forKey: Key.theme)
+        defaults.set(font.rawValue, forKey: Key.font)
+        defaults.set(Double(fontSize), forKey: Key.fontSize)
+        defaults.set(showORPNotch, forKey: Key.showORPNotch)
+        defaults.set(smartWPMEnabled, forKey: Key.smartWPM)
+        defaults.set(chunkSize, forKey: Key.chunkSize)
+        defaults.set(bimodalAudioEnabled, forKey: Key.bimodalAudio)
+    }
+}
+
+/// Preferências globais simples do app.
+public enum AppSettings {
+    public static let defaultWPMKey = "default_wpm"
+    public static let wpmRange = 100...1000
+    
+    /// Velocidade inicial do leitor (WPM), salva pelo benchmark, pelos Atalhos e pela aba Ajustes.
+    public static var defaultWPM: Int {
+        let stored = UserDefaults.standard.integer(forKey: defaultWPMKey)
+        return stored > 0 ? min(max(stored, wpmRange.lowerBound), wpmRange.upperBound) : 300
+    }
+}
+
 private extension Color {
     init(uiColorOrFallback: UIColorType) {
         #if canImport(UIKit)
