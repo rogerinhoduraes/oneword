@@ -45,6 +45,7 @@ public struct BookDetailView: View {
     
     // Feedback de Processamento
     @State private var isProcessing: Bool = false
+    @State private var importErrorMessage: String?
     @State private var processingProgressText: String = ""
     
     // Edição de Capa
@@ -222,6 +223,17 @@ public struct BookDetailView: View {
             if isProcessing {
                 OCRProcessingOverlay(message: processingProgressText)
             }
+        }
+        .alert(
+            "Não foi possível importar",
+            isPresented: Binding(
+                get: { importErrorMessage != nil },
+                set: { if !$0 { importErrorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importErrorMessage ?? "")
         }
         #if canImport(Translation)
         .background {
@@ -428,26 +440,26 @@ public struct BookDetailView: View {
         guard case .success(let urls) = result, let url = urls.first else { return }
         
         Task {
-            await MainActor.run {
-                isProcessing = true
-                processingProgressText = String(localized: "Extraindo páginas do PDF...")
+            isProcessing = true
+            processingProgressText = String(localized: "Extraindo páginas do PDF...")
+            
+            let isSecured = url.startAccessingSecurityScopedResource()
+            defer {
+                if isSecured { url.stopAccessingSecurityScopedResource() }
             }
             
-            let pdfService = PDFImportService()
             do {
-                let pagesData = try pdfService.extractPages(from: url)
-                await MainActor.run {
-                    for (text, words) in pagesData {
-                        _ = book.addPage(rawText: text, words: words)
-                    }
-                    try? modelContext.save()
-                    isProcessing = false
+                let pagesData = try await Task.detached(priority: .userInitiated) {
+                    try PDFImportService().extractPages(from: url)
+                }.value
+                for (text, words) in pagesData {
+                    _ = book.addPage(rawText: text, words: words)
                 }
+                try? modelContext.save()
             } catch {
-                await MainActor.run {
-                    isProcessing = false
-                }
+                importErrorMessage = error.localizedDescription
             }
+            isProcessing = false
         }
     }
 }
