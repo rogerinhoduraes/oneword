@@ -163,7 +163,7 @@ struct SettingsView: View {
             LabeledContent("Versão", value: appVersion)
             Button("Guia: Técnicas & Recursos") { isShowingReadingGuide = true }
             Link("Avaliar na App Store", destination: Self.reviewURL)
-            Link("Contato: clique aqui", destination: Self.contactURL)
+            Link("Contato", destination: Self.contactURL)
         }
     }
     

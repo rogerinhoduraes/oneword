@@ -10609,19 +10609,19 @@
         }
       }
     },
-    "Contato: clique aqui": {
+    "Contato": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Contact: click here"
+            "value": "Contact"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Contacto: haz clic aquí"
+            "value": "Contacto"
           }
         }
       }
