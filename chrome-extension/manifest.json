@@ -34,17 +34,7 @@
   ],
   "host_permissions": [
     "http://127.0.0.1/*",
-    "http://localhost/*",
-    "<all_urls>"
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "lib/pdf.worker.min.js",
-        "lib/pdf.min.js"
-      ],
-      "matches": ["<all_urls>"]
-    }
+    "http://localhost/*"
   ],
   "commands": {
     "_execute_action": {
