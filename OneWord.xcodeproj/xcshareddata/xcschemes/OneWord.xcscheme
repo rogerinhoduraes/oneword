@@ -77,5 +77,23 @@
    <ArchiveAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Gerar dSYMs dos frameworks embutidos"
+               scriptText = "#!/bin/sh&#10;# Frameworks estáticos (Google Mobile Ads, UMP) viram stubs ao serem embutidos.&#10;# Gera um dSYM para cada stub sem dSYM, evitando o aviso de símbolos no App Store Connect.&#10;APP=&quot;$ARCHIVE_PRODUCTS_PATH/Applications/$WRAPPER_NAME&quot;&#10;for FW in &quot;$APP/Frameworks&quot;/*.framework; do&#10;  [ -d &quot;$FW&quot; ] || continue&#10;  NAME=$(basename &quot;$FW&quot; .framework)&#10;  DSYM=&quot;$ARCHIVE_DSYMS_PATH/$NAME.framework.dSYM&quot;&#10;  [ -e &quot;$DSYM&quot; ] &amp;&amp; continue&#10;  xcrun dsymutil &quot;$FW/$NAME&quot; -o &quot;$DSYM&quot;&#10;done&#10;">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "A305968261EB45389C833FD1"
+                     BuildableName = "OneWord.app"
+                     BlueprintName = "OneWord"
+                     ReferencedContainer = "container:OneWord.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
    </ArchiveAction>
 </Scheme>
