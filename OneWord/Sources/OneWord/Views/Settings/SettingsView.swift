@@ -49,34 +49,7 @@ struct SettingsView: View {
                     Label("Anúncios removidos. Obrigado por apoiar o OneWord!", systemImage: "checkmark.seal.fill")
                         .foregroundStyle(.green)
                 } else {
-                    Text("O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. Com uma compra única, ele some para sempre. O leitor nunca tem anúncios.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    Button {
-                        Task { await purchases.purchase() }
-                    } label: {
-                        HStack {
-                            if purchases.isWorking {
-                                ProgressView()
-                            } else if let product = purchases.product {
-                                Text("Remover anúncios por \(product.displayPrice)")
-                            } else {
-                                Text("Remover anúncios")
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .disabled(purchases.isWorking || purchases.product == nil)
-                }
-                Button("Restaurar compras") {
-                    Task { await purchases.restore() }
-                }
-                .disabled(purchases.isWorking)
-                
-                if let message = purchases.message {
-                    Text(message)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    purchaseCard
                 }
             } else {
                 Text("O OneWord é gratuito e mostra um pequeno banner na Biblioteca e nas Estatísticas. O leitor nunca tem anúncios.")
@@ -85,7 +58,68 @@ struct SettingsView: View {
             }
         } header: {
             Text("Apoio")
+        } footer: {
+            if PurchaseManager.isPurchaseEnabled && !purchases.hasRemovedAds {
+                Text("Compra única. O leitor nunca tem anúncios.")
+            }
         }
+    }
+    
+    private var purchaseCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "rectangle.badge.xmark")
+                    .font(.title2)
+                    .foregroundStyle(.tint)
+                    .frame(width: 32)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Remover anúncios")
+                        .font(.headline)
+                    Text("Tira o banner da Biblioteca e das Estatísticas para sempre.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Button {
+                Task { await purchases.purchase() }
+            } label: {
+                HStack(spacing: 8) {
+                    if purchases.isWorking || purchases.isLoadingProduct {
+                        ProgressView().tint(.white)
+                    }
+                    if purchases.isWorking {
+                        Text("Processando…")
+                    } else if let product = purchases.product {
+                        Text("Comprar por \(product.displayPrice)")
+                    } else if purchases.isLoadingProduct {
+                        Text("Carregando preço…")
+                    } else {
+                        Text("Tentar novamente")
+                    }
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(purchases.isWorking || purchases.isLoadingProduct)
+            
+            HStack {
+                if let message = purchases.message {
+                    Text(message)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+                Button("Restaurar compras") {
+                    Task { await purchases.restore() }
+                }
+                .font(.footnote)
+                .disabled(purchases.isWorking)
+            }
+        }
+        .padding(.vertical, 6)
     }
     
     // MARK: - Privacidade

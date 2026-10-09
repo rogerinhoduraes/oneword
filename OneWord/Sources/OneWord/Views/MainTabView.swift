@@ -24,6 +24,8 @@ public struct MainTabView: View {
         let tab: Tab
         if launchArg == "stats" {
             tab = .stats
+        } else if launchArg == "settings" {
+            tab = .settings
         } else {
             tab = initialTab
         }
