@@ -23,6 +23,7 @@ public final class PurchaseManager {
     public private(set) var product: Product?
     public private(set) var hasRemovedAds: Bool
     public private(set) var isWorking: Bool = false
+    public private(set) var isLoadingProduct: Bool = false
     public private(set) var message: String?
     
     @ObservationIgnored private var updatesTask: Task<Void, Never>?
@@ -40,11 +41,14 @@ public final class PurchaseManager {
     /// Carrega o produto e confere o que o usuário já comprou.
     public func prepare() async {
         await refreshEntitlements()
-        guard product == nil else { return }
+        guard product == nil, !isLoadingProduct else { return }
+        isLoadingProduct = true
+        defer { isLoadingProduct = false }
         do {
             product = try await Product.products(for: [Self.removeAdsID]).first
+            message = product == nil ? String(localized: "Compra indisponível no momento.") : nil
         } catch {
-            message = String(localized: "Não foi possível carregar a compra. Tente novamente.")
+            message = String(localized: "Não foi possível carregar a compra.")
         }
     }
     
