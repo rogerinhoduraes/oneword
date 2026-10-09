@@ -664,3 +664,19 @@ body {
   font-size: 11px;
   opacity: 0.85;
 }
+
+.app-promo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 12px;
+}
+.app-promo span { color: var(--primary-accent); }
+.app-promo:hover { border-color: var(--primary-accent); }
