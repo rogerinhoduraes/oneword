@@ -35,6 +35,8 @@ public final class AdConsentManager {
         didStart = true
         
         #if DEBUG
+        // iPhone Rogério (também cadastrado em AdMob > Dispositivos de teste).
+        MobileAds.shared.requestConfiguration.testDeviceIdentifiers = ["E6AF9888-1A27-444A-9CE0-8975524C745D"]
         // Apenas builds de debug: -adsMode off (sem anúncios) ou force (pula UMP/ATT).
         switch UserDefaults.standard.string(forKey: "adsMode") {
         case "off": return
